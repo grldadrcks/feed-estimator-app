@@ -1091,7 +1091,7 @@ async function checkNotifications(){
     try{
       const notifications=urgent.slice(0,5).map((f,i)=>{
         const msg=f.daysAway<0?`Overdue by ${Math.abs(f.daysAway)} day(s)`:f.daysAway===0?'Due today — order now':`Due in ${f.daysAway} day(s)`;
-        return{id:f.id,title:`🌾 ${f.name}`,body:msg+(f.feedType?` · ${f.feedType}`:''),schedule:{at:new Date(Date.now()+500+i*300)},smallIcon:'ic_launcher',iconColor:'#5a8a3c'};
+        return{id:f.id,title:`🌾 ${f.name}`,body:msg+(f.feedType?` · ${f.feedType}`:''),schedule:{at:new Date(Date.now()+500+i*300)},smallIcon:'ic_launcher',largeIcon:'ic_launcher',iconColor:'#5a8a3c'};
       });
       await ln.schedule({notifications});
     }catch(e){}
