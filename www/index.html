@@ -1,0 +1,1469 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=no"/>
+<title>Feed Estimator by M@SE</title>
+<meta name="mobile-web-app-capable" content="yes"/>
+<meta name="application-name" content="Feed Estimator"/>
+<meta name="theme-color" content="#5a8a3c" media="(prefers-color-scheme: light)"/>
+<meta name="theme-color" content="#1e2418" media="(prefers-color-scheme: dark)"/>
+<meta name="apple-mobile-web-app-capable" content="yes"/>
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"/>
+<meta name="apple-mobile-web-app-title" content="Feed Estimator"/>
+<meta name="description" content="Feed Estimator by M@SE — predict dairy farm feed orders with ease."/>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+<link id="pwa-manifest" rel="manifest"/>
+<style>
+/* —— TOKENS —— */
+:root {
+  --bg:#f5f0e8; --surface:#fffdf8; --surface2:#f0ebe0; --border:#d4c9b0;
+  --text:#2c2416; --text2:#6b5e45;
+  --accent:#5a8a3c; --accent2:#3d6128; --accent-light:#e8f5e0;
+  --warn:#c8832a; --warn-light:#fef3e2;
+  --danger:#c0392b; --danger-light:#fde8e6;
+  --shadow:0 2px 16px rgba(44,36,22,.10);
+  --radius:14px; --radius-sm:10px;
+  --header-h:56px; --bnav-h:68px;
+  --safe-b:env(safe-area-inset-bottom,0px);
+  --safe-t:env(safe-area-inset-top,0px);
+  --safe-l:env(safe-area-inset-left,0px);
+  --safe-r:env(safe-area-inset-right,0px);
+}
+.dark {
+  --bg:#141810; --surface:#1e2418; --surface2:#252d1e; --border:#3a4530;
+  --text:#e8eddf; --text2:#9aaa85;
+  --accent:#72b84e; --accent2:#8fd66a; --accent-light:#1e2d14;
+  --warn:#e09a42; --warn-light:#2a200a;
+  --danger:#e05548; --danger-light:#2a1210;
+  --shadow:0 2px 20px rgba(0,0,0,.4);
+}
+
+/* —— RESET —— */
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
+html{min-height:100%;overflow-x:hidden;}
+body{
+  font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);
+  min-height:100%;
+  padding-top:var(--safe-t);
+  padding-left:var(--safe-l);padding-right:var(--safe-r);
+  transition:background .3s,color .3s;overflow-x:hidden;
+}
+
+/* —— HEADER —— */
+header{
+  position:sticky;top:0;z-index:200;
+  height:calc(var(--header-h) + var(--safe-t));
+  padding-top:var(--safe-t);
+  background:var(--surface);border-bottom:1.5px solid var(--border);
+  box-shadow:var(--shadow);
+  display:flex;align-items:center;justify-content:space-between;
+  padding-left:16px;padding-right:16px;gap:10px;
+}
+.app-title{
+  font-family:'Playfair Display',serif;font-weight:900;font-size:1.1rem;color:var(--text);line-height:1.1;
+}
+.app-title small{display:block;font-family:'DM Sans',sans-serif;font-size:.62rem;font-weight:400;color:var(--text2);letter-spacing:.06em;}
+.header-right{display:flex;gap:7px;align-items:center;}
+.icon-btn{
+  background:var(--surface2);border:1.5px solid var(--border);border-radius:10px;
+  padding:7px 11px;font-size:.82rem;font-weight:600;color:var(--text2);cursor:pointer;
+  display:inline-flex;align-items:center;gap:5px;white-space:nowrap;
+  transition:all .15s;min-height:40px;font-family:'DM Sans',sans-serif;
+}
+.icon-btn:active{transform:scale(.95);background:var(--accent-light);}
+.icon-btn.primary{background:var(--accent);color:#fff;border-color:var(--accent);}
+.icon-btn.primary:active{background:var(--accent2);}
+.date-chip{font-size:.7rem;color:var(--text2);background:var(--surface2);border:1px solid var(--border);padding:5px 9px;border-radius:20px;white-space:nowrap;}
+
+/* —— BOTTOM NAV —— */
+.bnav{
+  position:fixed;bottom:0;left:0;right:0;z-index:200;
+  background:var(--surface);border-top:1.5px solid var(--border);
+  display:grid;grid-template-columns:repeat(4,1fr);
+  padding-bottom:var(--safe-b);
+  box-shadow:0 -2px 16px rgba(0,0,0,.08);
+}
+.bnav-item{
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  padding:10px 4px 8px;gap:3px;cursor:pointer;transition:all .15s;
+  border:none;background:none;color:var(--text2);font-family:'DM Sans',sans-serif;
+  font-size:.62rem;font-weight:600;letter-spacing:.02em;
+}
+.bnav-icon{font-size:1.4rem;line-height:1;transition:transform .15s;}
+.bnav-item:active .bnav-icon{transform:scale(.88);}
+.bnav-item.active{color:var(--accent);}
+.bnav-item.active .bnav-icon{filter:drop-shadow(0 0 4px var(--accent));}
+
+/* —— SCROLL AREA —— */
+.scroll-area{
+  padding:14px 14px calc(var(--bnav-h) + var(--safe-b) + 16px);
+}
+
+/* —— PANELS —— */
+.panel{display:none;}
+.panel.active{display:block;}
+
+/* —— SECTION TITLE —— */
+.section-title{
+  font-family:'Playfair Display',serif;font-size:1.05rem;font-weight:700;
+  margin-bottom:12px;color:var(--text);display:flex;align-items:center;gap:8px;flex-wrap:wrap;
+}
+.pill{font-size:.7rem;font-family:'DM Sans',sans-serif;background:var(--accent-light);color:var(--accent);padding:3px 10px;border-radius:20px;font-weight:600;}
+
+/* —— STAT CARDS —— */
+.stats-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px;}
+.stat-card{background:var(--surface2);border:1.5px solid var(--border);border-radius:var(--radius);padding:14px 14px;}
+.stat-label{font-size:.65rem;color:var(--text2);font-weight:700;text-transform:uppercase;letter-spacing:.06em;margin-bottom:4px;}
+.stat-val{font-family:'Playfair Display',serif;font-size:1.65rem;font-weight:700;color:var(--text);line-height:1;}
+.stat-unit{font-size:.7rem;color:var(--text2);margin-top:3px;}
+.stat-card.good{background:var(--accent-light);border-color:var(--accent);}
+.stat-card.danger{background:var(--danger-light);border-color:var(--danger);}
+
+/* —— REMINDER —— */
+.reminder{
+  border-radius:var(--radius-sm);padding:12px 14px;margin-bottom:10px;
+  display:flex;align-items:flex-start;gap:10px;font-size:.85rem;
+}
+.reminder.danger{background:var(--danger-light);border:1.5px solid var(--danger);color:var(--danger);}
+.reminder.warn{background:var(--warn-light);border:1.5px solid var(--warn);color:var(--warn);}
+.reminder.ok{background:var(--accent-light);border:1.5px solid var(--accent);color:var(--accent);}
+.reminder-icon{font-size:1.25rem;flex-shrink:0;margin-top:1px;}
+.reminder strong{display:block;font-size:.88rem;margin-bottom:1px;}
+
+/* —— FARM ROW (dashboard) —— */
+.farm-row{background:var(--surface);border:1.5px solid var(--border);border-radius:var(--radius-sm);padding:13px;margin-bottom:9px;}
+.farm-row-top{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:9px;}
+.farm-row-name{font-weight:700;font-size:.92rem;}
+.farm-row-meta{display:grid;grid-template-columns:1fr 1fr;gap:6px;}
+.farm-meta-item{background:var(--surface2);border-radius:8px;padding:8px 10px;}
+.farm-meta-label{font-size:.62rem;color:var(--text2);font-weight:700;text-transform:uppercase;letter-spacing:.04em;}
+.farm-meta-val{font-size:.88rem;font-weight:600;color:var(--text);margin-top:1px;}
+
+/* —— FEED TYPE TAG —— */
+.feed-tag{display:inline-block;padding:2px 8px;border-radius:20px;font-size:.68rem;font-weight:700;background:var(--accent-light);color:var(--accent2);border:1px solid var(--accent);white-space:nowrap;}
+.additive-tag{display:inline-block;padding:2px 8px;border-radius:20px;font-size:.68rem;font-weight:600;background:var(--warn-light);color:var(--warn);border:1px solid var(--warn);white-space:nowrap;margin-left:4px;}
+
+/* —— FARM CARD (edit) —— */
+.farm-card{background:var(--surface);border:1.5px solid var(--border);border-radius:var(--radius);padding:16px;margin-bottom:13px;}
+.farm-card-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;gap:8px;}
+.farm-card-name{font-family:'Playfair Display',serif;font-size:.98rem;font-weight:700;}
+.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px;}
+.form-grid.full{grid-template-columns:1fr;}
+.form-group{display:flex;flex-direction:column;gap:5px;}
+label{font-size:.65rem;font-weight:700;color:var(--text2);text-transform:uppercase;letter-spacing:.05em;display:flex;align-items:center;gap:5px;flex-wrap:wrap;}
+input[type=text],input[type=number],input[type=date],input[type=tel]{
+  padding:12px 12px;border-radius:9px;border:1.5px solid var(--border);
+  background:var(--surface2);color:var(--text);
+  font-family:'DM Sans',sans-serif;font-size:1rem;width:100%;
+  -webkit-appearance:none;appearance:none;
+  transition:border-color .15s,background .15s;
+  min-height:48px;
+}
+input:focus,textarea:focus{outline:none;border-color:var(--accent);background:var(--accent-light);}
+input[type=date]{cursor:pointer;}
+.input-hint{font-size:.68rem;color:var(--text2);margin-top:2px;line-height:1.4;}
+.input-hint.warn{color:var(--warn);}
+.input-hint.good{color:var(--accent);}
+.farm-stats-bar{background:var(--surface2);border-radius:8px;padding:10px 12px;font-size:.76rem;color:var(--text2);line-height:1.8;}
+.del-btn{background:none;border:1.5px solid var(--danger);color:var(--danger);border-radius:8px;padding:7px 12px;font-size:.78rem;font-weight:700;cursor:pointer;white-space:nowrap;min-height:38px;font-family:'DM Sans',sans-serif;}
+.del-btn:active{background:var(--danger-light);}
+
+/* —— ORDER CARD —— */
+.order-card{background:var(--surface);border:1.5px solid var(--border);border-radius:var(--radius-sm);padding:13px;margin-bottom:9px;}
+.order-card.urgent{border-color:var(--danger);background:var(--danger-light);}
+.order-card.soon{border-color:var(--warn);background:var(--warn-light);}
+.order-card-top{display:flex;align-items:flex-start;justify-content:space-between;gap:8px;margin-bottom:10px;}
+.order-name{font-weight:700;font-size:.92rem;}
+.order-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px;}
+.order-cell{background:rgba(0,0,0,.04);border-radius:7px;padding:7px 8px;}
+.dark .order-cell{background:rgba(255,255,255,.05);}
+.order-cell-label{font-size:.6rem;color:var(--text2);font-weight:700;text-transform:uppercase;letter-spacing:.04em;}
+.order-cell-val{font-size:.88rem;font-weight:700;color:var(--text);margin-top:1px;}
+.order-feed-row{display:flex;align-items:center;flex-wrap:wrap;gap:6px;margin-top:8px;padding-top:8px;border-top:1px solid var(--border);}
+.order-feed-label{font-size:.62rem;color:var(--text2);font-weight:700;text-transform:uppercase;letter-spacing:.04em;margin-right:2px;}
+
+/* —— BADGE —— */
+.badge{display:inline-flex;align-items:center;padding:4px 10px;border-radius:20px;font-size:.7rem;font-weight:700;white-space:nowrap;}
+.badge-ok{background:var(--accent-light);color:var(--accent);}
+.badge-warn{background:var(--warn-light);color:var(--warn);}
+.badge-danger{background:var(--danger-light);color:var(--danger);}
+
+/* —— GUIDE —— */
+.guide-card{background:var(--surface2);border:1.5px solid var(--border);border-radius:var(--radius);padding:16px;margin-bottom:11px;}
+.guide-card h3{font-family:'Playfair Display',serif;font-size:.98rem;margin-bottom:10px;display:flex;align-items:center;gap:7px;}
+.guide-card p,.guide-card li{font-size:.83rem;color:var(--text2);line-height:1.65;}
+.guide-card ul{padding-left:16px;}
+.guide-step{display:flex;align-items:flex-start;gap:10px;margin-bottom:11px;}
+.guide-num{background:var(--accent);color:#fff;width:24px;height:24px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:.72rem;flex-shrink:0;margin-top:1px;}
+
+/* —— DIVIDER —— */
+.divider{height:1.5px;background:var(--border);margin:14px 0;}
+
+/* —— SUMMARY ROW —— */
+.summary-row{
+  background:var(--accent-light);border:1.5px solid var(--accent);
+  border-radius:var(--radius-sm);padding:12px 10px;
+  display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px;margin-top:10px;
+}
+.summary-cell{text-align:center;}
+.summary-label{font-size:.62rem;color:var(--accent2);font-weight:700;text-transform:uppercase;letter-spacing:.04em;}
+.summary-val{font-family:'Playfair Display',serif;font-size:1.05rem;font-weight:700;color:var(--accent);}
+
+/* —— TOAST —— */
+#toast{
+  position:fixed;bottom:calc(var(--bnav-h) + var(--safe-b) + 12px);left:50%;
+  transform:translateX(-50%);
+  background:var(--accent);color:#fff;padding:11px 22px;border-radius:24px;
+  font-weight:600;font-size:.86rem;box-shadow:var(--shadow);
+  opacity:0;pointer-events:none;transition:opacity .3s;
+  white-space:nowrap;z-index:9999;
+}
+#toast.show{opacity:1;}
+
+/* —— MODAL —— */
+.modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:500;align-items:flex-end;justify-content:center;}
+.modal-overlay.open{display:flex;}
+.modal{
+  background:var(--surface);border-radius:var(--radius) var(--radius) 0 0;
+  padding:24px 18px calc(24px + var(--safe-b));
+  width:100%;max-width:600px;box-shadow:var(--shadow);
+}
+.modal-handle{width:36px;height:4px;background:var(--border);border-radius:2px;margin:0 auto 16px;}
+.modal h2{font-family:'Playfair Display',serif;font-size:1.15rem;margin-bottom:12px;}
+.share-box{background:var(--surface2);border:1.5px solid var(--border);border-radius:10px;padding:13px;margin-bottom:14px;}
+.share-url{display:flex;gap:8px;align-items:center;}
+.share-url input{flex:1;font-size:.8rem;min-height:44px;}
+.modal-actions{display:flex;gap:10px;}
+.modal-actions .icon-btn{flex:1;justify-content:center;}
+
+/* —— ADD FARM BTN —— */
+.add-farm-btn{
+  width:100%;padding:15px;border-radius:var(--radius);
+  border:2px dashed var(--accent);background:var(--accent-light);
+  color:var(--accent);font-family:'DM Sans',sans-serif;font-weight:700;font-size:.9rem;
+  cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;
+  margin-bottom:14px;min-height:54px;transition:all .15s;
+}
+.add-farm-btn:active{background:var(--accent);color:#fff;}
+
+/* —— DESKTOP —— */
+@media(min-width:700px){
+  :root{--header-h:60px;--bnav-h:0px;}
+  .bnav{display:none;}
+  .scroll-area{padding:20px 28px 40px;}
+  .stats-grid{grid-template-columns:repeat(4,1fr);}
+  .form-grid{grid-template-columns:repeat(3,1fr);}
+  .order-grid{grid-template-columns:repeat(6,1fr);}
+  .tab-bar{display:flex;gap:4px;padding:16px 28px 0;}
+  .tab{padding:10px 20px;border-radius:10px 10px 0 0;background:var(--surface2);border:1.5px solid var(--border);border-bottom:none;font-weight:600;font-size:.88rem;cursor:pointer;color:var(--text2);transition:all .18s;white-space:nowrap;font-family:'DM Sans',sans-serif;}
+  .tab.active{background:var(--surface);color:var(--accent);}
+  .tab:hover:not(.active){color:var(--text);background:var(--surface);}
+  .panel{background:var(--surface);border:1.5px solid var(--border);border-radius:0 var(--radius) var(--radius) var(--radius);padding:24px;box-shadow:var(--shadow);}
+  .modal-overlay{align-items:center;}
+  .modal{border-radius:var(--radius);max-width:500px;padding:30px;}
+  .modal-handle{display:none;}
+  .farm-row-meta{grid-template-columns:repeat(4,1fr);}
+  #toast{bottom:28px;}
+}
+@media(max-width:699px){
+  .tab-bar{display:none;}
+}
+
+/* —— SILO BAR —— */
+.silo-bar-wrap{margin:6px 0 8px;}
+.silo-bar-bg{height:7px;background:var(--border);border-radius:4px;overflow:hidden;}
+.silo-bar-fill{height:100%;border-radius:4px;transition:width .6s ease;}
+.silo-bar-fill.good{background:var(--accent);}
+.silo-bar-fill.warn{background:var(--warn);}
+.silo-bar-fill.danger{background:var(--danger);}
+.silo-bar-label{display:flex;justify-content:space-between;font-size:.6rem;color:var(--text2);margin-top:3px;}
+
+/* —— PANEL ANIMATION —— */
+@keyframes panelIn{from{opacity:0;transform:translateY(10px);}to{opacity:1;transform:translateY(0);}}
+.panel.active{animation:panelIn .22s ease-out;}
+
+/* —— DASHBOARD INLINE EXPAND —— */
+.farm-row{cursor:pointer;transition:box-shadow .15s;}
+.farm-row:hover{box-shadow:var(--shadow);}
+.farm-row-detail{display:none;margin-top:10px;padding-top:10px;border-top:1px solid var(--border);animation:panelIn .18s ease-out;}
+.farm-row.expanded .farm-row-detail{display:block;}
+.expand-chevron{font-size:.72rem;color:var(--text2);transition:transform .2s;display:inline-block;line-height:1;}
+.farm-row.expanded .expand-chevron{transform:rotate(180deg);}
+
+/* —— TOAST UNDO —— */
+#toast.show{pointer-events:auto;}
+.toast-undo{background:rgba(255,255,255,.25);border:none;color:#fff;font-weight:700;padding:4px 12px;border-radius:12px;margin-left:10px;cursor:pointer;font-size:.82rem;font-family:'DM Sans',sans-serif;vertical-align:middle;}
+.toast-undo:active{background:rgba(255,255,255,.4);}
+
+/* —— TIMELINE —— */
+.timeline-scroll{overflow-x:auto;padding-bottom:6px;-webkit-overflow-scrolling:touch;margin-bottom:14px;}
+.timeline-row{display:flex;gap:8px;min-width:max-content;}
+.timeline-day{min-width:90px;background:var(--surface);border:1.5px solid var(--border);border-radius:var(--radius-sm);padding:9px 10px;flex-shrink:0;}
+.timeline-day.has-farms{border-color:var(--accent);}
+.timeline-day.has-soon{border-color:var(--warn);background:var(--warn-light);}
+.timeline-day.has-urgent{border-color:var(--danger);background:var(--danger-light);}
+.timeline-day.is-today{box-shadow:0 0 0 2px var(--accent);}
+.tl-day-label{font-size:.58rem;font-weight:700;color:var(--text2);text-transform:uppercase;letter-spacing:.05em;margin-bottom:2px;}
+.tl-day-name{font-size:.8rem;font-weight:700;color:var(--text);margin-bottom:7px;}
+.timeline-day.is-today .tl-day-name{color:var(--accent);}
+.tl-chip{border-radius:5px;padding:3px 7px;font-size:.68rem;font-weight:700;margin-bottom:3px;white-space:nowrap;max-width:74px;overflow:hidden;text-overflow:ellipsis;}
+.tl-chip.ok{background:var(--accent-light);color:var(--accent2);}
+.tl-chip.soon{background:var(--warn);color:#fff;}
+.tl-chip.urgent{background:var(--danger);color:#fff;}
+.tl-empty{font-size:.66rem;color:var(--text2);font-style:italic;}
+
+/* —— DELIVER BTN —— */
+.deliver-row{display:flex;gap:8px;margin-top:8px;}
+.deliver-row .icon-btn{flex:1;justify-content:center;min-height:44px;}
+
+/* —— FILTER BAR —— */
+.filter-bar{margin-bottom:12px;display:flex;flex-direction:column;gap:8px;}
+.dash-search{padding:11px 14px;border-radius:var(--radius-sm);border:1.5px solid var(--border);background:var(--surface2);color:var(--text);font-family:'DM Sans',sans-serif;font-size:.9rem;width:100%;-webkit-appearance:none;appearance:none;min-height:46px;transition:border-color .15s,background .15s;}
+.dash-search:focus{outline:none;border-color:var(--accent);background:var(--accent-light);}
+.sort-pills{display:flex;gap:6px;flex-wrap:wrap;}
+.sort-pill{background:var(--surface2);border:1.5px solid var(--border);border-radius:20px;padding:6px 14px;font-size:.72rem;font-weight:700;color:var(--text2);cursor:pointer;font-family:'DM Sans',sans-serif;transition:all .15s;white-space:nowrap;}
+.sort-pill.active{background:var(--accent);color:#fff;border-color:var(--accent);}
+.sort-pill:active{transform:scale(.95);}
+.no-results{text-align:center;padding:28px 16px;color:var(--text2);font-size:.84rem;}
+
+/* —— CALL LINK —— */
+a.call-btn{display:flex;align-items:center;justify-content:center;gap:6px;width:100%;padding:10px;border-radius:9px;border:1.5px solid var(--accent);background:var(--accent-light);color:var(--accent2);font-weight:700;font-size:.82rem;text-decoration:none;font-family:'DM Sans',sans-serif;margin-bottom:8px;transition:all .15s;}
+a.call-btn:active{background:var(--accent);color:#fff;}
+
+/* —— PRINT —— */
+@media print{
+  header,.tab-bar,.bnav,.modal-overlay,#toast,.filter-bar,
+  #tab-dashboard,#tab-farms,#tab-settings,#tab-guide,
+  .timeline-scroll,.section-title+.divider,.deliver-row,
+  .icon-btn,a.call-btn,#orderSummary,#print-btn-wrap,#orderFilterBar{display:none!important;}
+  body{background:#fff!important;color:#000!important;padding:0!important;font-size:11pt;}
+  .scroll-area{padding:12px!important;}
+  #tab-orders{display:block!important;}
+  .section-title{font-size:11pt;font-weight:700;margin-bottom:8px;}
+  .reminder{border:1px solid #ccc!important;background:#fff!important;margin-bottom:6px;padding:8px;}
+  .order-card{break-inside:avoid;border:1px solid #ccc!important;background:#fff!important;margin-bottom:8px;padding:10px;}
+  .order-card.urgent{border-color:#c0392b!important;}
+  .order-card.soon{border-color:#c8832a!important;}
+  .badge-danger{color:#c0392b!important;background:none!important;}
+  .badge-warn{color:#c8832a!important;background:none!important;}
+  .badge-ok{color:#2d7a1f!important;background:none!important;}
+  .order-cell{background:#f5f5f5!important;}
+  .feed-tag,.additive-tag{background:none!important;border:1px solid #999!important;}
+  .print-history{display:block!important;font-size:9pt;color:#333;margin-top:5px;padding-top:5px;border-top:1px solid #ddd;}
+}
+.print-history{display:none;}
+</style>
+</head>
+<body>
+
+<header>
+  <div>
+    <div class="app-title">Feed Estimator <small>by M@SE &nbsp;·&nbsp; <span id="versionDisplay"></span></small></div>
+  </div>
+  <div class="header-right">
+    <span class="date-chip" id="todayDisplay"></span>
+    <button class="icon-btn" id="darkBtn" onclick="toggleDark()" title="Night Mode">🌙</button>
+    <button class="icon-btn primary" onclick="saveAll()">💾 Save</button>
+  </div>
+</header>
+
+<div class="tab-bar">
+  <div class="tab active" onclick="switchTab('dashboard')">📊 Dashboard</div>
+  <div class="tab" onclick="switchTab('farms')">🏡 Farm Data</div>
+  <div class="tab" onclick="switchTab('orders')">📦 Orders</div>
+  <div class="tab" onclick="switchTab('settings')">⚙️ Settings</div>
+  <div class="tab" onclick="switchTab('guide')">📖 Guide</div>
+</div>
+
+<div class="scroll-area">
+
+  <!-- DASHBOARD -->
+  <div class="panel active" id="tab-dashboard">
+    <div id="reminderBanner"></div>
+    <div class="stats-grid" id="statsGrid"></div>
+    <div class="section-title">All Farms <span class="pill" id="farmCount"></span></div>
+    <div class="filter-bar">
+      <input class="dash-search" id="dashSearch" type="text" placeholder="🔍 Search farms..." oninput="setDashFilter(this.value)"/>
+      <div class="sort-pills">
+        <button class="sort-pill active" data-sort="urgency" onclick="setDashSort('urgency')">⚡ Urgency</button>
+        <button class="sort-pill" data-sort="name" onclick="setDashSort('name')">A→Z Name</button>
+        <button class="sort-pill" data-sort="silo" onclick="setDashSort('silo')">🪣 Silo %</button>
+      </div>
+    </div>
+    <div id="dashList"></div>
+  </div>
+
+  <!-- FARMS -->
+  <div class="panel" id="tab-farms">
+    <button class="add-farm-btn" onclick="addFarm()">＋ Add New Farm</button>
+    <div id="farmCards"></div>
+  </div>
+
+  <!-- ORDERS -->
+  <div class="panel" id="tab-orders">
+    <div class="section-title">⚠️ Urgent Deliveries</div>
+    <div id="orderReminders"></div>
+    <div class="divider"></div>
+    <div class="section-title">📅 Next 7 Days</div>
+    <div class="timeline-scroll"><div id="timelineWrap"></div></div>
+    <div id="print-btn-wrap" style="margin-bottom:10px;">
+      <button class="icon-btn" onclick="printRunSheet()" style="width:100%;justify-content:center;">🖨️ Print Run Sheet</button>
+    </div>
+    <div class="divider"></div>
+    <div class="section-title">All Farms — Order Schedule</div>
+    <div id="orderFilterBar" style="margin-bottom:8px;">
+      <input class="dash-search" id="orderSearch" type="text" placeholder="🔍 Search farm..." oninput="setOrderFilter(this.value)" style="margin-bottom:6px;"/>
+      <div class="sort-pills">
+        <button class="sort-pill active" data-osort="urgency" onclick="setOrderSort('urgency')">⚡ Urgency</button>
+        <button class="sort-pill" data-osort="route" onclick="setOrderSort('route')">🗺️ Route</button>
+        <button class="sort-pill" data-osort="name" onclick="setOrderSort('name')">A→Z Name</button>
+      </div>
+    </div>
+    <div id="orderCards"></div>
+    <div id="orderSummary"></div>
+  </div>
+
+  <!-- SETTINGS -->
+  <div class="panel" id="tab-settings">
+    <div class="section-title">⚙️ Settings &amp; Tools</div>
+    <div class="guide-card">
+      <h3>🌙 Night Mode</h3>
+      <p style="margin-bottom:12px">Switch between light and dark display for comfortable day or evening use.</p>
+      <button class="icon-btn" id="darkBtn2" onclick="toggleDark()" style="width:100%;justify-content:center;padding:13px;">Toggle Night Mode</button>
+    </div>
+    <div class="guide-card">
+      <h3>🔔 Delivery Reminders</h3>
+      <p style="margin-bottom:12px">Get a browser notification for overdue or upcoming deliveries each time you open the app. No install needed.</p>
+      <button class="icon-btn" id="notifBtn" onclick="toggleNotifications()" style="width:100%;justify-content:center;padding:13px;">🔔 Enable Reminders</button>
+    </div>
+    <div class="guide-card">
+      <h3>🤝 Share App</h3>
+      <p style="margin-bottom:12px">Generate a link with all your farm data. Send via text, email or WhatsApp — opens on any phone or computer.</p>
+      <button class="icon-btn primary" onclick="openShare()" style="width:100%;justify-content:center;padding:13px;">Generate Share Link</button>
+    </div>
+    <div class="guide-card">
+      <h3>⬇️ Download App</h3>
+      <p style="margin-bottom:12px">Save the entire app as a file. Works offline — no internet needed. Open in Chrome, Safari, or any browser.</p>
+      <button class="icon-btn" onclick="downloadApp()" style="width:100%;justify-content:center;padding:13px;">Download to Device</button>
+    </div>
+    <div class="guide-card">
+      <h3>💾 Save Data</h3>
+      <p style="margin-bottom:12px">Saves all farm data to this device. Auto-saves every 2 minutes. <span id="lastSaveDisplay" style="color:var(--accent);font-weight:600;"></span></p>
+      <button class="icon-btn primary" onclick="saveAll()" style="width:100%;justify-content:center;padding:13px;">Save Now</button>
+    </div>
+    <div class="guide-card">
+      <h3>📊 Export to CSV</h3>
+      <p style="margin-bottom:12px">Download all farm data as a spreadsheet. Opens in Excel, Google Sheets, or Numbers.</p>
+      <button class="icon-btn" onclick="downloadCSV()" style="width:100%;justify-content:center;padding:13px;">📊 Export CSV</button>
+    </div>
+    <div class="guide-card">
+      <h3>📋 Export Delivery History</h3>
+      <p style="margin-bottom:12px">Download all recorded deliveries as a spreadsheet — one row per delivery. Useful for reconciling with invoices.</p>
+      <button class="icon-btn" onclick="downloadHistoryCSV()" style="width:100%;justify-content:center;padding:13px;">📋 Export History CSV</button>
+    </div>
+    <div class="guide-card">
+      <h3>🗄️ Backup &amp; Restore</h3>
+      <p style="margin-bottom:12px">Save a full backup including all farm data and delivery history as a JSON file. Use Restore to reload it on any device.</p>
+      <div style="display:flex;gap:8px;">
+        <button class="icon-btn" onclick="backupJSON()" style="flex:1;justify-content:center;padding:13px;">🗄️ Backup</button>
+        <button class="icon-btn" onclick="restoreJSON()" style="flex:1;justify-content:center;padding:13px;">↩️ Restore</button>
+      </div>
+    </div>
+    <div class="guide-card">
+      <h3>📥 Import from CSV</h3>
+      <p style="margin-bottom:12px">Load farms from a CSV spreadsheet. Use the exported CSV as a template. <strong>Replaces all current farms.</strong></p>
+      <button class="icon-btn" onclick="importCSV()" style="width:100%;justify-content:center;padding:13px;">📥 Import CSV</button>
+    </div>
+    <div class="guide-card">
+      <h3>🖨️ Print Run Sheet</h3>
+      <p style="margin-bottom:12px">Print a clean delivery schedule — hides all buttons and navigation for a driver-friendly page.</p>
+      <button class="icon-btn" onclick="printRunSheet()" style="width:100%;justify-content:center;padding:13px;">🖨️ Print Orders</button>
+    </div>
+    <div class="guide-card" id="installCard">
+      <h3>📲 Install App</h3>
+      <div style="margin-bottom:14px;">
+        <strong style="display:block;margin-bottom:6px;font-size:.88rem;">🍎 iPhone / iPad — use Edge</strong>
+        <ol style="padding-left:18px;font-size:.82rem;color:var(--text2);line-height:2;">
+          <li>Open this page in <strong>Edge</strong></li>
+          <li>Tap the <strong>Share</strong> button (box with arrow at bottom of screen)</li>
+          <li>Scroll down and tap <strong>"Add to Home Screen"</strong></li>
+          <li>Tap <strong>Add</strong> — icon appears on your home screen</li>
+        </ol>
+      </div>
+      <div style="margin-bottom:14px;">
+        <strong style="display:block;margin-bottom:6px;font-size:.88rem;">🤖 Android — use Chrome</strong>
+        <ol style="padding-left:18px;font-size:.82rem;color:var(--text2);line-height:2;">
+          <li>Open this page in <strong>Chrome</strong></li>
+          <li>Tap the <strong>⋮ menu</strong> (three dots, top right)</li>
+          <li>Tap <strong>"Add to Home Screen"</strong> or <strong>"Install app"</strong></li>
+          <li>Tap <strong>Install</strong> — icon appears on your home screen</li>
+        </ol>
+      </div>
+      <button class="icon-btn primary" id="installBtn" onclick="installApp()" style="width:100%;justify-content:center;padding:13px;display:none;">📲 Install on this device</button>
+    </div>
+    <div style="text-align:center;padding:18px 0 4px;font-size:.72rem;color:var(--text2);line-height:1.8;">
+      Feed Estimator by M@SE &nbsp;·&nbsp; <strong>v<span id="aboutVersion"></span></strong><br>
+      <span style="font-size:.68rem;">Dairy farm feed order estimator &nbsp;·&nbsp; All data stored on this device</span>
+    </div>
+  </div>
+
+  <!-- GUIDE -->
+  <div class="panel" id="tab-guide">
+    <div class="section-title">📖 How To Use</div>
+    <div class="guide-card">
+      <h3>🏡 Entering Farm Data</h3>
+      <div class="guide-step"><div class="guide-num">1</div><p>Tap <strong>Farms</strong> in the bottom bar.</p></div>
+      <div class="guide-step"><div class="guide-num">2</div><p>Fill in: Silo size, No. of cows, Feed rate (kg/day), Tonnes delivered, and Last delivery date.</p></div>
+      <div class="guide-step"><div class="guide-num">3</div><p>Enter <strong>Feed Type</strong> (e.g. Dairy Standard, Pasture Optimiser, Milko Hi Pro) and any <strong>Extra Additives</strong> (e.g. Availa Zn, DCP, E-mag).</p></div>
+      <div class="guide-step"><div class="guide-num">4</div><p>Next delivery date is predicted automatically. You can override it by typing your own date.</p></div>
+      <div class="guide-step"><div class="guide-num">5</div><p>Tap <strong>＋ Add New Farm</strong> to add more farms to the group.</p></div>
+    </div>
+    <div class="guide-card">
+      <h3>📊 Reading the Dashboard</h3>
+      <div class="guide-step"><div class="guide-num">1</div><p>Top 4 cards show group totals: cows, tonnes/month, containers/week, and urgent farms.</p></div>
+      <div class="guide-step"><div class="guide-num">2</div><p>Each farm shows its status badge and feed type at a glance:</p></div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:10px;margin-left:34px;">
+        <span class="badge badge-ok">On Track</span>
+        <span class="badge badge-warn">Due Soon</span>
+        <span class="badge badge-danger">Overdue</span>
+      </div>
+    </div>
+    <div class="guide-card">
+      <h3>🔮 Predicted Next Delivery</h3>
+      <ul>
+        <li style="margin-bottom:6px">Auto-calculated as: <strong>Last Delivery Date + Days to Empty</strong></li>
+        <li style="margin-bottom:6px">Days to Empty = Tonnes Delivered ÷ (Cows × Feed Rate ÷ 1000)</li>
+        <li style="margin-bottom:6px">You can manually override the date by typing in the field.</li>
+        <li>Tap <em>Reset to predicted</em> to go back to auto-calculation.</li>
+      </ul>
+    </div>
+    <div class="guide-card">
+      <h3>⚠️ Reminder System</h3>
+      <ul>
+        <li style="margin-bottom:6px">🔴 <strong>Overdue / Today</strong> — Order immediately</li>
+        <li style="margin-bottom:6px">🟠 <strong>Within 3 days</strong> — Call your supplier now</li>
+        <li>🟢 <strong>More than 3 days away</strong> — You're on track</li>
+      </ul>
+    </div>
+    <div class="guide-card">
+      <h3>📐 Formulas Used</h3>
+      <ul>
+        <li>Usage/Day = Cows × Feed Rate ÷ 1000</li>
+        <li>Days to Empty = Tonnes Delivered ÷ Usage/Day</li>
+        <li>Tonnes/Month = Usage/Day × 30</li>
+        <li>Containers/Month = Tonnes/Month ÷ 22</li>
+        <li>Containers/Week = Containers/Month ÷ 4.33</li>
+      </ul>
+    </div>
+  </div>
+
+</div>
+
+<!-- BOTTOM NAV -->
+<nav class="bnav">
+  <button class="bnav-item active" data-tab="dashboard" onclick="switchTab('dashboard')">
+    <span class="bnav-icon">📊</span>Dashboard
+  </button>
+  <button class="bnav-item" data-tab="farms" onclick="switchTab('farms')">
+    <span class="bnav-icon">🏡</span>Farms
+  </button>
+  <button class="bnav-item" data-tab="orders" onclick="switchTab('orders')">
+    <span class="bnav-icon">📦</span>Orders
+  </button>
+  <button class="bnav-item" data-tab="settings" onclick="switchTab('settings')">
+    <span class="bnav-icon">⚙️</span>Settings
+  </button>
+</nav>
+
+<!-- SHARE MODAL -->
+<div class="modal-overlay" id="shareModal" onclick="if(event.target===this)closeShare()">
+  <div class="modal">
+    <div class="modal-handle"></div>
+    <h2>🤝 Share Feed Estimator</h2>
+    <p style="font-size:.83rem;color:var(--text2);margin-bottom:14px;">Copy this link and send to any farmer or agronomist. Works on any phone or computer.</p>
+    <div class="share-box">
+      <div class="share-url">
+        <input type="text" id="shareUrl" readonly/>
+        <button class="icon-btn primary" onclick="copyShare()">Copy</button>
+      </div>
+    </div>
+    <div class="modal-actions">
+      <button class="icon-btn" onclick="closeShare()" style="justify-content:center;">Close</button>
+    </div>
+  </div>
+</div>
+
+<!-- DELIVERY MODAL -->
+<div class="modal-overlay" id="deliveryModal" onclick="if(event.target===this)closeDelivery()">
+  <div class="modal">
+    <div class="modal-handle"></div>
+    <h2>✅ Record Delivery</h2>
+    <p id="deliveryFarmName" style="font-size:.88rem;color:var(--text2);margin-bottom:16px;font-weight:600;"></p>
+    <div class="form-grid" style="margin-bottom:8px;">
+      <div class="form-group">
+        <label>Tonnes Delivered</label>
+        <input type="number" id="deliveryTonnes" min="0" step="1" placeholder="e.g. 24"/>
+      </div>
+      <div class="form-group">
+        <label>Delivery Date</label>
+        <input type="date" id="deliveryDate"/>
+      </div>
+    </div>
+    <div class="form-group" style="margin-bottom:4px;">
+      <label>Notes <span style="text-transform:none;font-weight:400;font-size:.62rem;">(optional)</span></label>
+      <input type="text" id="deliveryNotes" placeholder="e.g. short delivery, access issues..."/>
+    </div>
+    <div style="margin:10px 0 4px;padding:10px 12px;background:var(--surface2);border-radius:9px;border:1.5px solid var(--border);">
+      <label style="text-transform:none;font-size:.84rem;font-weight:600;color:var(--text);display:flex;align-items:center;gap:8px;cursor:pointer;">
+        <input type="checkbox" id="deliveryCarryOver" style="width:18px;min-height:auto;padding:0;margin:0;cursor:pointer;flex-shrink:0;"/>
+        Add to current silo remaining (<span id="deliveryRemaining">—</span>t in silo)
+      </label>
+      <div style="font-size:.7rem;color:var(--text2);margin-top:4px;">When ticked: total = remaining + delivered. Default: replace with delivered amount.</div>
+    </div>
+    <div class="modal-actions" style="margin-top:14px;">
+      <button class="icon-btn" onclick="closeDelivery()" style="justify-content:center;">Cancel</button>
+      <button class="icon-btn primary" onclick="confirmDelivery()" style="flex:2;justify-content:center;">✅ Confirm Delivery</button>
+    </div>
+  </div>
+</div>
+
+<datalist id="feedTypeList"></datalist>
+<datalist id="additivesList"></datalist>
+<div id="toast"></div>
+
+<script>
+const CONTAINER_SIZE=22;
+const APP_VERSION='2.3';
+
+function fmtDate(d){return d.toISOString().slice(0,10);}
+function parseDate(s){if(!s)return null;const d=new Date(s+'T00:00:00');return isNaN(d)?null:d;}
+function daysBetween(a,b){return Math.round((b-a)/86400000);}
+function today(){const d=new Date();d.setHours(0,0,0,0);return d;}
+function fmtDateHuman(d){
+  if(!d)return '—';
+  const t=today();const diff=daysBetween(t,d);
+  if(diff===0)return 'Today';
+  if(diff===1)return 'Tomorrow';
+  if(diff===-1)return 'Yesterday';
+  if(diff>1&&diff<=13)return d.toLocaleDateString('en-AU',{weekday:'short',day:'numeric',month:'short'});
+  return d.toLocaleDateString('en-AU',{day:'numeric',month:'short'});
+}
+
+function fmtDateShort(s){
+  const d=parseDate(s);if(!d)return s||'—';
+  const diff=daysBetween(d,today());
+  if(diff===0)return 'Today';if(diff===1)return 'Yesterday';
+  return d.toLocaleDateString('en-AU',{day:'numeric',month:'short'});
+}
+
+function defaultFarms(){
+  const t=today();
+  return Array.from({length:14},(_,i)=>{
+    const last=new Date(t);last.setDate(t.getDate()-6);
+    return{id:i+1,name:`Farm ${i+1}`,silo:30+((i%2)*10),cows:800,feedRate:5,tonnesDel:24,lastDel:fmtDate(last),nextDel:'',_manualNextDel:false,feedType:'',additives:'',comments:'',phone:'',phone2:'',deliveryHistory:[],route:0};
+  });
+}
+
+function computeFarm(f){
+  const usageDay=(f.cows*f.feedRate)/1000;
+  const daysEmpty=usageDay>0?f.tonnesDel/usageDay:0;
+  const tonnesMonth=usageDay*30;
+  const containersMonth=tonnesMonth/CONTAINER_SIZE;
+  const containersWeek=containersMonth/4.33;
+  const lastD=parseDate(f.lastDel);
+  const manualNextD=parseDate(f.nextDel);
+  const predictedNextD=(lastD&&usageDay>0)?new Date(lastD.getTime()+daysEmpty*86400000):null;
+  const nextD=manualNextD||predictedNextD;
+  const isPredicted=!manualNextD&&!!predictedNextD;
+  const t=today();
+  const daysAway=nextD?daysBetween(t,nextD):null;
+  const daysSinceLastDel=lastD?Math.max(0,daysBetween(lastD,t)):0;
+  const remainingTonnes=Math.max(0,f.tonnesDel-usageDay*daysSinceLastDel);
+  const siloBase=f.silo>0?f.silo:(f.tonnesDel||1);
+  const siloPercent=Math.min(100,Math.round(remainingTonnes/siloBase*100));
+  const siloBarClass=siloPercent>40?'good':siloPercent>15?'warn':'danger';
+  return{...f,usageDay,daysEmpty,tonnesMonth,containersMonth,containersWeek,nextD,predictedNextD,isPredicted,daysAway,remainingTonnes,siloPercent,siloBarClass};
+}
+
+let farms=[],darkMode=false,currentTab='dashboard',_lastSaveTime=null;
+
+function loadData(){
+  try{
+    const s=localStorage.getItem('feedEstimator_v2');
+    if(s){const d=JSON.parse(s);farms=d.farms||defaultFarms();darkMode=d.darkMode||false;notificationsEnabled=d.notificationsEnabled||false;}
+    else farms=defaultFarms();
+  }catch(e){farms=defaultFarms();}
+  farms.forEach(f=>{if(f.feedType===undefined)f.feedType='';if(f.additives===undefined)f.additives='';if(f.comments===undefined)f.comments='';if(f.phone===undefined)f.phone='';if(f.phone2===undefined)f.phone2='';if(!Array.isArray(f.deliveryHistory))f.deliveryHistory=[];if(f.route===undefined)f.route=0;});
+  if(darkMode)document.body.classList.add('dark');
+  updateDarkBtn();
+}
+
+function saveAll(silent=false){
+  localStorage.setItem('feedEstimator_v2',JSON.stringify({farms,darkMode,notificationsEnabled}));
+  _lastSaveTime=Date.now();updateSaveDisplay();
+  if(!silent)showToast('✅ Saved!');
+}
+
+function render(){renderDashboard();renderFarms();renderOrders();updateTodayDisplay();updateDataLists();updateSaveDisplay();}
+
+function updateSaveDisplay(){
+  const el=document.getElementById('lastSaveDisplay');
+  if(!el||!_lastSaveTime)return;
+  const mins=Math.round((Date.now()-_lastSaveTime)/60000);
+  el.textContent=mins===0?'(just saved)':`(saved ${mins} min ago)`;
+}
+
+function updateDataLists(){
+  const feedTypes=[...new Set(farms.map(f=>f.feedType).filter(Boolean))];
+  const additives=[...new Set(farms.map(f=>f.additives).filter(Boolean))];
+  const ftl=document.getElementById('feedTypeList');
+  const al=document.getElementById('additivesList');
+  if(ftl)ftl.innerHTML=feedTypes.map(t=>`<option value="${esc(t)}">`).join('');
+  if(al)al.innerHTML=additives.map(t=>`<option value="${esc(t)}">`).join('');
+}
+
+function updateTodayDisplay(){
+  document.getElementById('todayDisplay').textContent=
+    new Date().toLocaleDateString('en-AU',{day:'numeric',month:'short',year:'numeric'});
+  const vd=document.getElementById('versionDisplay');
+  if(vd)vd.textContent='v'+APP_VERSION;
+  const av=document.getElementById('aboutVersion');
+  if(av)av.textContent=APP_VERSION;
+}
+
+function statusInfo(daysAway){
+  if(daysAway===null)return{cls:'badge-ok',badge:'—',cardCls:''};
+  if(daysAway<=0)return{cls:'badge-danger',badge:'Overdue',cardCls:'urgent'};
+  if(daysAway<=3)return{cls:'badge-warn',badge:`${daysAway}d`,cardCls:'soon'};
+  return{cls:'badge-ok',badge:`${daysAway}d`,cardCls:''};
+}
+
+function renderDashboard(){
+  const computed=farms.map(computeFarm);
+  const totalCows=farms.reduce((s,f)=>s+f.cows,0);
+  const totalTonnes=computed.reduce((s,f)=>s+f.tonnesMonth,0);
+  const totalContW=computed.reduce((s,f)=>s+f.containersWeek,0);
+  const urgent=computed.filter(f=>f.daysAway!==null&&f.daysAway<=3).length;
+
+  document.getElementById('statsGrid').innerHTML=`
+    <div class="stat-card good"><div class="stat-label">Total Cows</div><div class="stat-val">${totalCows.toLocaleString()}</div><div class="stat-unit">${farms.length} farms</div></div>
+    <div class="stat-card"><div class="stat-label">Tonnes/Month</div><div class="stat-val">${totalTonnes.toFixed(0)}</div><div class="stat-unit">group total</div></div>
+    <div class="stat-card"><div class="stat-label">Cont./Week</div><div class="stat-val">${totalContW.toFixed(1)}</div><div class="stat-unit">@ 22t each</div></div>
+    <div class="stat-card ${urgent>0?'danger':'good'}"><div class="stat-label">Attention</div><div class="stat-val">${urgent}</div><div class="stat-unit">farms due soon</div></div>
+  `;
+  document.getElementById('farmCount').textContent=`${farms.length} Farms`;
+
+  const due=computed.filter(f=>f.daysAway!==null&&f.daysAway<=3).sort((a,b)=>a.daysAway-b.daysAway);
+  let banner='';
+  if(due.length>0){
+    const f=due[0];
+    const cls=f.daysAway<=0?'danger':'warn';
+    const msg=f.daysAway<0?`OVERDUE by ${Math.abs(f.daysAway)} day(s)`:f.daysAway===0?'Due TODAY':'Due in '+f.daysAway+' day(s)';
+    banner=`<div class="reminder ${cls}"><div class="reminder-icon">${f.daysAway<=0?'🚨':'⚠️'}</div><div><strong>${f.name} — ${msg}</strong>${due.length>1?` + ${due.length-1} more farm(s)`:''} — check Orders tab</div></div>`;
+  }else{
+    banner=`<div class="reminder ok"><div class="reminder-icon">✅</div><div><strong>All deliveries on track</strong> — nothing due within 3 days</div></div>`;
+  }
+  document.getElementById('reminderBanner').innerHTML=banner;
+
+  let display=[...computed];
+  if(dashFilter)display=display.filter(f=>f.name.toLowerCase().includes(dashFilter.toLowerCase())||(f.phone&&f.phone.includes(dashFilter)));
+  if(dashSort==='name')display.sort((a,b)=>a.name.localeCompare(b.name));
+  else if(dashSort==='silo')display.sort((a,b)=>a.siloPercent-b.siloPercent);
+  else display.sort((a,b)=>(a.daysAway??999)-(b.daysAway??999));
+
+  let html='';
+  if(!display.length){
+    html='<div class="no-results">🔍 No farms match — try a different name</div>';
+  }
+  display.forEach((f)=>{
+    const i=farms.findIndex(fm=>fm.id===f.id);
+    const{cls,badge}=statusInfo(f.daysAway);
+    const nextStr=f.nextD?fmtDateHuman(f.nextD):'—';
+    const feedTagHtml=f.feedType?`<span class="feed-tag">${esc(f.feedType)}</span>`:'';
+    const addTagHtml=f.additives?`<span class="additive-tag">+ ${esc(f.additives)}</span>`:'';
+    const isExpanded=expandedFarmId===f.id;
+    html+=`<div class="farm-row${isExpanded?' expanded':''}" onclick="toggleFarmExpand(${f.id})">
+      <div class="farm-row-top">
+        <span class="farm-row-name">${esc(f.name)}</span>
+        <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;">
+          ${feedTagHtml}${addTagHtml}
+          <span class="badge ${cls}">${badge}</span>
+          <span class="expand-chevron">▼</span>
+        </div>
+      </div>
+      <div class="silo-bar-wrap">
+        <div class="silo-bar-bg"><div class="silo-bar-fill ${f.siloBarClass}" style="width:${f.siloPercent}%"></div></div>
+        <div class="silo-bar-label"><span>${f.siloPercent}% remaining</span><span>${f.remainingTonnes.toFixed(1)}t left</span></div>
+      </div>
+      <div class="farm-row-meta">
+        <div class="farm-meta-item"><div class="farm-meta-label">Cows</div><div class="farm-meta-val">${f.cows.toLocaleString()}</div></div>
+        <div class="farm-meta-item"><div class="farm-meta-label">Usage/Day</div><div class="farm-meta-val">${f.usageDay.toFixed(2)} t</div></div>
+        <div class="farm-meta-item"><div class="farm-meta-label">Next Delivery</div><div class="farm-meta-val">${nextStr}</div></div>
+        <div class="farm-meta-item"><div class="farm-meta-label">Days to Empty</div><div class="farm-meta-val">${f.daysEmpty.toFixed(1)}</div></div>
+      </div>
+      ${isExpanded?`<div class="farm-row-detail" onclick="event.stopPropagation()">
+        ${f.phone?`<a href="tel:${esc(f.phone)}" class="call-btn" onclick="event.stopPropagation()">📞 ${esc(f.phone)}</a>`:''}
+        ${f.phone2?`<a href="tel:${esc(f.phone2)}" class="call-btn" onclick="event.stopPropagation()">📞 ${esc(f.phone2)}</a>`:''}
+        ${f.comments?`<div style="margin-bottom:10px;font-size:.76rem;color:var(--text2);line-height:1.5;">📝 ${esc(f.comments)}</div>`:''}
+        <div class="form-grid" style="margin-bottom:8px;">
+          <div class="form-group"><label>Tonnes Delivered</label><input type="number" value="${f.tonnesDel}" min="0" onchange="updateFarm(${i},'tonnesDel',+this.value)"/></div>
+          <div class="form-group"><label>Last Delivery</label><input type="date" value="${f.lastDel}" onchange="updateFarm(${i},'lastDel',this.value)"/></div>
+        </div>
+        <div class="deliver-row">
+          <button class="icon-btn primary" onclick="event.stopPropagation();openDelivery(${f.id})">✅ Delivered</button>
+          <button class="icon-btn" onclick="event.stopPropagation();expandedFarmId=null;switchTab('farms')">✏️ Edit Details</button>
+        </div>
+        ${f.deliveryHistory&&f.deliveryHistory.length?`<div style="margin-top:10px;padding-top:10px;border-top:1px solid var(--border);"><div style="font-size:.62rem;font-weight:700;color:var(--text2);text-transform:uppercase;letter-spacing:.05em;margin-bottom:5px;">📋 Recent Deliveries</div>${f.deliveryHistory.map((h,hi)=>`<div style="padding:4px 0;border-bottom:1px solid var(--border);"><div style="display:flex;justify-content:space-between;align-items:center;font-size:.8rem;"><span style="color:var(--text2);">${esc(fmtDateShort(h.date))}</span><div style="display:flex;align-items:center;gap:8px;"><span style="font-weight:600;">${h.tonnes}t</span><button onclick="event.stopPropagation();removeHistoryEntry(${f.id},${hi})" style="background:none;border:none;color:var(--danger);font-size:.9rem;cursor:pointer;padding:2px 5px;font-weight:700;line-height:1;">×</button></div></div>${h.notes?`<div style="font-size:.72rem;color:var(--text2);margin-top:1px;">${esc(h.notes)}</div>`:''}</div>`).join('')}</div>`:''}
+      </div>`:f.comments?`<div style="margin-top:8px;padding-top:8px;border-top:1px solid var(--border);font-size:.76rem;color:var(--text2);line-height:1.5;" onclick="event.stopPropagation()">📝 ${esc(f.comments)}</div>`:''}
+    </div>`;
+  });
+  document.getElementById('dashList').innerHTML=html;
+}
+
+function renderFarms(){
+  let html='';
+  farms.forEach((f,i)=>{
+    const c=computeFarm(f);
+    const predStr=c.predictedNextD?fmtDate(c.predictedNextD):'—';
+    html+=`<div class="farm-card">
+      <div class="farm-card-header">
+        <div class="farm-card-name">${esc(f.name)}</div>
+        <div style="display:flex;gap:6px;">
+          <button class="icon-btn" onclick="duplicateFarm(${i})" style="font-size:.75rem;padding:5px 9px;min-height:32px;">📋 Copy</button>
+          <button class="del-btn" onclick="removeFarm(${i})">🗑 Remove</button>
+        </div>
+      </div>
+      <div class="form-grid">
+        <div class="form-group"><label>Farm Name</label><input type="text" value="${esc(f.name)}" onchange="updateFarm(${i},'name',this.value)"/></div>
+        <div class="form-group"><label>Silo (t)</label><input type="number" value="${f.silo}" min="0" onchange="updateFarm(${i},'silo',+this.value)"/></div>
+        <div class="form-group"><label>No. of Cows</label><input type="number" value="${f.cows}" min="0" onchange="updateFarm(${i},'cows',+this.value)"/></div>
+        <div class="form-group"><label>Feed Rate (kg/day)</label><input type="number" value="${f.feedRate}" min="0" step="0.1" onchange="updateFarm(${i},'feedRate',+this.value)"/></div>
+        <div class="form-group"><label>Tonnes Delivered</label><input type="number" value="${f.tonnesDel}" min="0" onchange="updateFarm(${i},'tonnesDel',+this.value)"/></div>
+        <div class="form-group"><label>Last Delivery</label><input type="date" value="${f.lastDel}" onchange="updateFarm(${i},'lastDel',this.value)"/></div>
+      </div>
+      <div class="form-grid">
+        <div class="form-group">
+          <label>Feed Type <span style="text-transform:none;font-weight:400;color:var(--text2);font-size:.62rem;">(e.g. Dairy Standard, Pasture Optimiser)</span></label>
+          <input type="text" list="feedTypeList" value="${esc(f.feedType||'')}" placeholder="e.g. Dairy Standard, Pasture Optimiser, Milko Hi Pro" onchange="updateFarm(${i},'feedType',this.value)"/>
+        </div>
+        <div class="form-group">
+          <label>Extra Additives <span style="text-transform:none;font-weight:400;color:var(--text2);font-size:.62rem;">(optional)</span></label>
+          <input type="text" list="additivesList" value="${esc(f.additives||'')}" placeholder="e.g. Availa Zn, DCP, E-mag" onchange="updateFarm(${i},'additives',this.value)"/>
+        </div>
+        <div class="form-group">
+          <label>Phone Number</label>
+          <input type="tel" value="${esc(f.phone||'')}" placeholder="e.g. 0412 345 678" onchange="updateFarm(${i},'phone',this.value)"/>
+        </div>
+        <div class="form-group">
+          <label>Phone 2 <span style="text-transform:none;font-weight:400;font-size:.62rem;">(optional)</span></label>
+          <input type="tel" value="${esc(f.phone2||'')}" placeholder="e.g. 0411 234 567" onchange="updateFarm(${i},'phone2',this.value)"/>
+        </div>
+        <div class="form-group">
+          <label>Route # <span style="text-transform:none;font-weight:400;font-size:.62rem;">(delivery order)</span></label>
+          <input type="number" value="${f.route||0}" min="0" step="1" placeholder="0" onchange="updateFarm(${i},'route',+this.value)"/>
+        </div>
+      </div>
+      <div class="form-grid full">
+        <div class="form-group">
+          <label>Extra Comments</label>
+          <textarea rows="2" style="padding:10px 12px;border-radius:9px;border:1.5px solid var(--border);background:var(--surface2);color:var(--text);font-family:'DM Sans',sans-serif;font-size:.92rem;width:100%;resize:vertical;min-height:56px;transition:border-color .15s,background .15s;" placeholder="e.g. access notes, special instructions, contact details..." onchange="updateFarm(${i},'comments',this.value)">${esc(f.comments||'')}</textarea>
+        </div>
+      </div>
+      <div class="form-grid full">
+        <div class="form-group">
+          <label>Next Delivery ${c.isPredicted?'<span class="badge badge-warn" style="font-size:.58rem;">🔮 Predicted</span>':'<span class="badge badge-ok" style="font-size:.58rem;">📅 Manual</span>'}</label>
+          <input type="date" value="${f.nextDel||predStr}" style="${c.isPredicted?'border-color:var(--warn);background:var(--warn-light);':''}" onchange="updateFarm(${i},'nextDel',this.value)"/>
+          ${c.isPredicted
+            ?`<span class="input-hint warn">Auto-calculated: last delivery + ${c.daysEmpty.toFixed(1)} days. Tap to override.</span>`
+            :`<span class="input-hint good">Manually set. <button onclick="clearNextDel(${i})" style="background:none;border:none;color:var(--warn);font-size:.7rem;cursor:pointer;text-decoration:underline;padding:0;font-family:'DM Sans',sans-serif;">Reset to predicted (${predStr})</button></span>`
+          }
+        </div>
+      </div>
+      <div class="farm-stats-bar">
+        📦 <strong>${c.containersMonth.toFixed(2)}</strong> containers/month &nbsp;|&nbsp;
+        <strong>${c.containersWeek.toFixed(2)}</strong>/week &nbsp;|&nbsp;
+        <strong>${c.tonnesMonth.toFixed(1)} t</strong>/month &nbsp;|&nbsp;
+        Days to empty: <strong>${c.daysEmpty.toFixed(1)}</strong>
+      </div>
+      ${(f.deliveryHistory&&f.deliveryHistory.length)?`<div style="margin-top:8px;padding:8px 10px;background:var(--surface2);border-radius:8px;"><div style="font-size:.62rem;font-weight:700;color:var(--text2);text-transform:uppercase;letter-spacing:.05em;margin-bottom:5px;">📋 Delivery History</div>${f.deliveryHistory.map((h,hi)=>`<div style="padding:3px 0;border-bottom:1px solid var(--border);"><div style="display:flex;justify-content:space-between;align-items:center;font-size:.8rem;"><span style="color:var(--text2);">${esc(fmtDateShort(h.date))}</span><div style="display:flex;align-items:center;gap:8px;"><span style="font-weight:600;color:var(--text);">${h.tonnes}t</span><button onclick="removeHistoryEntry(${f.id},${hi})" style="background:none;border:none;color:var(--danger);font-size:.9rem;cursor:pointer;padding:2px 5px;font-weight:700;line-height:1;">×</button></div></div>${h.notes?`<div style="font-size:.72rem;color:var(--text2);margin-top:1px;">${esc(h.notes)}</div>`:''}</div>`).join('')}</div>`:''}
+    </div>`;
+  });
+  document.getElementById('farmCards').innerHTML=html;
+}
+
+function renderOrders(){
+  let computed=farms.map(computeFarm);
+  if(orderSort==='route')computed.sort((a,b)=>{const ra=a.route||0,rb=b.route||0;if(ra===0&&rb>0)return 1;if(rb===0&&ra>0)return-1;return ra-rb||(a.daysAway??999)-(b.daysAway??999);});
+  else if(orderSort==='name')computed.sort((a,b)=>a.name.localeCompare(b.name));
+  else computed.sort((a,b)=>(a.daysAway??999)-(b.daysAway??999));
+
+  const urgent=computed.filter(f=>f.daysAway!==null&&f.daysAway<=3);
+  let remHtml='';
+  urgent.forEach(f=>{
+    const cls=f.daysAway<=0?'danger':'warn';
+    const icon=f.daysAway<=0?'🚨':'⚠️';
+    const msg=f.daysAway<0?`OVERDUE by ${Math.abs(f.daysAway)} day(s)`:f.daysAway===0?'Due TODAY — order now':`Due in ${f.daysAway} day(s) — call supplier`;
+    const feedInfo=f.feedType?` &bull; ${esc(f.feedType)}`:'';
+    const addInfo=f.additives?` + ${esc(f.additives)}`:'';
+    remHtml+=`<div class="reminder ${cls}"><div class="reminder-icon">${icon}</div><div><strong>${esc(f.name)} — ${msg}</strong><br><span style="font-size:.75rem;">${f.tonnesDel}t &bull; ${(f.tonnesDel/CONTAINER_SIZE).toFixed(2)} containers${feedInfo}${addInfo}</span></div></div>`;
+  });
+  document.getElementById('orderReminders').innerHTML=remHtml||'<p style="font-size:.83rem;color:var(--text2);">✅ No urgent orders — all farms on track.</p>';
+
+  renderTimeline(computed);
+
+  let cardsHtml='';
+  const ordersToShow=orderFilter?computed.filter(f=>f.name.toLowerCase().includes(orderFilter.toLowerCase())):computed;
+  if(ordersToShow.length===0&&orderFilter)cardsHtml='<div class="no-results">🔍 No farms match — try a different name</div>';
+  ordersToShow.forEach(f=>{
+    const{cls,badge,cardCls}=statusInfo(f.daysAway);
+    const nextStr=f.nextD?fmtDateHuman(f.nextD):'—';
+    const feedTagHtml=f.feedType?`<span class="feed-tag">${esc(f.feedType)}</span>`:'<span style="font-size:.78rem;color:var(--text2);">—</span>';
+    const addTagHtml=f.additives?`<span class="additive-tag">${esc(f.additives)}</span>`:'<span style="font-size:.78rem;color:var(--text2);">—</span>';
+    const routeBadge=f.route?`<span style="background:var(--accent);color:#fff;font-size:.65rem;font-weight:700;padding:2px 7px;border-radius:10px;margin-right:6px;vertical-align:middle;">Stop ${f.route}</span>`:'';
+    cardsHtml+=`<div class="order-card ${cardCls}">
+      <div class="order-card-top"><div class="order-name">${routeBadge}${esc(f.name)}</div><span class="badge ${cls}">${badge}</span></div>
+      <div class="order-grid">
+        <div class="order-cell"><div class="order-cell-label">Next Date</div><div class="order-cell-val" style="font-size:.8rem;">${nextStr}</div></div>
+        <div class="order-cell"><div class="order-cell-label">Tonnes/Mo</div><div class="order-cell-val">${f.tonnesMonth.toFixed(1)}</div></div>
+        <div class="order-cell"><div class="order-cell-label">Cont./Mo</div><div class="order-cell-val">${f.containersMonth.toFixed(1)}</div></div>
+      </div>
+      <div class="silo-bar-wrap" style="margin:8px 0 4px;">
+        <div class="silo-bar-bg"><div class="silo-bar-fill ${f.siloBarClass}" style="width:${f.siloPercent}%"></div></div>
+        <div class="silo-bar-label"><span>${f.siloPercent}% silo remaining</span><span>${f.remainingTonnes.toFixed(1)}t left</span></div>
+      </div>
+      <div class="order-feed-row">
+        <span class="order-feed-label">Feed:</span>${feedTagHtml}
+        <span class="order-feed-label" style="margin-left:6px;">Additives:</span>${addTagHtml}
+      </div>
+      ${f.comments?`<div style="margin-top:7px;padding-top:7px;border-top:1px solid var(--border);font-size:.76rem;color:var(--text2);line-height:1.5;">📝 ${esc(f.comments)}</div>`:''}
+      ${f.deliveryHistory&&f.deliveryHistory.length?`<div class="print-history"><strong>Recent deliveries: </strong>${f.deliveryHistory.slice(0,5).map(h=>`${esc(fmtDateShort(h.date))} — ${h.tonnes}t`).join(' · ')}</div>`:''}
+      <div style="display:flex;gap:8px;margin-top:10px;flex-wrap:wrap;">
+        ${f.phone?`<a href="tel:${esc(f.phone)}" class="call-btn" style="flex:1;min-width:120px;margin-bottom:0;">📞 ${esc(f.phone)}</a>`:''}
+        ${f.phone2?`<a href="tel:${esc(f.phone2)}" class="call-btn" style="flex:1;min-width:120px;margin-bottom:0;">📞 ${esc(f.phone2)}</a>`:''}
+        <button class="icon-btn primary" style="flex:2;min-width:140px;justify-content:center;" onclick="openDelivery(${f.id})">✅ Record Delivery</button>
+      </div>
+    </div>`;
+  });
+  document.getElementById('orderCards').innerHTML=cardsHtml;
+
+  const totalT=computed.reduce((s,f)=>s+f.tonnesMonth,0);
+  const totalC=computed.reduce((s,f)=>s+f.containersMonth,0);
+  const totalCW=computed.reduce((s,f)=>s+f.containersWeek,0);
+  document.getElementById('orderSummary').innerHTML=`
+    <div class="summary-row">
+      <div class="summary-cell"><div class="summary-label">Tonnes/Month</div><div class="summary-val">${totalT.toFixed(0)}</div></div>
+      <div class="summary-cell"><div class="summary-label">Cont./Month</div><div class="summary-val">${totalC.toFixed(1)}</div></div>
+      <div class="summary-cell"><div class="summary-label">Cont./Week</div><div class="summary-val">${totalCW.toFixed(1)}</div></div>
+    </div>`;
+}
+
+function esc(s){
+  return String(s).replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+}
+
+function renderTimeline(computed){
+  const t=today();
+  const days=Array.from({length:7},(_,i)=>{const d=new Date(t);d.setDate(t.getDate()+i);return d;});
+  let html='<div class="timeline-row">';
+  days.forEach((day,di)=>{
+    const dayStr=fmtDate(day);
+    const farmsOnDay=computed.filter(f=>f.nextD&&fmtDate(f.nextD)===dayStr);
+    const hasUrgent=farmsOnDay.some(f=>f.daysAway!==null&&f.daysAway<=0);
+    const hasSoon=farmsOnDay.some(f=>f.daysAway!==null&&f.daysAway<=3);
+    const dayCls=`timeline-day${di===0?' is-today':''}${farmsOnDay.length?hasUrgent?' has-urgent':hasSoon?' has-soon':' has-farms':''}`;
+    const dayLabel=day.toLocaleDateString('en-AU',{weekday:'short'});
+    const dateLabel=day.toLocaleDateString('en-AU',{day:'numeric',month:'short'});
+    const chips=farmsOnDay.length
+      ?farmsOnDay.map(f=>`<div class="tl-chip ${f.daysAway<=0?'urgent':f.daysAway<=3?'soon':'ok'}">${esc(f.name)}</div>`).join('')
+      :'<div class="tl-empty">—</div>';
+    html+=`<div class="${dayCls}"><div class="tl-day-label">${dayLabel}</div><div class="tl-day-name">${dateLabel}</div>${chips}</div>`;
+  });
+  html+='</div>';
+  document.getElementById('timelineWrap').innerHTML=html;
+}
+
+// —— DELIVERY MODAL ——
+let _deliveryFarmId=null;
+function openDelivery(farmId){
+  _deliveryFarmId=farmId;
+  const f=farms.find(fm=>fm.id===farmId);
+  if(!f)return;
+  document.getElementById('deliveryFarmName').textContent=f.name;
+  const lastTonnes=f.deliveryHistory&&f.deliveryHistory.length?f.deliveryHistory[0].tonnes:(f.silo>0?f.silo:f.tonnesDel||'');
+  document.getElementById('deliveryTonnes').value=lastTonnes;
+  document.getElementById('deliveryDate').value=fmtDate(today());
+  document.getElementById('deliveryNotes').value='';
+  document.getElementById('deliveryCarryOver').checked=false;
+  document.getElementById('deliveryRemaining').textContent=computeFarm(f).remainingTonnes.toFixed(1);
+  document.getElementById('deliveryModal').classList.add('open');
+  setTimeout(()=>document.getElementById('deliveryTonnes').select(),150);
+}
+function closeDelivery(){document.getElementById('deliveryModal').classList.remove('open');_deliveryFarmId=null;}
+let _lastDelivery=null,_lastDeliveryTimer=null;
+function confirmDelivery(){
+  if(_deliveryFarmId===null)return;
+  const tonnes=+document.getElementById('deliveryTonnes').value;
+  const date=document.getElementById('deliveryDate').value;
+  const notes=document.getElementById('deliveryNotes').value.trim();
+  if(!tonnes||tonnes<=0){showToast('⚠️ Enter tonnes delivered');return;}
+  const idx=farms.findIndex(fm=>fm.id===_deliveryFarmId);
+  if(idx===-1)return;
+  const name=farms[idx].name;
+  const carryOver=document.getElementById('deliveryCarryOver').checked;
+  const finalTonnes=carryOver?+(computeFarm(farms[idx]).remainingTonnes+tonnes).toFixed(2):tonnes;
+  _lastDelivery={idx,snapshot:JSON.parse(JSON.stringify(farms[idx]))};
+  clearTimeout(_lastDeliveryTimer);
+  _lastDeliveryTimer=setTimeout(()=>{_lastDelivery=null;},7000);
+  if(!Array.isArray(farms[idx].deliveryHistory))farms[idx].deliveryHistory=[];
+  farms[idx].deliveryHistory.unshift({date,tonnes,...(notes&&{notes})});
+  farms[idx].deliveryHistory.splice(10);
+  farms[idx].tonnesDel=finalTonnes;farms[idx].lastDel=date;farms[idx].nextDel='';farms[idx]._manualNextDel=false;
+  closeDelivery();render();saveAll(true);
+  showToast(`✅ ${name} — delivery recorded`,'undoDelivery');
+}
+function undoDelivery(){
+  if(!_lastDelivery)return;
+  clearTimeout(_lastDeliveryTimer);
+  farms[_lastDelivery.idx]=_lastDelivery.snapshot;
+  _lastDelivery=null;
+  render();saveAll(true);showToast('↩️ Delivery undone');
+}
+
+// —— NOTIFICATIONS ——
+let notificationsEnabled=false;
+
+// Returns the Capacitor LocalNotifications plugin when running inside the Android app.
+// Returns null when running in a plain browser.
+function _capLN(){return window.Capacitor&&window.Capacitor.Plugins&&window.Capacitor.Plugins.LocalNotifications||null;}
+
+async function toggleNotifications(){
+  if(!notificationsEnabled){
+    const ln=_capLN();
+    if(ln){
+      // ── Capacitor / Android native path ──
+      try{
+        let status=(await ln.checkPermissions()).display;
+        if(status==='prompt'||status==='prompt-with-rationale'){
+          status=(await ln.requestPermissions()).display;
+        }
+        if(status==='granted'){
+          notificationsEnabled=true;saveAll(true);updateNotifBtn();showToast('🔔 Reminders enabled');checkNotifications();
+        }else{
+          showToast('⚠️ Notifications blocked — allow in Android Settings › Apps › Feed Estimator');
+        }
+      }catch(e){showToast('⚠️ Could not enable reminders');}
+    }else if('Notification' in window){
+      // ── Browser Web Notifications path ──
+      if(Notification.permission==='granted'){
+        notificationsEnabled=true;saveAll(true);updateNotifBtn();showToast('🔔 Reminders enabled');checkNotifications();return;
+      }
+      const p=await Notification.requestPermission();
+      if(p==='granted'){
+        notificationsEnabled=true;saveAll(true);updateNotifBtn();showToast('🔔 Reminders enabled');checkNotifications();
+      }else if(p==='denied'){
+        showToast('⚠️ Notifications blocked — allow in browser settings');
+      }else{
+        showToast('⚠️ Permission not granted — please try again');
+      }
+    }else{
+      showToast('⚠️ Notifications not supported in this browser');
+    }
+  }else{
+    notificationsEnabled=false;saveAll(true);updateNotifBtn();showToast('🔕 Reminders off');
+  }
+}
+function updateNotifBtn(){
+  const b=document.getElementById('notifBtn');
+  if(b)b.textContent=notificationsEnabled?'🔕 Disable Reminders':'🔔 Enable Reminders';
+}
+async function checkNotifications(){
+  if(!notificationsEnabled)return;
+  // Fire at most once per calendar day to avoid repeated sounds on every app open
+  const todayStr=fmtDate(today());
+  if(localStorage.getItem('feedEst_notifDate')===todayStr)return;
+  const urgent=farms.map(computeFarm).filter(f=>f.daysAway!==null&&f.daysAway<=3);
+  if(!urgent.length)return;
+  localStorage.setItem('feedEst_notifDate',todayStr);
+  const ln=_capLN();
+  if(ln){
+    // ── Capacitor native notifications ──
+    try{
+      const notifications=urgent.slice(0,5).map((f,i)=>{
+        const msg=f.daysAway<0?`Overdue by ${Math.abs(f.daysAway)} day(s)`:f.daysAway===0?'Due today — order now':`Due in ${f.daysAway} day(s)`;
+        return{id:f.id,title:`🌾 ${f.name}`,body:msg+(f.feedType?` · ${f.feedType}`:''),schedule:{at:new Date(Date.now()+500+i*300)},smallIcon:'ic_launcher',iconColor:'#5a8a3c'};
+      });
+      await ln.schedule({notifications});
+    }catch(e){}
+  }else if('Notification' in window&&Notification.permission==='granted'){
+    // ── Browser Web Notifications ──
+    urgent.slice(0,5).forEach(f=>{
+      const msg=f.daysAway<0?`Overdue by ${Math.abs(f.daysAway)}d`:f.daysAway===0?'Due today — order now':`Due in ${f.daysAway} day(s)`;
+      try{new Notification(`🌾 ${f.name}`,{body:msg+(f.feedType?` · ${f.feedType}`:''),tag:`farm-${f.id}`});}catch(e){}
+    });
+  }
+}
+
+function updateFarm(i,key,val){
+  if(key==='cows'&&(isNaN(val)||val<0)){showToast('⚠️ Cows must be 0 or more');return;}
+  if(key==='feedRate'&&(isNaN(val)||val<0)){showToast('⚠️ Feed rate must be 0 or more');return;}
+  if(key==='tonnesDel'&&(isNaN(val)||val<0)){showToast('⚠️ Tonnes must be 0 or more');return;}
+  if(key==='silo'&&(isNaN(val)||val<0)){showToast('⚠️ Silo size must be 0 or more');return;}
+  if(key==='lastDel'&&val&&parseDate(val)>today()){showToast('⚠️ Last delivery cannot be in the future');return;}
+  farms[i][key]=val;
+  if(['lastDel','cows','feedRate','tonnesDel'].includes(key)){if(!farms[i]._manualNextDel)farms[i].nextDel='';}
+  if(key==='nextDel')farms[i]._manualNextDel=!!val;
+  if(key==='tonnesDel'&&farms[i].deliveryHistory&&farms[i].deliveryHistory.length>0)
+    showToast('ℹ️ Tip: use ✅ Delivered to keep history accurate');
+  render();
+}
+function clearNextDel(i){farms[i].nextDel='';farms[i]._manualNextDel=false;render();showToast('🔮 Reset to predicted date');}
+function addFarm(){
+  const t=today();const last=new Date(t);last.setDate(t.getDate()-6);
+  const newId=farms.length>0?Math.max(...farms.map(f=>f.id))+1:1;
+  farms.push({id:newId,name:`Farm ${farms.length+1}`,silo:30,cows:800,feedRate:5,tonnesDel:24,lastDel:fmtDate(last),nextDel:'',_manualNextDel:false,feedType:'',additives:'',comments:'',phone:'',phone2:'',deliveryHistory:[],route:0});
+  saveAll(true);switchTab('farms');showToast('✅ New farm added');
+}
+let _deletedFarm=null,_deleteTimer=null;
+function removeFarm(i){
+  _deletedFarm={farm:JSON.parse(JSON.stringify(farms[i])),index:i};
+  farms.splice(i,1);
+  render();saveAll(true);
+  clearTimeout(_deleteTimer);
+  showToast(`${_deletedFarm.farm.name} removed`,'undoDelete');
+  _deleteTimer=setTimeout(()=>{_deletedFarm=null;},5000);
+}
+function undoDelete(){
+  if(!_deletedFarm)return;
+  clearTimeout(_deleteTimer);
+  farms.splice(_deletedFarm.index,0,_deletedFarm.farm);
+  _deletedFarm=null;
+  render();saveAll(true);
+  showToast('↩️ Restored!');
+}
+
+function switchTab(name){
+  currentTab=name;
+  const tabs=['dashboard','farms','orders','settings','guide'];
+  document.querySelectorAll('.tab').forEach((t,i)=>t.classList.toggle('active',tabs[i]===name));
+  document.querySelectorAll('.bnav-item').forEach(btn=>btn.classList.toggle('active',btn.dataset.tab===name));
+  document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));
+  const panel=document.getElementById('tab-'+name);
+  panel.style.animation='none';
+  panel.offsetHeight;
+  panel.style.animation='';
+  panel.classList.add('active');
+  window.scrollTo({top:0,behavior:'smooth'});
+  render();
+}
+
+function toggleDark(){
+  darkMode=!darkMode;document.body.classList.toggle('dark',darkMode);updateDarkBtn();saveAll(true);
+}
+function updateDarkBtn(){
+  document.getElementById('darkBtn').textContent=darkMode?'☀️':'🌙';
+  const b2=document.getElementById('darkBtn2');
+  if(b2)b2.textContent=darkMode?'☀️ Switch to Day Mode':'🌙 Switch to Night Mode';
+}
+
+function openShare(){
+  const shareFarms=farms.map(({deliveryHistory,...f})=>f);
+  const data=encodeURIComponent(JSON.stringify({farms:shareFarms}));
+  const url=location.href.split('?')[0]+'?data='+data;
+  if(navigator.share){
+    navigator.share({title:'Feed Estimator by M@SE',url}).catch(()=>{});
+    return;
+  }
+  document.getElementById('shareUrl').value=url;
+  document.getElementById('shareModal').classList.add('open');
+  if(url.length>6000)setTimeout(()=>showToast('⚠️ Link is very long — some browsers may truncate it'),300);
+}
+function closeShare(){document.getElementById('shareModal').classList.remove('open');}
+function copyShare(){
+  const el=document.getElementById('shareUrl');el.select();el.setSelectionRange(0,99999);
+  try{navigator.clipboard.writeText(el.value);}catch(e){document.execCommand('copy');}
+  showToast('🔗 Link copied!');
+}
+
+function downloadApp(){
+  const payload=JSON.stringify(JSON.stringify({farms,darkMode,notificationsEnabled}));
+  const script=`<script>localStorage.setItem('feedEstimator_v2',${payload});<\/script>`;
+  const html=document.documentElement.outerHTML.replace('</head>',script+'</head>');
+  const blob=new Blob([html],{type:'text/html'});
+  const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='FeedEstimator_by_M@SE.html';a.click();
+  showToast('⬇️ Download started');
+}
+
+function downloadCSV(){
+  const BOM='﻿';
+  const headers=['Farm','Route','Cows','Feed Type','Additives','Feed Rate (kg/day)','Silo (t)','Tonnes Delivered','Last Delivery','Next Delivery','Usage/Day (t)','Days to Empty','Tonnes/Month','Containers/Month','Phone','Phone 2','Comments'];
+  const rows=farms.map(f=>{
+    const c=computeFarm(f);
+    return[f.name,f.route||0,f.cows,f.feedType,f.additives,f.feedRate,f.silo,f.tonnesDel,f.lastDel,c.nextD?fmtDate(c.nextD):'',c.usageDay.toFixed(3),c.daysEmpty.toFixed(1),c.tonnesMonth.toFixed(1),c.containersMonth.toFixed(2),f.phone,f.phone2||'',f.comments];
+  });
+  const csv=BOM+[headers,...rows].map(r=>r.map(v=>`"${String(v??'').replace(/"/g,'""')}"`).join(',')).join('\r\n');
+  const blob=new Blob([csv],{type:'text/csv;charset=utf-8'});
+  const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='FeedEstimator_Export.csv';a.click();
+  showToast('📊 CSV downloaded');
+}
+
+let _toastTimer=null;
+function showToast(msg,undoFn=null){
+  const t=document.getElementById('toast');
+  if(undoFn){
+    t.innerHTML=`${esc(msg)} <button class="toast-undo" onclick="${undoFn}()">Undo</button>`;
+  }else{
+    t.textContent=msg;
+  }
+  t.classList.add('show');
+  clearTimeout(_toastTimer);
+  _toastTimer=setTimeout(()=>t.classList.remove('show'),undoFn?7000:2600);
+}
+
+function removeHistoryEntry(farmId,idx){
+  const farm=farms.find(f=>f.id===farmId);
+  if(!farm)return;
+  farm.deliveryHistory.splice(idx,1);
+  render();saveAll(true);showToast('🗑 Entry removed');
+}
+
+function parseCSVRow(line){
+  const result=[];let cur='';let inQ=false;
+  for(let i=0;i<line.length;i++){
+    const ch=line[i];
+    if(inQ){if(ch==='"'&&line[i+1]==='"'){cur+='"';i++;}else if(ch==='"')inQ=false;else cur+=ch;}
+    else{if(ch==='"')inQ=true;else if(ch===','){result.push(cur);cur='';}else cur+=ch;}
+  }
+  result.push(cur);return result;
+}
+
+function importCSV(){
+  const inp=document.createElement('input');
+  inp.type='file';inp.accept='.csv,text/csv';
+  inp.onchange=e=>{
+    const file=e.target.files[0];if(!file)return;
+    const reader=new FileReader();
+    reader.onload=ev=>{
+      try{
+        const text=ev.target.result.replace(/^﻿/,'');
+        const lines=text.split(/\r?\n/).filter(l=>l.trim());
+        if(lines.length<2){showToast('⚠️ CSV has no data rows');return;}
+        const headers=parseCSVRow(lines[0]).map(h=>h.trim().toLowerCase());
+        const col=h=>headers.indexOf(h);
+        const fc=col('farm');
+        if(fc===-1){showToast('⚠️ No "Farm" column found');return;}
+        const cc=col('cows'),frc=col('feed rate (kg/day)'),ftc=col('feed type'),
+              ac=col('additives'),sc=col('silo (t)'),tc=col('tonnes delivered'),
+              ldc=col('last delivery'),ndc=col('next delivery'),
+              phc=col('phone'),ph2c=col('phone 2'),coc=col('comments'),rtc=col('route');
+        const imported=[];
+        for(let i=1;i<lines.length;i++){
+          const row=parseCSVRow(lines[i]);
+          const name=row[fc]?.trim();if(!name)continue;
+          const maxId=farms.length?Math.max(...farms.map(f=>f.id)):0;
+          imported.push({
+            id:maxId+imported.length+1,name,
+            cows:parseInt(row[cc])||0,feedRate:parseFloat(row[frc])||0,
+            feedType:row[ftc]?.trim()||'',additives:row[ac]?.trim()||'',
+            silo:parseFloat(row[sc])||0,tonnesDel:parseFloat(row[tc])||0,
+            lastDel:row[ldc]?.trim()||'',nextDel:row[ndc]?.trim()||'',
+            _manualNextDel:!!(row[ndc]?.trim()),
+            phone:row[phc]?.trim()||'',phone2:row[ph2c]?.trim()||'',comments:row[coc]?.trim()||'',
+            route:rtc>=0?parseInt(row[rtc])||0:0,deliveryHistory:[]
+          });
+        }
+        if(!imported.length){showToast('⚠️ No valid farms found');return;}
+        if(!confirm(`Replace all ${farms.length} farm(s) with ${imported.length} imported farm(s)?`))return;
+        farms=imported;render();saveAll(true);
+        showToast(`📥 Imported ${imported.length} farm(s)`);
+      }catch(err){showToast('⚠️ Could not read CSV');}
+    };
+    reader.readAsText(file,'utf-8');
+  };
+  inp.click();
+}
+
+function duplicateFarm(i){
+  const orig=farms[i];
+  const newId=Math.max(...farms.map(f=>f.id))+1;
+  const copy={...JSON.parse(JSON.stringify(orig)),id:newId,name:orig.name+' (Copy)',deliveryHistory:[]};
+  farms.splice(i+1,0,copy);
+  render();saveAll(true);showToast(`📋 ${orig.name} duplicated`);
+}
+
+function downloadHistoryCSV(){
+  const BOM='﻿';
+  const headers=['Farm','Date','Tonnes','Notes'];
+  const rows=[];
+  farms.forEach(f=>(f.deliveryHistory||[]).forEach(h=>rows.push([f.name,h.date,h.tonnes,h.notes||''])));
+  if(!rows.length){showToast('⚠️ No delivery history to export');return;}
+  const csv=BOM+[headers,...rows].map(r=>r.map(v=>`"${String(v??'').replace(/"/g,'""')}"`).join(',')).join('\r\n');
+  const blob=new Blob([csv],{type:'text/csv;charset=utf-8'});
+  const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='FeedEstimator_DeliveryHistory.csv';a.click();
+  showToast('📋 History CSV downloaded');
+}
+
+function backupJSON(){
+  const data=JSON.stringify({farms,darkMode,notificationsEnabled},null,2);
+  const blob=new Blob([data],{type:'application/json'});
+  const a=document.createElement('a');a.href=URL.createObjectURL(blob);
+  a.download=`FeedEstimator_Backup_${fmtDate(today())}.json`;a.click();
+  showToast('🗄️ Backup downloaded');
+}
+
+function restoreJSON(){
+  const inp=document.createElement('input');
+  inp.type='file';inp.accept='.json,application/json';
+  inp.onchange=e=>{
+    const file=e.target.files[0];if(!file)return;
+    const reader=new FileReader();
+    reader.onload=ev=>{
+      try{
+        const d=JSON.parse(ev.target.result);
+        if(!d.farms||!Array.isArray(d.farms)){showToast('⚠️ Invalid backup file');return;}
+        if(!confirm(`Restore ${d.farms.length} farm(s) from backup? This replaces all current data.`))return;
+        farms=d.farms;darkMode=d.darkMode||false;notificationsEnabled=d.notificationsEnabled||false;
+        farms.forEach(f=>{if(f.feedType===undefined)f.feedType='';if(f.additives===undefined)f.additives='';if(f.comments===undefined)f.comments='';if(f.phone===undefined)f.phone='';if(f.phone2===undefined)f.phone2='';if(!Array.isArray(f.deliveryHistory))f.deliveryHistory=[];if(f.route===undefined)f.route=0;});
+        document.body.classList.toggle('dark',darkMode);updateDarkBtn();
+        render();saveAll(true);showToast(`✅ Restored ${farms.length} farm(s)`);
+      }catch(err){showToast('⚠️ Could not read backup file');}
+    };
+    reader.readAsText(file,'utf-8');
+  };
+  inp.click();
+}
+
+let orderFilter='',orderSort='urgency';
+function setOrderFilter(v){orderFilter=v;renderOrders();}
+function setOrderSort(v){
+  orderSort=v;
+  document.querySelectorAll('[data-osort]').forEach(p=>p.classList.toggle('active',p.dataset.osort===v));
+  renderOrders();
+}
+
+function loadUrlData(){
+  const d=new URLSearchParams(location.search).get('data');
+  if(d){try{const p=JSON.parse(d);if(p.farms){farms=p.farms;farms.forEach(f=>{if(!Array.isArray(f.deliveryHistory))f.deliveryHistory=[];if(f.phone2===undefined)f.phone2='';if(f.route===undefined)f.route=0;});showToast('📥 Shared data loaded!');}}catch(e){}}
+}
+
+let expandedFarmId=null;
+function toggleFarmExpand(id){expandedFarmId=(expandedFarmId===id?null:id);renderDashboard();}
+
+// —— FILTER / SORT ——
+let dashFilter='',dashSort='urgency';
+function setDashFilter(v){dashFilter=v;renderDashboard();}
+function setDashSort(v){
+  dashSort=v;
+  document.querySelectorAll('[data-sort]').forEach(p=>p.classList.toggle('active',p.dataset.sort===v));
+  renderDashboard();
+}
+
+// —— PRINT ——
+function printRunSheet(){
+  if(currentTab!=='orders')switchTab('orders');
+  setTimeout(()=>window.print(),300);
+}
+
+// —— PWA INSTALL ——
+let _installPrompt=null;
+function installApp(){
+  if(!_installPrompt)return;
+  _installPrompt.prompt();
+  _installPrompt.userChoice.then(()=>{_installPrompt=null;document.getElementById('installBtn').style.display='none';});
+}
+window.addEventListener('beforeinstallprompt',e=>{
+  e.preventDefault();_installPrompt=e;
+  document.getElementById('installBtn').style.display='flex';
+});
+window.addEventListener('appinstalled',()=>{
+  document.getElementById('installBtn').style.display='none';showToast('📲 App installed!');
+});
+
+// —— PWA: canvas icons, manifest, service worker ——
+(function(){
+  function makeIcon(size){
+    const c=document.createElement('canvas');c.width=c.height=size;
+    const x=c.getContext('2d');
+    x.fillStyle='#5a8a3c';
+    if(x.roundRect)x.roundRect(0,0,size,size,size*.15);
+    else{x.beginPath();x.rect(0,0,size,size);}
+    x.fill();
+    x.font=`${Math.round(size*.58)}px serif`;
+    x.textAlign='center';x.textBaseline='middle';
+    x.fillText('🌾',size/2,size*.54);
+    return c.toDataURL('image/png');
+  }
+  const i192=makeIcon(192),i512=makeIcon(512);
+
+  // Apple touch icon (iOS home screen)
+  const atl=document.createElement('link');
+  atl.rel='apple-touch-icon';atl.href=i192;
+  document.head.appendChild(atl);
+
+  // Manifest with PNG icons — Chrome requires PNG (not SVG) for installability
+  const m={
+    name:'Feed Estimator by M@SE',short_name:'FeedEst',
+    description:'Dairy farm feed order estimator',
+    start_url:'./',scope:'./',display:'standalone',orientation:'portrait',
+    background_color:'#f5f0e8',theme_color:'#5a8a3c',
+    icons:[
+      {src:i192,sizes:'192x192',type:'image/png'},
+      {src:i512,sizes:'512x512',type:'image/png',purpose:'any maskable'}
+    ]
+  };
+  const blob=new Blob([JSON.stringify(m)],{type:'application/manifest+json'});
+  document.getElementById('pwa-manifest').href=URL.createObjectURL(blob);
+
+  // Service worker — required for Android auto-install prompt when hosted on HTTPS
+  if('serviceWorker' in navigator){
+    const sw=`
+      const CACHE='feed-est-v2';
+      self.addEventListener('install',e=>{
+        e.waitUntil(caches.open(CACHE).then(c=>c.add('./').catch(()=>{})).finally(()=>self.skipWaiting()));
+      });
+      self.addEventListener('activate',e=>{
+        e.waitUntil(caches.keys().then(ks=>Promise.all(ks.filter(k=>k!==CACHE).map(k=>caches.delete(k)))).then(()=>clients.claim()));
+      });
+      self.addEventListener('fetch',e=>{
+        if(e.request.method!=='GET')return;
+        e.respondWith(caches.match(e.request).then(r=>{
+          if(r)return r;
+          return fetch(e.request).then(res=>{
+            if(res.ok&&res.type!=='opaque')caches.open(CACHE).then(c=>c.put(e.request,res.clone()));
+            return res;
+          }).catch(()=>caches.match(e.request)||new Response('Offline — open the app online first to cache it.',{headers:{'Content-Type':'text/plain'}}));
+        }));
+      });
+    `;
+    try{
+      const swBlob=new Blob([sw],{type:'text/javascript'});
+      navigator.serviceWorker.register(URL.createObjectURL(swBlob));
+    }catch(e){}
+  }
+})();
+
+// Swipe left/right to switch tabs
+const _mobileTabOrder=['dashboard','farms','orders','settings'];
+const _allTabOrder=['dashboard','farms','orders','settings','guide'];
+let _swipeX=0,_swipeY=0;
+document.querySelector('.scroll-area').addEventListener('touchstart',e=>{
+  _swipeX=e.touches[0].clientX;_swipeY=e.touches[0].clientY;
+},{passive:true});
+document.querySelector('.scroll-area').addEventListener('touchend',e=>{
+  const dx=e.changedTouches[0].clientX-_swipeX;
+  const dy=e.changedTouches[0].clientY-_swipeY;
+  if(Math.abs(dx)>55&&Math.abs(dx)>Math.abs(dy)*1.5){
+    const order=window.innerWidth>=700?_allTabOrder:_mobileTabOrder;
+    const idx=order.indexOf(currentTab);
+    if(dx<0&&idx<order.length-1)switchTab(order[idx+1]);
+    else if(dx>0&&idx>0)switchTab(order[idx-1]);
+  }
+},{passive:true});
+
+loadData();loadUrlData();render();
+updateNotifBtn();checkNotifications();
+setInterval(()=>saveAll(true),120000);
+setInterval(checkNotifications,3600000);
+</script>
+</body>
+</html>

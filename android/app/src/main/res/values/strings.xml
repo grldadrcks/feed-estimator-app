@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">Feed Estimator</string>
+    <string name="title_activity_main">Feed Estimator</string>
+    <string name="package_name">com.mase.feedestimator</string>
+    <string name="custom_url_scheme">com.mase.feedestimator</string>
+</resources>
