@@ -1,19 +1,17 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-<meta charset="UTF-8"/>
-<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=no"/>
+<html lang="en"><head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=no">
 <title>Feed Estimator by M@SE</title>
-<meta name="mobile-web-app-capable" content="yes"/>
-<meta name="application-name" content="Feed Estimator"/>
-<meta name="theme-color" content="#5a8a3c" media="(prefers-color-scheme: light)"/>
-<meta name="theme-color" content="#1e2418" media="(prefers-color-scheme: dark)"/>
-<meta name="apple-mobile-web-app-capable" content="yes"/>
-<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"/>
-<meta name="apple-mobile-web-app-title" content="Feed Estimator"/>
-<meta name="description" content="Feed Estimator by M@SE — predict dairy farm feed orders with ease."/>
-<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet"/>
-<link id="pwa-manifest" rel="manifest"/>
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="application-name" content="Feed Estimator">
+<meta name="theme-color" content="#5a8a3c" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#1e2418" media="(prefers-color-scheme: dark)">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Feed Estimator">
+<meta name="description" content="Feed Estimator by M@SE — predict dairy farm feed orders with ease.">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&amp;family=DM+Sans:wght@300;400;500;600&amp;display=swap" rel="stylesheet">
+<link id="pwa-manifest" rel="manifest" href="">
 <style>
 /* —— TOKENS —— */
 :root {
@@ -336,7 +334,7 @@ a.call-btn:active{background:var(--accent);color:#fff;}
   header,.tab-bar,.bnav,.modal-overlay,#toast,.filter-bar,
   #tab-dashboard,#tab-farms,#tab-settings,#tab-guide,
   .timeline-scroll,.section-title+.divider,.deliver-row,
-  .icon-btn,a.call-btn,#orderSummary,#print-btn-wrap,#orderFilterBar{display:none!important;}
+  .icon-btn,a.call-btn,#orderSummary,#print-btn-wrap{display:none!important;}
   body{background:#fff!important;color:#000!important;padding:0!important;font-size:11pt;}
   .scroll-area{padding:12px!important;}
   #tab-orders{display:block!important;}
@@ -350,92 +348,1732 @@ a.call-btn:active{background:var(--accent);color:#fff;}
   .badge-ok{color:#2d7a1f!important;background:none!important;}
   .order-cell{background:#f5f5f5!important;}
   .feed-tag,.additive-tag{background:none!important;border:1px solid #999!important;}
-  .print-history{display:block!important;font-size:9pt;color:#333;margin-top:5px;padding-top:5px;border-top:1px solid #ddd;}
 }
-.print-history{display:none;}
 </style>
-</head>
-<body>
+<link rel="apple-touch-icon" href="data:image/png;base64,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"></head>
+<body class="dark">
 
 <header>
   <div>
-    <div class="app-title">Feed Estimator <small>by M@SE &nbsp;·&nbsp; <span id="versionDisplay"></span></small></div>
+    <div class="app-title">Feed Estimator <small>by M@SE</small></div>
   </div>
   <div class="header-right">
-    <span class="date-chip" id="todayDisplay"></span>
-    <button class="icon-btn" id="darkBtn" onclick="toggleDark()" title="Night Mode">🌙</button>
+    <span class="date-chip" id="todayDisplay">2 May 2026</span>
+    <button class="icon-btn" id="darkBtn" onclick="toggleDark()" title="Night Mode">☀️</button>
     <button class="icon-btn primary" onclick="saveAll()">💾 Save</button>
   </div>
 </header>
 
 <div class="tab-bar">
-  <div class="tab active" onclick="switchTab('dashboard')">📊 Dashboard</div>
+  <div class="tab" onclick="switchTab('dashboard')">📊 Dashboard</div>
   <div class="tab" onclick="switchTab('farms')">🏡 Farm Data</div>
   <div class="tab" onclick="switchTab('orders')">📦 Orders</div>
-  <div class="tab" onclick="switchTab('settings')">⚙️ Settings</div>
+  <div class="tab active" onclick="switchTab('settings')">⚙️ Settings</div>
   <div class="tab" onclick="switchTab('guide')">📖 Guide</div>
 </div>
 
 <div class="scroll-area">
 
   <!-- DASHBOARD -->
-  <div class="panel active" id="tab-dashboard">
-    <div id="reminderBanner"></div>
-    <div class="stats-grid" id="statsGrid"></div>
-    <div class="section-title">All Farms <span class="pill" id="farmCount"></span></div>
+  <div class="panel" id="tab-dashboard">
+    <div id="reminderBanner"><div class="reminder danger"><div class="reminder-icon">🚨</div><div><strong>Farm 1 — OVERDUE by 2 day(s)</strong> + 19 more farm(s) — check Orders tab</div></div></div>
+    <div class="stats-grid" id="statsGrid">
+    <div class="stat-card good"><div class="stat-label">Total Cows</div><div class="stat-val">16,000</div><div class="stat-unit">20 farms</div></div>
+    <div class="stat-card"><div class="stat-label">Tonnes/Month</div><div class="stat-val">2400</div><div class="stat-unit">group total</div></div>
+    <div class="stat-card"><div class="stat-label">Cont./Week</div><div class="stat-val">25.2</div><div class="stat-unit">@ 22t each</div></div>
+    <div class="stat-card danger"><div class="stat-label">Attention</div><div class="stat-val">20</div><div class="stat-unit">farms due soon</div></div>
+  </div>
+    <div class="section-title">All Farms <span class="pill" id="farmCount">20 Farms</span></div>
     <div class="filter-bar">
-      <input class="dash-search" id="dashSearch" type="text" placeholder="🔍 Search farms..." oninput="setDashFilter(this.value)"/>
+      <input class="dash-search" id="dashSearch" type="text" placeholder="🔍 Search farms..." oninput="setDashFilter(this.value)">
       <div class="sort-pills">
-        <button class="sort-pill active" data-sort="urgency" onclick="setDashSort('urgency')">⚡ Urgency</button>
+        <button class="sort-pill" data-sort="urgency" onclick="setDashSort('urgency')">⚡ Urgency</button>
         <button class="sort-pill" data-sort="name" onclick="setDashSort('name')">A→Z Name</button>
-        <button class="sort-pill" data-sort="silo" onclick="setDashSort('silo')">🪣 Silo %</button>
+        <button class="sort-pill active" data-sort="silo" onclick="setDashSort('silo')">🪣 Silo %</button>
       </div>
     </div>
-    <div id="dashList"></div>
+    <div id="dashList"><div class="farm-row" onclick="toggleFarmExpand(1)">
+      <div class="farm-row-top">
+        <span class="farm-row-name">Farm 1</span>
+        <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;">
+          
+          <span class="badge badge-danger">Overdue</span>
+          <span class="expand-chevron">▼</span>
+        </div>
+      </div>
+      <div class="silo-bar-wrap">
+        <div class="silo-bar-bg"><div class="silo-bar-fill danger" style="width:0%"></div></div>
+        <div class="silo-bar-label"><span>0% remaining</span><span>0.0t left</span></div>
+      </div>
+      <div class="farm-row-meta">
+        <div class="farm-meta-item"><div class="farm-meta-label">Cows</div><div class="farm-meta-val">800</div></div>
+        <div class="farm-meta-item"><div class="farm-meta-label">Usage/Day</div><div class="farm-meta-val">4.00 t</div></div>
+        <div class="farm-meta-item"><div class="farm-meta-label">Next Delivery</div><div class="farm-meta-val">30 Apr</div></div>
+        <div class="farm-meta-item"><div class="farm-meta-label">Days to Empty</div><div class="farm-meta-val">6.0</div></div>
+      </div>
+      
+    </div><div class="farm-row" onclick="toggleFarmExpand(2)">
+      <div class="farm-row-top">
+        <span class="farm-row-name">Farm 2</span>
+        <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;">
+          
+          <span class="badge badge-danger">Overdue</span>
+          <span class="expand-chevron">▼</span>
+        </div>
+      </div>
+      <div class="silo-bar-wrap">
+        <div class="silo-bar-bg"><div class="silo-bar-fill danger" style="width:0%"></div></div>
+        <div class="silo-bar-label"><span>0% remaining</span><span>0.0t left</span></div>
+      </div>
+      <div class="farm-row-meta">
+        <div class="farm-meta-item"><div class="farm-meta-label">Cows</div><div class="farm-meta-val">800</div></div>
+        <div class="farm-meta-item"><div class="farm-meta-label">Usage/Day</div><div class="farm-meta-val">4.00 t</div></div>
+        <div class="farm-meta-item"><div class="farm-meta-label">Next Delivery</div><div class="farm-meta-val">30 Apr</div></div>
+        <div class="farm-meta-item"><div class="farm-meta-label">Days to Empty</div><div class="farm-meta-val">6.0</div></div>
+      </div>
+      
+    </div><div class="farm-row" onclick="toggleFarmExpand(3)">
+      <div class="farm-row-top">
+        <span class="farm-row-name">Farm 3</span>
+        <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;">
+          
+          <span class="badge badge-danger">Overdue</span>
+          <span class="expand-chevron">▼</span>
+        </div>
+      </div>
+      <div class="silo-bar-wrap">
+        <div class="silo-bar-bg"><div class="silo-bar-fill danger" style="width:0%"></div></div>
+        <div class="silo-bar-label"><span>0% remaining</span><span>0.0t left</span></div>
+      </div>
+      <div class="farm-row-meta">
+        <div class="farm-meta-item"><div class="farm-meta-label">Cows</div><div class="farm-meta-val">800</div></div>
+        <div class="farm-meta-item"><div class="farm-meta-label">Usage/Day</div><div class="farm-meta-val">4.00 t</div></div>
+        <div class="farm-meta-item"><div class="farm-meta-label">Next Delivery</div><div class="farm-meta-val">30 Apr</div></div>
+        <div class="farm-meta-item"><div class="farm-meta-label">Days to Empty</div><div class="farm-meta-val">6.0</div></div>
+      </div>
+      
+    </div><div class="farm-row" onclick="toggleFarmExpand(4)">
+      <div class="farm-row-top">
+        <span class="farm-row-name">Farm 4</span>
+        <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;">
+          
+          <span class="badge badge-danger">Overdue</span>
+          <span class="expand-chevron">▼</span>
+        </div>
+      </div>
+      <div class="silo-bar-wrap">
+        <div class="silo-bar-bg"><div class="silo-bar-fill danger" style="width:0%"></div></div>
+        <div class="silo-bar-label"><span>0% remaining</span><span>0.0t left</span></div>
+      </div>
+      <div class="farm-row-meta">
+        <div class="farm-meta-item"><div class="farm-meta-label">Cows</div><div class="farm-meta-val">800</div></div>
+        <div class="farm-meta-item"><div class="farm-meta-label">Usage/Day</div><div class="farm-meta-val">4.00 t</div></div>
+        <div class="farm-meta-item"><div class="farm-meta-label">Next Delivery</div><div class="farm-meta-val">30 Apr</div></div>
+        <div class="farm-meta-item"><div class="farm-meta-label">Days to Empty</div><div class="farm-meta-val">6.0</div></div>
+      </div>
+      
+    </div><div class="farm-row" onclick="toggleFarmExpand(5)">
+      <div class="farm-row-top">
+        <span class="farm-row-name">Farm 5</span>
+        <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;">
+          
+          <span class="badge badge-danger">Overdue</span>
+          <span class="expand-chevron">▼</span>
+        </div>
+      </div>
+      <div class="silo-bar-wrap">
+        <div class="silo-bar-bg"><div class="silo-bar-fill danger" style="width:0%"></div></div>
+        <div class="silo-bar-label"><span>0% remaining</span><span>0.0t left</span></div>
+      </div>
+      <div class="farm-row-meta">
+        <div class="farm-meta-item"><div class="farm-meta-label">Cows</div><div class="farm-meta-val">800</div></div>
+        <div class="farm-meta-item"><div class="farm-meta-label">Usage/Day</div><div class="farm-meta-val">4.00 t</div></div>
+        <div class="farm-meta-item"><div class="farm-meta-label">Next Delivery</div><div class="farm-meta-val">30 Apr</div></div>
+        <div class="farm-meta-item"><div class="farm-meta-label">Days to Empty</div><div class="farm-meta-val">6.0</div></div>
+      </div>
+      
+    </div><div class="farm-row" onclick="toggleFarmExpand(6)">
+      <div class="farm-row-top">
+        <span class="farm-row-name">Farm 6</span>
+        <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;">
+          
+          <span class="badge badge-danger">Overdue</span>
+          <span class="expand-chevron">▼</span>
+        </div>
+      </div>
+      <div class="silo-bar-wrap">
+        <div class="silo-bar-bg"><div class="silo-bar-fill danger" style="width:0%"></div></div>
+        <div class="silo-bar-label"><span>0% remaining</span><span>0.0t left</span></div>
+      </div>
+      <div class="farm-row-meta">
+        <div class="farm-meta-item"><div class="farm-meta-label">Cows</div><div class="farm-meta-val">800</div></div>
+        <div class="farm-meta-item"><div class="farm-meta-label">Usage/Day</div><div class="farm-meta-val">4.00 t</div></div>
+        <div class="farm-meta-item"><div class="farm-meta-label">Next Delivery</div><div class="farm-meta-val">30 Apr</div></div>
+        <div class="farm-meta-item"><div class="farm-meta-label">Days to Empty</div><div class="farm-meta-val">6.0</div></div>
+      </div>
+      
+    </div><div class="farm-row" onclick="toggleFarmExpand(7)">
+      <div class="farm-row-top">
+        <span class="farm-row-name">Farm 7</span>
+        <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;">
+          
+          <span class="badge badge-danger">Overdue</span>
+          <span class="expand-chevron">▼</span>
+        </div>
+      </div>
+      <div class="silo-bar-wrap">
+        <div class="silo-bar-bg"><div class="silo-bar-fill danger" style="width:0%"></div></div>
+        <div class="silo-bar-label"><span>0% remaining</span><span>0.0t left</span></div>
+      </div>
+      <div class="farm-row-meta">
+        <div class="farm-meta-item"><div class="farm-meta-label">Cows</div><div class="farm-meta-val">800</div></div>
+        <div class="farm-meta-item"><div class="farm-meta-label">Usage/Day</div><div class="farm-meta-val">4.00 t</div></div>
+        <div class="farm-meta-item"><div class="farm-meta-label">Next Delivery</div><div class="farm-meta-val">30 Apr</div></div>
+        <div class="farm-meta-item"><div class="farm-meta-label">Days to Empty</div><div class="farm-meta-val">6.0</div></div>
+      </div>
+      
+    </div><div class="farm-row" onclick="toggleFarmExpand(8)">
+      <div class="farm-row-top">
+        <span class="farm-row-name">Farm 8</span>
+        <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;">
+          
+          <span class="badge badge-danger">Overdue</span>
+          <span class="expand-chevron">▼</span>
+        </div>
+      </div>
+      <div class="silo-bar-wrap">
+        <div class="silo-bar-bg"><div class="silo-bar-fill danger" style="width:0%"></div></div>
+        <div class="silo-bar-label"><span>0% remaining</span><span>0.0t left</span></div>
+      </div>
+      <div class="farm-row-meta">
+        <div class="farm-meta-item"><div class="farm-meta-label">Cows</div><div class="farm-meta-val">800</div></div>
+        <div class="farm-meta-item"><div class="farm-meta-label">Usage/Day</div><div class="farm-meta-val">4.00 t</div></div>
+        <div class="farm-meta-item"><div class="farm-meta-label">Next Delivery</div><div class="farm-meta-val">30 Apr</div></div>
+        <div class="farm-meta-item"><div class="farm-meta-label">Days to Empty</div><div class="farm-meta-val">6.0</div></div>
+      </div>
+      
+    </div><div class="farm-row" onclick="toggleFarmExpand(9)">
+      <div class="farm-row-top">
+        <span class="farm-row-name">Farm 9</span>
+        <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;">
+          
+          <span class="badge badge-danger">Overdue</span>
+          <span class="expand-chevron">▼</span>
+        </div>
+      </div>
+      <div class="silo-bar-wrap">
+        <div class="silo-bar-bg"><div class="silo-bar-fill danger" style="width:0%"></div></div>
+        <div class="silo-bar-label"><span>0% remaining</span><span>0.0t left</span></div>
+      </div>
+      <div class="farm-row-meta">
+        <div class="farm-meta-item"><div class="farm-meta-label">Cows</div><div class="farm-meta-val">800</div></div>
+        <div class="farm-meta-item"><div class="farm-meta-label">Usage/Day</div><div class="farm-meta-val">4.00 t</div></div>
+        <div class="farm-meta-item"><div class="farm-meta-label">Next Delivery</div><div class="farm-meta-val">30 Apr</div></div>
+        <div class="farm-meta-item"><div class="farm-meta-label">Days to Empty</div><div class="farm-meta-val">6.0</div></div>
+      </div>
+      
+    </div><div class="farm-row" onclick="toggleFarmExpand(10)">
+      <div class="farm-row-top">
+        <span class="farm-row-name">Farm 10</span>
+        <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;">
+          
+          <span class="badge badge-danger">Overdue</span>
+          <span class="expand-chevron">▼</span>
+        </div>
+      </div>
+      <div class="silo-bar-wrap">
+        <div class="silo-bar-bg"><div class="silo-bar-fill danger" style="width:0%"></div></div>
+        <div class="silo-bar-label"><span>0% remaining</span><span>0.0t left</span></div>
+      </div>
+      <div class="farm-row-meta">
+        <div class="farm-meta-item"><div class="farm-meta-label">Cows</div><div class="farm-meta-val">800</div></div>
+        <div class="farm-meta-item"><div class="farm-meta-label">Usage/Day</div><div class="farm-meta-val">4.00 t</div></div>
+        <div class="farm-meta-item"><div class="farm-meta-label">Next Delivery</div><div class="farm-meta-val">30 Apr</div></div>
+        <div class="farm-meta-item"><div class="farm-meta-label">Days to Empty</div><div class="farm-meta-val">6.0</div></div>
+      </div>
+      
+    </div><div class="farm-row" onclick="toggleFarmExpand(11)">
+      <div class="farm-row-top">
+        <span class="farm-row-name">Farm 11</span>
+        <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;">
+          
+          <span class="badge badge-danger">Overdue</span>
+          <span class="expand-chevron">▼</span>
+        </div>
+      </div>
+      <div class="silo-bar-wrap">
+        <div class="silo-bar-bg"><div class="silo-bar-fill danger" style="width:0%"></div></div>
+        <div class="silo-bar-label"><span>0% remaining</span><span>0.0t left</span></div>
+      </div>
+      <div class="farm-row-meta">
+        <div class="farm-meta-item"><div class="farm-meta-label">Cows</div><div class="farm-meta-val">800</div></div>
+        <div class="farm-meta-item"><div class="farm-meta-label">Usage/Day</div><div class="farm-meta-val">4.00 t</div></div>
+        <div class="farm-meta-item"><div class="farm-meta-label">Next Delivery</div><div class="farm-meta-val">30 Apr</div></div>
+        <div class="farm-meta-item"><div class="farm-meta-label">Days to Empty</div><div class="farm-meta-val">6.0</div></div>
+      </div>
+      
+    </div><div class="farm-row" onclick="toggleFarmExpand(12)">
+      <div class="farm-row-top">
+        <span class="farm-row-name">Farm 12</span>
+        <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;">
+          
+          <span class="badge badge-danger">Overdue</span>
+          <span class="expand-chevron">▼</span>
+        </div>
+      </div>
+      <div class="silo-bar-wrap">
+        <div class="silo-bar-bg"><div class="silo-bar-fill danger" style="width:0%"></div></div>
+        <div class="silo-bar-label"><span>0% remaining</span><span>0.0t left</span></div>
+      </div>
+      <div class="farm-row-meta">
+        <div class="farm-meta-item"><div class="farm-meta-label">Cows</div><div class="farm-meta-val">800</div></div>
+        <div class="farm-meta-item"><div class="farm-meta-label">Usage/Day</div><div class="farm-meta-val">4.00 t</div></div>
+        <div class="farm-meta-item"><div class="farm-meta-label">Next Delivery</div><div class="farm-meta-val">30 Apr</div></div>
+        <div class="farm-meta-item"><div class="farm-meta-label">Days to Empty</div><div class="farm-meta-val">6.0</div></div>
+      </div>
+      
+    </div><div class="farm-row" onclick="toggleFarmExpand(13)">
+      <div class="farm-row-top">
+        <span class="farm-row-name">Farm 13</span>
+        <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;">
+          
+          <span class="badge badge-danger">Overdue</span>
+          <span class="expand-chevron">▼</span>
+        </div>
+      </div>
+      <div class="silo-bar-wrap">
+        <div class="silo-bar-bg"><div class="silo-bar-fill danger" style="width:0%"></div></div>
+        <div class="silo-bar-label"><span>0% remaining</span><span>0.0t left</span></div>
+      </div>
+      <div class="farm-row-meta">
+        <div class="farm-meta-item"><div class="farm-meta-label">Cows</div><div class="farm-meta-val">800</div></div>
+        <div class="farm-meta-item"><div class="farm-meta-label">Usage/Day</div><div class="farm-meta-val">4.00 t</div></div>
+        <div class="farm-meta-item"><div class="farm-meta-label">Next Delivery</div><div class="farm-meta-val">30 Apr</div></div>
+        <div class="farm-meta-item"><div class="farm-meta-label">Days to Empty</div><div class="farm-meta-val">6.0</div></div>
+      </div>
+      
+    </div><div class="farm-row" onclick="toggleFarmExpand(14)">
+      <div class="farm-row-top">
+        <span class="farm-row-name">Farm 14</span>
+        <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;">
+          
+          <span class="badge badge-danger">Overdue</span>
+          <span class="expand-chevron">▼</span>
+        </div>
+      </div>
+      <div class="silo-bar-wrap">
+        <div class="silo-bar-bg"><div class="silo-bar-fill danger" style="width:0%"></div></div>
+        <div class="silo-bar-label"><span>0% remaining</span><span>0.0t left</span></div>
+      </div>
+      <div class="farm-row-meta">
+        <div class="farm-meta-item"><div class="farm-meta-label">Cows</div><div class="farm-meta-val">800</div></div>
+        <div class="farm-meta-item"><div class="farm-meta-label">Usage/Day</div><div class="farm-meta-val">4.00 t</div></div>
+        <div class="farm-meta-item"><div class="farm-meta-label">Next Delivery</div><div class="farm-meta-val">30 Apr</div></div>
+        <div class="farm-meta-item"><div class="farm-meta-label">Days to Empty</div><div class="farm-meta-val">6.0</div></div>
+      </div>
+      
+    </div><div class="farm-row" onclick="toggleFarmExpand(15)">
+      <div class="farm-row-top">
+        <span class="farm-row-name">Farm 15</span>
+        <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;">
+          
+          <span class="badge badge-danger">Overdue</span>
+          <span class="expand-chevron">▼</span>
+        </div>
+      </div>
+      <div class="silo-bar-wrap">
+        <div class="silo-bar-bg"><div class="silo-bar-fill danger" style="width:0%"></div></div>
+        <div class="silo-bar-label"><span>0% remaining</span><span>0.0t left</span></div>
+      </div>
+      <div class="farm-row-meta">
+        <div class="farm-meta-item"><div class="farm-meta-label">Cows</div><div class="farm-meta-val">800</div></div>
+        <div class="farm-meta-item"><div class="farm-meta-label">Usage/Day</div><div class="farm-meta-val">4.00 t</div></div>
+        <div class="farm-meta-item"><div class="farm-meta-label">Next Delivery</div><div class="farm-meta-val">30 Apr</div></div>
+        <div class="farm-meta-item"><div class="farm-meta-label">Days to Empty</div><div class="farm-meta-val">6.0</div></div>
+      </div>
+      
+    </div><div class="farm-row" onclick="toggleFarmExpand(16)">
+      <div class="farm-row-top">
+        <span class="farm-row-name">Farm 16</span>
+        <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;">
+          
+          <span class="badge badge-danger">Overdue</span>
+          <span class="expand-chevron">▼</span>
+        </div>
+      </div>
+      <div class="silo-bar-wrap">
+        <div class="silo-bar-bg"><div class="silo-bar-fill danger" style="width:0%"></div></div>
+        <div class="silo-bar-label"><span>0% remaining</span><span>0.0t left</span></div>
+      </div>
+      <div class="farm-row-meta">
+        <div class="farm-meta-item"><div class="farm-meta-label">Cows</div><div class="farm-meta-val">800</div></div>
+        <div class="farm-meta-item"><div class="farm-meta-label">Usage/Day</div><div class="farm-meta-val">4.00 t</div></div>
+        <div class="farm-meta-item"><div class="farm-meta-label">Next Delivery</div><div class="farm-meta-val">30 Apr</div></div>
+        <div class="farm-meta-item"><div class="farm-meta-label">Days to Empty</div><div class="farm-meta-val">6.0</div></div>
+      </div>
+      
+    </div><div class="farm-row" onclick="toggleFarmExpand(17)">
+      <div class="farm-row-top">
+        <span class="farm-row-name">Farm 17</span>
+        <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;">
+          
+          <span class="badge badge-danger">Overdue</span>
+          <span class="expand-chevron">▼</span>
+        </div>
+      </div>
+      <div class="silo-bar-wrap">
+        <div class="silo-bar-bg"><div class="silo-bar-fill danger" style="width:0%"></div></div>
+        <div class="silo-bar-label"><span>0% remaining</span><span>0.0t left</span></div>
+      </div>
+      <div class="farm-row-meta">
+        <div class="farm-meta-item"><div class="farm-meta-label">Cows</div><div class="farm-meta-val">800</div></div>
+        <div class="farm-meta-item"><div class="farm-meta-label">Usage/Day</div><div class="farm-meta-val">4.00 t</div></div>
+        <div class="farm-meta-item"><div class="farm-meta-label">Next Delivery</div><div class="farm-meta-val">30 Apr</div></div>
+        <div class="farm-meta-item"><div class="farm-meta-label">Days to Empty</div><div class="farm-meta-val">6.0</div></div>
+      </div>
+      
+    </div><div class="farm-row" onclick="toggleFarmExpand(18)">
+      <div class="farm-row-top">
+        <span class="farm-row-name">Farm 18</span>
+        <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;">
+          
+          <span class="badge badge-danger">Overdue</span>
+          <span class="expand-chevron">▼</span>
+        </div>
+      </div>
+      <div class="silo-bar-wrap">
+        <div class="silo-bar-bg"><div class="silo-bar-fill danger" style="width:0%"></div></div>
+        <div class="silo-bar-label"><span>0% remaining</span><span>0.0t left</span></div>
+      </div>
+      <div class="farm-row-meta">
+        <div class="farm-meta-item"><div class="farm-meta-label">Cows</div><div class="farm-meta-val">800</div></div>
+        <div class="farm-meta-item"><div class="farm-meta-label">Usage/Day</div><div class="farm-meta-val">4.00 t</div></div>
+        <div class="farm-meta-item"><div class="farm-meta-label">Next Delivery</div><div class="farm-meta-val">30 Apr</div></div>
+        <div class="farm-meta-item"><div class="farm-meta-label">Days to Empty</div><div class="farm-meta-val">6.0</div></div>
+      </div>
+      
+    </div><div class="farm-row" onclick="toggleFarmExpand(19)">
+      <div class="farm-row-top">
+        <span class="farm-row-name">Farm 19</span>
+        <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;">
+          
+          <span class="badge badge-danger">Overdue</span>
+          <span class="expand-chevron">▼</span>
+        </div>
+      </div>
+      <div class="silo-bar-wrap">
+        <div class="silo-bar-bg"><div class="silo-bar-fill danger" style="width:0%"></div></div>
+        <div class="silo-bar-label"><span>0% remaining</span><span>0.0t left</span></div>
+      </div>
+      <div class="farm-row-meta">
+        <div class="farm-meta-item"><div class="farm-meta-label">Cows</div><div class="farm-meta-val">800</div></div>
+        <div class="farm-meta-item"><div class="farm-meta-label">Usage/Day</div><div class="farm-meta-val">4.00 t</div></div>
+        <div class="farm-meta-item"><div class="farm-meta-label">Next Delivery</div><div class="farm-meta-val">30 Apr</div></div>
+        <div class="farm-meta-item"><div class="farm-meta-label">Days to Empty</div><div class="farm-meta-val">6.0</div></div>
+      </div>
+      
+    </div><div class="farm-row" onclick="toggleFarmExpand(20)">
+      <div class="farm-row-top">
+        <span class="farm-row-name">Farm 20</span>
+        <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;">
+          
+          <span class="badge badge-danger">Overdue</span>
+          <span class="expand-chevron">▼</span>
+        </div>
+      </div>
+      <div class="silo-bar-wrap">
+        <div class="silo-bar-bg"><div class="silo-bar-fill danger" style="width:0%"></div></div>
+        <div class="silo-bar-label"><span>0% remaining</span><span>0.0t left</span></div>
+      </div>
+      <div class="farm-row-meta">
+        <div class="farm-meta-item"><div class="farm-meta-label">Cows</div><div class="farm-meta-val">800</div></div>
+        <div class="farm-meta-item"><div class="farm-meta-label">Usage/Day</div><div class="farm-meta-val">4.00 t</div></div>
+        <div class="farm-meta-item"><div class="farm-meta-label">Next Delivery</div><div class="farm-meta-val">30 Apr</div></div>
+        <div class="farm-meta-item"><div class="farm-meta-label">Days to Empty</div><div class="farm-meta-val">6.0</div></div>
+      </div>
+      
+    </div></div>
   </div>
 
   <!-- FARMS -->
   <div class="panel" id="tab-farms">
     <button class="add-farm-btn" onclick="addFarm()">＋ Add New Farm</button>
-    <div id="farmCards"></div>
+    <div id="farmCards"><div class="farm-card">
+      <div class="farm-card-header">
+        <div class="farm-card-name">Farm 1</div>
+        <button class="del-btn" onclick="removeFarm(0)">🗑 Remove</button>
+      </div>
+      <div class="form-grid">
+        <div class="form-group"><label>Farm Name</label><input type="text" value="Farm 1" onchange="updateFarm(0,'name',this.value)"></div>
+        <div class="form-group"><label>Silo (t)</label><input type="number" value="30" min="0" onchange="updateFarm(0,'silo',+this.value)"></div>
+        <div class="form-group"><label>No. of Cows</label><input type="number" value="800" min="0" onchange="updateFarm(0,'cows',+this.value)"></div>
+        <div class="form-group"><label>Feed Rate (kg/day)</label><input type="number" value="5" min="0" step="0.1" onchange="updateFarm(0,'feedRate',+this.value)"></div>
+        <div class="form-group"><label>Tonnes Delivered</label><input type="number" value="24" min="0" onchange="updateFarm(0,'tonnesDel',+this.value)"></div>
+        <div class="form-group"><label>Last Delivery</label><input type="date" value="2026-04-24" onchange="updateFarm(0,'lastDel',this.value)"></div>
+      </div>
+      <div class="form-grid">
+        <div class="form-group">
+          <label>Feed Type <span style="text-transform:none;font-weight:400;color:var(--text2);font-size:.62rem;">(e.g. Dairy Standard, Pasture Optimiser)</span></label>
+          <input type="text" value="" placeholder="e.g. Dairy Standard, Pasture Optimiser, Milko Hi Pro" onchange="updateFarm(0,'feedType',this.value)">
+        </div>
+        <div class="form-group">
+          <label>Extra Additives <span style="text-transform:none;font-weight:400;color:var(--text2);font-size:.62rem;">(optional)</span></label>
+          <input type="text" value="" placeholder="e.g. Availa Zn, DCP, E-mag" onchange="updateFarm(0,'additives',this.value)">
+        </div>
+        <div class="form-group">
+          <label>Phone Number</label>
+          <input type="tel" value="0470490438" placeholder="e.g. 0412 345 678" onchange="updateFarm(0,'phone',this.value)">
+        </div>
+      </div>
+      <div class="form-grid full">
+        <div class="form-group">
+          <label>Extra Comments</label>
+          <textarea rows="2" style="padding:10px 12px;border-radius:9px;border:1.5px solid var(--border);background:var(--surface2);color:var(--text);font-family:'DM Sans',sans-serif;font-size:.92rem;width:100%;resize:vertical;min-height:56px;transition:border-color .15s,background .15s;" placeholder="e.g. access notes, special instructions, contact details..." onchange="updateFarm(0,'comments',this.value)"></textarea>
+        </div>
+      </div>
+      <div class="form-grid full">
+        <div class="form-group">
+          <label>Next Delivery <span class="badge badge-warn" style="font-size:.58rem;">🔮 Predicted</span></label>
+          <input type="date" value="2026-04-29" style="border-color:var(--warn);background:var(--warn-light);" onchange="updateFarm(0,'nextDel',this.value)">
+          <span class="input-hint warn">Auto-calculated: last delivery + 6.0 days. Tap to override.</span>
+        </div>
+      </div>
+      <div class="farm-stats-bar">
+        📦 <strong>5.45</strong> containers/month &nbsp;|&nbsp;
+        <strong>1.26</strong>/week &nbsp;|&nbsp;
+        <strong>120.0 t</strong>/month &nbsp;|&nbsp;
+        Days to empty: <strong>6.0</strong>
+      </div>
+    </div><div class="farm-card">
+      <div class="farm-card-header">
+        <div class="farm-card-name">Farm 2</div>
+        <button class="del-btn" onclick="removeFarm(1)">🗑 Remove</button>
+      </div>
+      <div class="form-grid">
+        <div class="form-group"><label>Farm Name</label><input type="text" value="Farm 2" onchange="updateFarm(1,'name',this.value)"></div>
+        <div class="form-group"><label>Silo (t)</label><input type="number" value="40" min="0" onchange="updateFarm(1,'silo',+this.value)"></div>
+        <div class="form-group"><label>No. of Cows</label><input type="number" value="800" min="0" onchange="updateFarm(1,'cows',+this.value)"></div>
+        <div class="form-group"><label>Feed Rate (kg/day)</label><input type="number" value="5" min="0" step="0.1" onchange="updateFarm(1,'feedRate',+this.value)"></div>
+        <div class="form-group"><label>Tonnes Delivered</label><input type="number" value="24" min="0" onchange="updateFarm(1,'tonnesDel',+this.value)"></div>
+        <div class="form-group"><label>Last Delivery</label><input type="date" value="2026-04-24" onchange="updateFarm(1,'lastDel',this.value)"></div>
+      </div>
+      <div class="form-grid">
+        <div class="form-group">
+          <label>Feed Type <span style="text-transform:none;font-weight:400;color:var(--text2);font-size:.62rem;">(e.g. Dairy Standard, Pasture Optimiser)</span></label>
+          <input type="text" value="" placeholder="e.g. Dairy Standard, Pasture Optimiser, Milko Hi Pro" onchange="updateFarm(1,'feedType',this.value)">
+        </div>
+        <div class="form-group">
+          <label>Extra Additives <span style="text-transform:none;font-weight:400;color:var(--text2);font-size:.62rem;">(optional)</span></label>
+          <input type="text" value="" placeholder="e.g. Availa Zn, DCP, E-mag" onchange="updateFarm(1,'additives',this.value)">
+        </div>
+        <div class="form-group">
+          <label>Phone Number</label>
+          <input type="tel" value="" placeholder="e.g. 0412 345 678" onchange="updateFarm(1,'phone',this.value)">
+        </div>
+      </div>
+      <div class="form-grid full">
+        <div class="form-group">
+          <label>Extra Comments</label>
+          <textarea rows="2" style="padding:10px 12px;border-radius:9px;border:1.5px solid var(--border);background:var(--surface2);color:var(--text);font-family:'DM Sans',sans-serif;font-size:.92rem;width:100%;resize:vertical;min-height:56px;transition:border-color .15s,background .15s;" placeholder="e.g. access notes, special instructions, contact details..." onchange="updateFarm(1,'comments',this.value)"></textarea>
+        </div>
+      </div>
+      <div class="form-grid full">
+        <div class="form-group">
+          <label>Next Delivery <span class="badge badge-warn" style="font-size:.58rem;">🔮 Predicted</span></label>
+          <input type="date" value="2026-04-29" style="border-color:var(--warn);background:var(--warn-light);" onchange="updateFarm(1,'nextDel',this.value)">
+          <span class="input-hint warn">Auto-calculated: last delivery + 6.0 days. Tap to override.</span>
+        </div>
+      </div>
+      <div class="farm-stats-bar">
+        📦 <strong>5.45</strong> containers/month &nbsp;|&nbsp;
+        <strong>1.26</strong>/week &nbsp;|&nbsp;
+        <strong>120.0 t</strong>/month &nbsp;|&nbsp;
+        Days to empty: <strong>6.0</strong>
+      </div>
+    </div><div class="farm-card">
+      <div class="farm-card-header">
+        <div class="farm-card-name">Farm 3</div>
+        <button class="del-btn" onclick="removeFarm(2)">🗑 Remove</button>
+      </div>
+      <div class="form-grid">
+        <div class="form-group"><label>Farm Name</label><input type="text" value="Farm 3" onchange="updateFarm(2,'name',this.value)"></div>
+        <div class="form-group"><label>Silo (t)</label><input type="number" value="30" min="0" onchange="updateFarm(2,'silo',+this.value)"></div>
+        <div class="form-group"><label>No. of Cows</label><input type="number" value="800" min="0" onchange="updateFarm(2,'cows',+this.value)"></div>
+        <div class="form-group"><label>Feed Rate (kg/day)</label><input type="number" value="5" min="0" step="0.1" onchange="updateFarm(2,'feedRate',+this.value)"></div>
+        <div class="form-group"><label>Tonnes Delivered</label><input type="number" value="24" min="0" onchange="updateFarm(2,'tonnesDel',+this.value)"></div>
+        <div class="form-group"><label>Last Delivery</label><input type="date" value="2026-04-24" onchange="updateFarm(2,'lastDel',this.value)"></div>
+      </div>
+      <div class="form-grid">
+        <div class="form-group">
+          <label>Feed Type <span style="text-transform:none;font-weight:400;color:var(--text2);font-size:.62rem;">(e.g. Dairy Standard, Pasture Optimiser)</span></label>
+          <input type="text" value="" placeholder="e.g. Dairy Standard, Pasture Optimiser, Milko Hi Pro" onchange="updateFarm(2,'feedType',this.value)">
+        </div>
+        <div class="form-group">
+          <label>Extra Additives <span style="text-transform:none;font-weight:400;color:var(--text2);font-size:.62rem;">(optional)</span></label>
+          <input type="text" value="" placeholder="e.g. Availa Zn, DCP, E-mag" onchange="updateFarm(2,'additives',this.value)">
+        </div>
+        <div class="form-group">
+          <label>Phone Number</label>
+          <input type="tel" value="" placeholder="e.g. 0412 345 678" onchange="updateFarm(2,'phone',this.value)">
+        </div>
+      </div>
+      <div class="form-grid full">
+        <div class="form-group">
+          <label>Extra Comments</label>
+          <textarea rows="2" style="padding:10px 12px;border-radius:9px;border:1.5px solid var(--border);background:var(--surface2);color:var(--text);font-family:'DM Sans',sans-serif;font-size:.92rem;width:100%;resize:vertical;min-height:56px;transition:border-color .15s,background .15s;" placeholder="e.g. access notes, special instructions, contact details..." onchange="updateFarm(2,'comments',this.value)"></textarea>
+        </div>
+      </div>
+      <div class="form-grid full">
+        <div class="form-group">
+          <label>Next Delivery <span class="badge badge-warn" style="font-size:.58rem;">🔮 Predicted</span></label>
+          <input type="date" value="2026-04-29" style="border-color:var(--warn);background:var(--warn-light);" onchange="updateFarm(2,'nextDel',this.value)">
+          <span class="input-hint warn">Auto-calculated: last delivery + 6.0 days. Tap to override.</span>
+        </div>
+      </div>
+      <div class="farm-stats-bar">
+        📦 <strong>5.45</strong> containers/month &nbsp;|&nbsp;
+        <strong>1.26</strong>/week &nbsp;|&nbsp;
+        <strong>120.0 t</strong>/month &nbsp;|&nbsp;
+        Days to empty: <strong>6.0</strong>
+      </div>
+    </div><div class="farm-card">
+      <div class="farm-card-header">
+        <div class="farm-card-name">Farm 4</div>
+        <button class="del-btn" onclick="removeFarm(3)">🗑 Remove</button>
+      </div>
+      <div class="form-grid">
+        <div class="form-group"><label>Farm Name</label><input type="text" value="Farm 4" onchange="updateFarm(3,'name',this.value)"></div>
+        <div class="form-group"><label>Silo (t)</label><input type="number" value="40" min="0" onchange="updateFarm(3,'silo',+this.value)"></div>
+        <div class="form-group"><label>No. of Cows</label><input type="number" value="800" min="0" onchange="updateFarm(3,'cows',+this.value)"></div>
+        <div class="form-group"><label>Feed Rate (kg/day)</label><input type="number" value="5" min="0" step="0.1" onchange="updateFarm(3,'feedRate',+this.value)"></div>
+        <div class="form-group"><label>Tonnes Delivered</label><input type="number" value="24" min="0" onchange="updateFarm(3,'tonnesDel',+this.value)"></div>
+        <div class="form-group"><label>Last Delivery</label><input type="date" value="2026-04-24" onchange="updateFarm(3,'lastDel',this.value)"></div>
+      </div>
+      <div class="form-grid">
+        <div class="form-group">
+          <label>Feed Type <span style="text-transform:none;font-weight:400;color:var(--text2);font-size:.62rem;">(e.g. Dairy Standard, Pasture Optimiser)</span></label>
+          <input type="text" value="" placeholder="e.g. Dairy Standard, Pasture Optimiser, Milko Hi Pro" onchange="updateFarm(3,'feedType',this.value)">
+        </div>
+        <div class="form-group">
+          <label>Extra Additives <span style="text-transform:none;font-weight:400;color:var(--text2);font-size:.62rem;">(optional)</span></label>
+          <input type="text" value="" placeholder="e.g. Availa Zn, DCP, E-mag" onchange="updateFarm(3,'additives',this.value)">
+        </div>
+        <div class="form-group">
+          <label>Phone Number</label>
+          <input type="tel" value="" placeholder="e.g. 0412 345 678" onchange="updateFarm(3,'phone',this.value)">
+        </div>
+      </div>
+      <div class="form-grid full">
+        <div class="form-group">
+          <label>Extra Comments</label>
+          <textarea rows="2" style="padding:10px 12px;border-radius:9px;border:1.5px solid var(--border);background:var(--surface2);color:var(--text);font-family:'DM Sans',sans-serif;font-size:.92rem;width:100%;resize:vertical;min-height:56px;transition:border-color .15s,background .15s;" placeholder="e.g. access notes, special instructions, contact details..." onchange="updateFarm(3,'comments',this.value)"></textarea>
+        </div>
+      </div>
+      <div class="form-grid full">
+        <div class="form-group">
+          <label>Next Delivery <span class="badge badge-warn" style="font-size:.58rem;">🔮 Predicted</span></label>
+          <input type="date" value="2026-04-29" style="border-color:var(--warn);background:var(--warn-light);" onchange="updateFarm(3,'nextDel',this.value)">
+          <span class="input-hint warn">Auto-calculated: last delivery + 6.0 days. Tap to override.</span>
+        </div>
+      </div>
+      <div class="farm-stats-bar">
+        📦 <strong>5.45</strong> containers/month &nbsp;|&nbsp;
+        <strong>1.26</strong>/week &nbsp;|&nbsp;
+        <strong>120.0 t</strong>/month &nbsp;|&nbsp;
+        Days to empty: <strong>6.0</strong>
+      </div>
+    </div><div class="farm-card">
+      <div class="farm-card-header">
+        <div class="farm-card-name">Farm 5</div>
+        <button class="del-btn" onclick="removeFarm(4)">🗑 Remove</button>
+      </div>
+      <div class="form-grid">
+        <div class="form-group"><label>Farm Name</label><input type="text" value="Farm 5" onchange="updateFarm(4,'name',this.value)"></div>
+        <div class="form-group"><label>Silo (t)</label><input type="number" value="30" min="0" onchange="updateFarm(4,'silo',+this.value)"></div>
+        <div class="form-group"><label>No. of Cows</label><input type="number" value="800" min="0" onchange="updateFarm(4,'cows',+this.value)"></div>
+        <div class="form-group"><label>Feed Rate (kg/day)</label><input type="number" value="5" min="0" step="0.1" onchange="updateFarm(4,'feedRate',+this.value)"></div>
+        <div class="form-group"><label>Tonnes Delivered</label><input type="number" value="24" min="0" onchange="updateFarm(4,'tonnesDel',+this.value)"></div>
+        <div class="form-group"><label>Last Delivery</label><input type="date" value="2026-04-24" onchange="updateFarm(4,'lastDel',this.value)"></div>
+      </div>
+      <div class="form-grid">
+        <div class="form-group">
+          <label>Feed Type <span style="text-transform:none;font-weight:400;color:var(--text2);font-size:.62rem;">(e.g. Dairy Standard, Pasture Optimiser)</span></label>
+          <input type="text" value="" placeholder="e.g. Dairy Standard, Pasture Optimiser, Milko Hi Pro" onchange="updateFarm(4,'feedType',this.value)">
+        </div>
+        <div class="form-group">
+          <label>Extra Additives <span style="text-transform:none;font-weight:400;color:var(--text2);font-size:.62rem;">(optional)</span></label>
+          <input type="text" value="" placeholder="e.g. Availa Zn, DCP, E-mag" onchange="updateFarm(4,'additives',this.value)">
+        </div>
+        <div class="form-group">
+          <label>Phone Number</label>
+          <input type="tel" value="" placeholder="e.g. 0412 345 678" onchange="updateFarm(4,'phone',this.value)">
+        </div>
+      </div>
+      <div class="form-grid full">
+        <div class="form-group">
+          <label>Extra Comments</label>
+          <textarea rows="2" style="padding:10px 12px;border-radius:9px;border:1.5px solid var(--border);background:var(--surface2);color:var(--text);font-family:'DM Sans',sans-serif;font-size:.92rem;width:100%;resize:vertical;min-height:56px;transition:border-color .15s,background .15s;" placeholder="e.g. access notes, special instructions, contact details..." onchange="updateFarm(4,'comments',this.value)"></textarea>
+        </div>
+      </div>
+      <div class="form-grid full">
+        <div class="form-group">
+          <label>Next Delivery <span class="badge badge-warn" style="font-size:.58rem;">🔮 Predicted</span></label>
+          <input type="date" value="2026-04-29" style="border-color:var(--warn);background:var(--warn-light);" onchange="updateFarm(4,'nextDel',this.value)">
+          <span class="input-hint warn">Auto-calculated: last delivery + 6.0 days. Tap to override.</span>
+        </div>
+      </div>
+      <div class="farm-stats-bar">
+        📦 <strong>5.45</strong> containers/month &nbsp;|&nbsp;
+        <strong>1.26</strong>/week &nbsp;|&nbsp;
+        <strong>120.0 t</strong>/month &nbsp;|&nbsp;
+        Days to empty: <strong>6.0</strong>
+      </div>
+    </div><div class="farm-card">
+      <div class="farm-card-header">
+        <div class="farm-card-name">Farm 6</div>
+        <button class="del-btn" onclick="removeFarm(5)">🗑 Remove</button>
+      </div>
+      <div class="form-grid">
+        <div class="form-group"><label>Farm Name</label><input type="text" value="Farm 6" onchange="updateFarm(5,'name',this.value)"></div>
+        <div class="form-group"><label>Silo (t)</label><input type="number" value="40" min="0" onchange="updateFarm(5,'silo',+this.value)"></div>
+        <div class="form-group"><label>No. of Cows</label><input type="number" value="800" min="0" onchange="updateFarm(5,'cows',+this.value)"></div>
+        <div class="form-group"><label>Feed Rate (kg/day)</label><input type="number" value="5" min="0" step="0.1" onchange="updateFarm(5,'feedRate',+this.value)"></div>
+        <div class="form-group"><label>Tonnes Delivered</label><input type="number" value="24" min="0" onchange="updateFarm(5,'tonnesDel',+this.value)"></div>
+        <div class="form-group"><label>Last Delivery</label><input type="date" value="2026-04-24" onchange="updateFarm(5,'lastDel',this.value)"></div>
+      </div>
+      <div class="form-grid">
+        <div class="form-group">
+          <label>Feed Type <span style="text-transform:none;font-weight:400;color:var(--text2);font-size:.62rem;">(e.g. Dairy Standard, Pasture Optimiser)</span></label>
+          <input type="text" value="" placeholder="e.g. Dairy Standard, Pasture Optimiser, Milko Hi Pro" onchange="updateFarm(5,'feedType',this.value)">
+        </div>
+        <div class="form-group">
+          <label>Extra Additives <span style="text-transform:none;font-weight:400;color:var(--text2);font-size:.62rem;">(optional)</span></label>
+          <input type="text" value="" placeholder="e.g. Availa Zn, DCP, E-mag" onchange="updateFarm(5,'additives',this.value)">
+        </div>
+        <div class="form-group">
+          <label>Phone Number</label>
+          <input type="tel" value="" placeholder="e.g. 0412 345 678" onchange="updateFarm(5,'phone',this.value)">
+        </div>
+      </div>
+      <div class="form-grid full">
+        <div class="form-group">
+          <label>Extra Comments</label>
+          <textarea rows="2" style="padding:10px 12px;border-radius:9px;border:1.5px solid var(--border);background:var(--surface2);color:var(--text);font-family:'DM Sans',sans-serif;font-size:.92rem;width:100%;resize:vertical;min-height:56px;transition:border-color .15s,background .15s;" placeholder="e.g. access notes, special instructions, contact details..." onchange="updateFarm(5,'comments',this.value)"></textarea>
+        </div>
+      </div>
+      <div class="form-grid full">
+        <div class="form-group">
+          <label>Next Delivery <span class="badge badge-warn" style="font-size:.58rem;">🔮 Predicted</span></label>
+          <input type="date" value="2026-04-29" style="border-color:var(--warn);background:var(--warn-light);" onchange="updateFarm(5,'nextDel',this.value)">
+          <span class="input-hint warn">Auto-calculated: last delivery + 6.0 days. Tap to override.</span>
+        </div>
+      </div>
+      <div class="farm-stats-bar">
+        📦 <strong>5.45</strong> containers/month &nbsp;|&nbsp;
+        <strong>1.26</strong>/week &nbsp;|&nbsp;
+        <strong>120.0 t</strong>/month &nbsp;|&nbsp;
+        Days to empty: <strong>6.0</strong>
+      </div>
+    </div><div class="farm-card">
+      <div class="farm-card-header">
+        <div class="farm-card-name">Farm 7</div>
+        <button class="del-btn" onclick="removeFarm(6)">🗑 Remove</button>
+      </div>
+      <div class="form-grid">
+        <div class="form-group"><label>Farm Name</label><input type="text" value="Farm 7" onchange="updateFarm(6,'name',this.value)"></div>
+        <div class="form-group"><label>Silo (t)</label><input type="number" value="30" min="0" onchange="updateFarm(6,'silo',+this.value)"></div>
+        <div class="form-group"><label>No. of Cows</label><input type="number" value="800" min="0" onchange="updateFarm(6,'cows',+this.value)"></div>
+        <div class="form-group"><label>Feed Rate (kg/day)</label><input type="number" value="5" min="0" step="0.1" onchange="updateFarm(6,'feedRate',+this.value)"></div>
+        <div class="form-group"><label>Tonnes Delivered</label><input type="number" value="24" min="0" onchange="updateFarm(6,'tonnesDel',+this.value)"></div>
+        <div class="form-group"><label>Last Delivery</label><input type="date" value="2026-04-24" onchange="updateFarm(6,'lastDel',this.value)"></div>
+      </div>
+      <div class="form-grid">
+        <div class="form-group">
+          <label>Feed Type <span style="text-transform:none;font-weight:400;color:var(--text2);font-size:.62rem;">(e.g. Dairy Standard, Pasture Optimiser)</span></label>
+          <input type="text" value="" placeholder="e.g. Dairy Standard, Pasture Optimiser, Milko Hi Pro" onchange="updateFarm(6,'feedType',this.value)">
+        </div>
+        <div class="form-group">
+          <label>Extra Additives <span style="text-transform:none;font-weight:400;color:var(--text2);font-size:.62rem;">(optional)</span></label>
+          <input type="text" value="" placeholder="e.g. Availa Zn, DCP, E-mag" onchange="updateFarm(6,'additives',this.value)">
+        </div>
+        <div class="form-group">
+          <label>Phone Number</label>
+          <input type="tel" value="" placeholder="e.g. 0412 345 678" onchange="updateFarm(6,'phone',this.value)">
+        </div>
+      </div>
+      <div class="form-grid full">
+        <div class="form-group">
+          <label>Extra Comments</label>
+          <textarea rows="2" style="padding:10px 12px;border-radius:9px;border:1.5px solid var(--border);background:var(--surface2);color:var(--text);font-family:'DM Sans',sans-serif;font-size:.92rem;width:100%;resize:vertical;min-height:56px;transition:border-color .15s,background .15s;" placeholder="e.g. access notes, special instructions, contact details..." onchange="updateFarm(6,'comments',this.value)"></textarea>
+        </div>
+      </div>
+      <div class="form-grid full">
+        <div class="form-group">
+          <label>Next Delivery <span class="badge badge-warn" style="font-size:.58rem;">🔮 Predicted</span></label>
+          <input type="date" value="2026-04-29" style="border-color:var(--warn);background:var(--warn-light);" onchange="updateFarm(6,'nextDel',this.value)">
+          <span class="input-hint warn">Auto-calculated: last delivery + 6.0 days. Tap to override.</span>
+        </div>
+      </div>
+      <div class="farm-stats-bar">
+        📦 <strong>5.45</strong> containers/month &nbsp;|&nbsp;
+        <strong>1.26</strong>/week &nbsp;|&nbsp;
+        <strong>120.0 t</strong>/month &nbsp;|&nbsp;
+        Days to empty: <strong>6.0</strong>
+      </div>
+    </div><div class="farm-card">
+      <div class="farm-card-header">
+        <div class="farm-card-name">Farm 8</div>
+        <button class="del-btn" onclick="removeFarm(7)">🗑 Remove</button>
+      </div>
+      <div class="form-grid">
+        <div class="form-group"><label>Farm Name</label><input type="text" value="Farm 8" onchange="updateFarm(7,'name',this.value)"></div>
+        <div class="form-group"><label>Silo (t)</label><input type="number" value="40" min="0" onchange="updateFarm(7,'silo',+this.value)"></div>
+        <div class="form-group"><label>No. of Cows</label><input type="number" value="800" min="0" onchange="updateFarm(7,'cows',+this.value)"></div>
+        <div class="form-group"><label>Feed Rate (kg/day)</label><input type="number" value="5" min="0" step="0.1" onchange="updateFarm(7,'feedRate',+this.value)"></div>
+        <div class="form-group"><label>Tonnes Delivered</label><input type="number" value="24" min="0" onchange="updateFarm(7,'tonnesDel',+this.value)"></div>
+        <div class="form-group"><label>Last Delivery</label><input type="date" value="2026-04-24" onchange="updateFarm(7,'lastDel',this.value)"></div>
+      </div>
+      <div class="form-grid">
+        <div class="form-group">
+          <label>Feed Type <span style="text-transform:none;font-weight:400;color:var(--text2);font-size:.62rem;">(e.g. Dairy Standard, Pasture Optimiser)</span></label>
+          <input type="text" value="" placeholder="e.g. Dairy Standard, Pasture Optimiser, Milko Hi Pro" onchange="updateFarm(7,'feedType',this.value)">
+        </div>
+        <div class="form-group">
+          <label>Extra Additives <span style="text-transform:none;font-weight:400;color:var(--text2);font-size:.62rem;">(optional)</span></label>
+          <input type="text" value="" placeholder="e.g. Availa Zn, DCP, E-mag" onchange="updateFarm(7,'additives',this.value)">
+        </div>
+        <div class="form-group">
+          <label>Phone Number</label>
+          <input type="tel" value="" placeholder="e.g. 0412 345 678" onchange="updateFarm(7,'phone',this.value)">
+        </div>
+      </div>
+      <div class="form-grid full">
+        <div class="form-group">
+          <label>Extra Comments</label>
+          <textarea rows="2" style="padding:10px 12px;border-radius:9px;border:1.5px solid var(--border);background:var(--surface2);color:var(--text);font-family:'DM Sans',sans-serif;font-size:.92rem;width:100%;resize:vertical;min-height:56px;transition:border-color .15s,background .15s;" placeholder="e.g. access notes, special instructions, contact details..." onchange="updateFarm(7,'comments',this.value)"></textarea>
+        </div>
+      </div>
+      <div class="form-grid full">
+        <div class="form-group">
+          <label>Next Delivery <span class="badge badge-warn" style="font-size:.58rem;">🔮 Predicted</span></label>
+          <input type="date" value="2026-04-29" style="border-color:var(--warn);background:var(--warn-light);" onchange="updateFarm(7,'nextDel',this.value)">
+          <span class="input-hint warn">Auto-calculated: last delivery + 6.0 days. Tap to override.</span>
+        </div>
+      </div>
+      <div class="farm-stats-bar">
+        📦 <strong>5.45</strong> containers/month &nbsp;|&nbsp;
+        <strong>1.26</strong>/week &nbsp;|&nbsp;
+        <strong>120.0 t</strong>/month &nbsp;|&nbsp;
+        Days to empty: <strong>6.0</strong>
+      </div>
+    </div><div class="farm-card">
+      <div class="farm-card-header">
+        <div class="farm-card-name">Farm 9</div>
+        <button class="del-btn" onclick="removeFarm(8)">🗑 Remove</button>
+      </div>
+      <div class="form-grid">
+        <div class="form-group"><label>Farm Name</label><input type="text" value="Farm 9" onchange="updateFarm(8,'name',this.value)"></div>
+        <div class="form-group"><label>Silo (t)</label><input type="number" value="30" min="0" onchange="updateFarm(8,'silo',+this.value)"></div>
+        <div class="form-group"><label>No. of Cows</label><input type="number" value="800" min="0" onchange="updateFarm(8,'cows',+this.value)"></div>
+        <div class="form-group"><label>Feed Rate (kg/day)</label><input type="number" value="5" min="0" step="0.1" onchange="updateFarm(8,'feedRate',+this.value)"></div>
+        <div class="form-group"><label>Tonnes Delivered</label><input type="number" value="24" min="0" onchange="updateFarm(8,'tonnesDel',+this.value)"></div>
+        <div class="form-group"><label>Last Delivery</label><input type="date" value="2026-04-24" onchange="updateFarm(8,'lastDel',this.value)"></div>
+      </div>
+      <div class="form-grid">
+        <div class="form-group">
+          <label>Feed Type <span style="text-transform:none;font-weight:400;color:var(--text2);font-size:.62rem;">(e.g. Dairy Standard, Pasture Optimiser)</span></label>
+          <input type="text" value="" placeholder="e.g. Dairy Standard, Pasture Optimiser, Milko Hi Pro" onchange="updateFarm(8,'feedType',this.value)">
+        </div>
+        <div class="form-group">
+          <label>Extra Additives <span style="text-transform:none;font-weight:400;color:var(--text2);font-size:.62rem;">(optional)</span></label>
+          <input type="text" value="" placeholder="e.g. Availa Zn, DCP, E-mag" onchange="updateFarm(8,'additives',this.value)">
+        </div>
+        <div class="form-group">
+          <label>Phone Number</label>
+          <input type="tel" value="" placeholder="e.g. 0412 345 678" onchange="updateFarm(8,'phone',this.value)">
+        </div>
+      </div>
+      <div class="form-grid full">
+        <div class="form-group">
+          <label>Extra Comments</label>
+          <textarea rows="2" style="padding:10px 12px;border-radius:9px;border:1.5px solid var(--border);background:var(--surface2);color:var(--text);font-family:'DM Sans',sans-serif;font-size:.92rem;width:100%;resize:vertical;min-height:56px;transition:border-color .15s,background .15s;" placeholder="e.g. access notes, special instructions, contact details..." onchange="updateFarm(8,'comments',this.value)"></textarea>
+        </div>
+      </div>
+      <div class="form-grid full">
+        <div class="form-group">
+          <label>Next Delivery <span class="badge badge-warn" style="font-size:.58rem;">🔮 Predicted</span></label>
+          <input type="date" value="2026-04-29" style="border-color:var(--warn);background:var(--warn-light);" onchange="updateFarm(8,'nextDel',this.value)">
+          <span class="input-hint warn">Auto-calculated: last delivery + 6.0 days. Tap to override.</span>
+        </div>
+      </div>
+      <div class="farm-stats-bar">
+        📦 <strong>5.45</strong> containers/month &nbsp;|&nbsp;
+        <strong>1.26</strong>/week &nbsp;|&nbsp;
+        <strong>120.0 t</strong>/month &nbsp;|&nbsp;
+        Days to empty: <strong>6.0</strong>
+      </div>
+    </div><div class="farm-card">
+      <div class="farm-card-header">
+        <div class="farm-card-name">Farm 10</div>
+        <button class="del-btn" onclick="removeFarm(9)">🗑 Remove</button>
+      </div>
+      <div class="form-grid">
+        <div class="form-group"><label>Farm Name</label><input type="text" value="Farm 10" onchange="updateFarm(9,'name',this.value)"></div>
+        <div class="form-group"><label>Silo (t)</label><input type="number" value="40" min="0" onchange="updateFarm(9,'silo',+this.value)"></div>
+        <div class="form-group"><label>No. of Cows</label><input type="number" value="800" min="0" onchange="updateFarm(9,'cows',+this.value)"></div>
+        <div class="form-group"><label>Feed Rate (kg/day)</label><input type="number" value="5" min="0" step="0.1" onchange="updateFarm(9,'feedRate',+this.value)"></div>
+        <div class="form-group"><label>Tonnes Delivered</label><input type="number" value="24" min="0" onchange="updateFarm(9,'tonnesDel',+this.value)"></div>
+        <div class="form-group"><label>Last Delivery</label><input type="date" value="2026-04-24" onchange="updateFarm(9,'lastDel',this.value)"></div>
+      </div>
+      <div class="form-grid">
+        <div class="form-group">
+          <label>Feed Type <span style="text-transform:none;font-weight:400;color:var(--text2);font-size:.62rem;">(e.g. Dairy Standard, Pasture Optimiser)</span></label>
+          <input type="text" value="" placeholder="e.g. Dairy Standard, Pasture Optimiser, Milko Hi Pro" onchange="updateFarm(9,'feedType',this.value)">
+        </div>
+        <div class="form-group">
+          <label>Extra Additives <span style="text-transform:none;font-weight:400;color:var(--text2);font-size:.62rem;">(optional)</span></label>
+          <input type="text" value="" placeholder="e.g. Availa Zn, DCP, E-mag" onchange="updateFarm(9,'additives',this.value)">
+        </div>
+        <div class="form-group">
+          <label>Phone Number</label>
+          <input type="tel" value="" placeholder="e.g. 0412 345 678" onchange="updateFarm(9,'phone',this.value)">
+        </div>
+      </div>
+      <div class="form-grid full">
+        <div class="form-group">
+          <label>Extra Comments</label>
+          <textarea rows="2" style="padding:10px 12px;border-radius:9px;border:1.5px solid var(--border);background:var(--surface2);color:var(--text);font-family:'DM Sans',sans-serif;font-size:.92rem;width:100%;resize:vertical;min-height:56px;transition:border-color .15s,background .15s;" placeholder="e.g. access notes, special instructions, contact details..." onchange="updateFarm(9,'comments',this.value)"></textarea>
+        </div>
+      </div>
+      <div class="form-grid full">
+        <div class="form-group">
+          <label>Next Delivery <span class="badge badge-warn" style="font-size:.58rem;">🔮 Predicted</span></label>
+          <input type="date" value="2026-04-29" style="border-color:var(--warn);background:var(--warn-light);" onchange="updateFarm(9,'nextDel',this.value)">
+          <span class="input-hint warn">Auto-calculated: last delivery + 6.0 days. Tap to override.</span>
+        </div>
+      </div>
+      <div class="farm-stats-bar">
+        📦 <strong>5.45</strong> containers/month &nbsp;|&nbsp;
+        <strong>1.26</strong>/week &nbsp;|&nbsp;
+        <strong>120.0 t</strong>/month &nbsp;|&nbsp;
+        Days to empty: <strong>6.0</strong>
+      </div>
+    </div><div class="farm-card">
+      <div class="farm-card-header">
+        <div class="farm-card-name">Farm 11</div>
+        <button class="del-btn" onclick="removeFarm(10)">🗑 Remove</button>
+      </div>
+      <div class="form-grid">
+        <div class="form-group"><label>Farm Name</label><input type="text" value="Farm 11" onchange="updateFarm(10,'name',this.value)"></div>
+        <div class="form-group"><label>Silo (t)</label><input type="number" value="30" min="0" onchange="updateFarm(10,'silo',+this.value)"></div>
+        <div class="form-group"><label>No. of Cows</label><input type="number" value="800" min="0" onchange="updateFarm(10,'cows',+this.value)"></div>
+        <div class="form-group"><label>Feed Rate (kg/day)</label><input type="number" value="5" min="0" step="0.1" onchange="updateFarm(10,'feedRate',+this.value)"></div>
+        <div class="form-group"><label>Tonnes Delivered</label><input type="number" value="24" min="0" onchange="updateFarm(10,'tonnesDel',+this.value)"></div>
+        <div class="form-group"><label>Last Delivery</label><input type="date" value="2026-04-24" onchange="updateFarm(10,'lastDel',this.value)"></div>
+      </div>
+      <div class="form-grid">
+        <div class="form-group">
+          <label>Feed Type <span style="text-transform:none;font-weight:400;color:var(--text2);font-size:.62rem;">(e.g. Dairy Standard, Pasture Optimiser)</span></label>
+          <input type="text" value="" placeholder="e.g. Dairy Standard, Pasture Optimiser, Milko Hi Pro" onchange="updateFarm(10,'feedType',this.value)">
+        </div>
+        <div class="form-group">
+          <label>Extra Additives <span style="text-transform:none;font-weight:400;color:var(--text2);font-size:.62rem;">(optional)</span></label>
+          <input type="text" value="" placeholder="e.g. Availa Zn, DCP, E-mag" onchange="updateFarm(10,'additives',this.value)">
+        </div>
+        <div class="form-group">
+          <label>Phone Number</label>
+          <input type="tel" value="" placeholder="e.g. 0412 345 678" onchange="updateFarm(10,'phone',this.value)">
+        </div>
+      </div>
+      <div class="form-grid full">
+        <div class="form-group">
+          <label>Extra Comments</label>
+          <textarea rows="2" style="padding:10px 12px;border-radius:9px;border:1.5px solid var(--border);background:var(--surface2);color:var(--text);font-family:'DM Sans',sans-serif;font-size:.92rem;width:100%;resize:vertical;min-height:56px;transition:border-color .15s,background .15s;" placeholder="e.g. access notes, special instructions, contact details..." onchange="updateFarm(10,'comments',this.value)"></textarea>
+        </div>
+      </div>
+      <div class="form-grid full">
+        <div class="form-group">
+          <label>Next Delivery <span class="badge badge-warn" style="font-size:.58rem;">🔮 Predicted</span></label>
+          <input type="date" value="2026-04-29" style="border-color:var(--warn);background:var(--warn-light);" onchange="updateFarm(10,'nextDel',this.value)">
+          <span class="input-hint warn">Auto-calculated: last delivery + 6.0 days. Tap to override.</span>
+        </div>
+      </div>
+      <div class="farm-stats-bar">
+        📦 <strong>5.45</strong> containers/month &nbsp;|&nbsp;
+        <strong>1.26</strong>/week &nbsp;|&nbsp;
+        <strong>120.0 t</strong>/month &nbsp;|&nbsp;
+        Days to empty: <strong>6.0</strong>
+      </div>
+    </div><div class="farm-card">
+      <div class="farm-card-header">
+        <div class="farm-card-name">Farm 12</div>
+        <button class="del-btn" onclick="removeFarm(11)">🗑 Remove</button>
+      </div>
+      <div class="form-grid">
+        <div class="form-group"><label>Farm Name</label><input type="text" value="Farm 12" onchange="updateFarm(11,'name',this.value)"></div>
+        <div class="form-group"><label>Silo (t)</label><input type="number" value="40" min="0" onchange="updateFarm(11,'silo',+this.value)"></div>
+        <div class="form-group"><label>No. of Cows</label><input type="number" value="800" min="0" onchange="updateFarm(11,'cows',+this.value)"></div>
+        <div class="form-group"><label>Feed Rate (kg/day)</label><input type="number" value="5" min="0" step="0.1" onchange="updateFarm(11,'feedRate',+this.value)"></div>
+        <div class="form-group"><label>Tonnes Delivered</label><input type="number" value="24" min="0" onchange="updateFarm(11,'tonnesDel',+this.value)"></div>
+        <div class="form-group"><label>Last Delivery</label><input type="date" value="2026-04-24" onchange="updateFarm(11,'lastDel',this.value)"></div>
+      </div>
+      <div class="form-grid">
+        <div class="form-group">
+          <label>Feed Type <span style="text-transform:none;font-weight:400;color:var(--text2);font-size:.62rem;">(e.g. Dairy Standard, Pasture Optimiser)</span></label>
+          <input type="text" value="" placeholder="e.g. Dairy Standard, Pasture Optimiser, Milko Hi Pro" onchange="updateFarm(11,'feedType',this.value)">
+        </div>
+        <div class="form-group">
+          <label>Extra Additives <span style="text-transform:none;font-weight:400;color:var(--text2);font-size:.62rem;">(optional)</span></label>
+          <input type="text" value="" placeholder="e.g. Availa Zn, DCP, E-mag" onchange="updateFarm(11,'additives',this.value)">
+        </div>
+        <div class="form-group">
+          <label>Phone Number</label>
+          <input type="tel" value="" placeholder="e.g. 0412 345 678" onchange="updateFarm(11,'phone',this.value)">
+        </div>
+      </div>
+      <div class="form-grid full">
+        <div class="form-group">
+          <label>Extra Comments</label>
+          <textarea rows="2" style="padding:10px 12px;border-radius:9px;border:1.5px solid var(--border);background:var(--surface2);color:var(--text);font-family:'DM Sans',sans-serif;font-size:.92rem;width:100%;resize:vertical;min-height:56px;transition:border-color .15s,background .15s;" placeholder="e.g. access notes, special instructions, contact details..." onchange="updateFarm(11,'comments',this.value)"></textarea>
+        </div>
+      </div>
+      <div class="form-grid full">
+        <div class="form-group">
+          <label>Next Delivery <span class="badge badge-warn" style="font-size:.58rem;">🔮 Predicted</span></label>
+          <input type="date" value="2026-04-29" style="border-color:var(--warn);background:var(--warn-light);" onchange="updateFarm(11,'nextDel',this.value)">
+          <span class="input-hint warn">Auto-calculated: last delivery + 6.0 days. Tap to override.</span>
+        </div>
+      </div>
+      <div class="farm-stats-bar">
+        📦 <strong>5.45</strong> containers/month &nbsp;|&nbsp;
+        <strong>1.26</strong>/week &nbsp;|&nbsp;
+        <strong>120.0 t</strong>/month &nbsp;|&nbsp;
+        Days to empty: <strong>6.0</strong>
+      </div>
+    </div><div class="farm-card">
+      <div class="farm-card-header">
+        <div class="farm-card-name">Farm 13</div>
+        <button class="del-btn" onclick="removeFarm(12)">🗑 Remove</button>
+      </div>
+      <div class="form-grid">
+        <div class="form-group"><label>Farm Name</label><input type="text" value="Farm 13" onchange="updateFarm(12,'name',this.value)"></div>
+        <div class="form-group"><label>Silo (t)</label><input type="number" value="30" min="0" onchange="updateFarm(12,'silo',+this.value)"></div>
+        <div class="form-group"><label>No. of Cows</label><input type="number" value="800" min="0" onchange="updateFarm(12,'cows',+this.value)"></div>
+        <div class="form-group"><label>Feed Rate (kg/day)</label><input type="number" value="5" min="0" step="0.1" onchange="updateFarm(12,'feedRate',+this.value)"></div>
+        <div class="form-group"><label>Tonnes Delivered</label><input type="number" value="24" min="0" onchange="updateFarm(12,'tonnesDel',+this.value)"></div>
+        <div class="form-group"><label>Last Delivery</label><input type="date" value="2026-04-24" onchange="updateFarm(12,'lastDel',this.value)"></div>
+      </div>
+      <div class="form-grid">
+        <div class="form-group">
+          <label>Feed Type <span style="text-transform:none;font-weight:400;color:var(--text2);font-size:.62rem;">(e.g. Dairy Standard, Pasture Optimiser)</span></label>
+          <input type="text" value="" placeholder="e.g. Dairy Standard, Pasture Optimiser, Milko Hi Pro" onchange="updateFarm(12,'feedType',this.value)">
+        </div>
+        <div class="form-group">
+          <label>Extra Additives <span style="text-transform:none;font-weight:400;color:var(--text2);font-size:.62rem;">(optional)</span></label>
+          <input type="text" value="" placeholder="e.g. Availa Zn, DCP, E-mag" onchange="updateFarm(12,'additives',this.value)">
+        </div>
+        <div class="form-group">
+          <label>Phone Number</label>
+          <input type="tel" value="" placeholder="e.g. 0412 345 678" onchange="updateFarm(12,'phone',this.value)">
+        </div>
+      </div>
+      <div class="form-grid full">
+        <div class="form-group">
+          <label>Extra Comments</label>
+          <textarea rows="2" style="padding:10px 12px;border-radius:9px;border:1.5px solid var(--border);background:var(--surface2);color:var(--text);font-family:'DM Sans',sans-serif;font-size:.92rem;width:100%;resize:vertical;min-height:56px;transition:border-color .15s,background .15s;" placeholder="e.g. access notes, special instructions, contact details..." onchange="updateFarm(12,'comments',this.value)"></textarea>
+        </div>
+      </div>
+      <div class="form-grid full">
+        <div class="form-group">
+          <label>Next Delivery <span class="badge badge-warn" style="font-size:.58rem;">🔮 Predicted</span></label>
+          <input type="date" value="2026-04-29" style="border-color:var(--warn);background:var(--warn-light);" onchange="updateFarm(12,'nextDel',this.value)">
+          <span class="input-hint warn">Auto-calculated: last delivery + 6.0 days. Tap to override.</span>
+        </div>
+      </div>
+      <div class="farm-stats-bar">
+        📦 <strong>5.45</strong> containers/month &nbsp;|&nbsp;
+        <strong>1.26</strong>/week &nbsp;|&nbsp;
+        <strong>120.0 t</strong>/month &nbsp;|&nbsp;
+        Days to empty: <strong>6.0</strong>
+      </div>
+    </div><div class="farm-card">
+      <div class="farm-card-header">
+        <div class="farm-card-name">Farm 14</div>
+        <button class="del-btn" onclick="removeFarm(13)">🗑 Remove</button>
+      </div>
+      <div class="form-grid">
+        <div class="form-group"><label>Farm Name</label><input type="text" value="Farm 14" onchange="updateFarm(13,'name',this.value)"></div>
+        <div class="form-group"><label>Silo (t)</label><input type="number" value="40" min="0" onchange="updateFarm(13,'silo',+this.value)"></div>
+        <div class="form-group"><label>No. of Cows</label><input type="number" value="800" min="0" onchange="updateFarm(13,'cows',+this.value)"></div>
+        <div class="form-group"><label>Feed Rate (kg/day)</label><input type="number" value="5" min="0" step="0.1" onchange="updateFarm(13,'feedRate',+this.value)"></div>
+        <div class="form-group"><label>Tonnes Delivered</label><input type="number" value="24" min="0" onchange="updateFarm(13,'tonnesDel',+this.value)"></div>
+        <div class="form-group"><label>Last Delivery</label><input type="date" value="2026-04-24" onchange="updateFarm(13,'lastDel',this.value)"></div>
+      </div>
+      <div class="form-grid">
+        <div class="form-group">
+          <label>Feed Type <span style="text-transform:none;font-weight:400;color:var(--text2);font-size:.62rem;">(e.g. Dairy Standard, Pasture Optimiser)</span></label>
+          <input type="text" value="" placeholder="e.g. Dairy Standard, Pasture Optimiser, Milko Hi Pro" onchange="updateFarm(13,'feedType',this.value)">
+        </div>
+        <div class="form-group">
+          <label>Extra Additives <span style="text-transform:none;font-weight:400;color:var(--text2);font-size:.62rem;">(optional)</span></label>
+          <input type="text" value="" placeholder="e.g. Availa Zn, DCP, E-mag" onchange="updateFarm(13,'additives',this.value)">
+        </div>
+        <div class="form-group">
+          <label>Phone Number</label>
+          <input type="tel" value="" placeholder="e.g. 0412 345 678" onchange="updateFarm(13,'phone',this.value)">
+        </div>
+      </div>
+      <div class="form-grid full">
+        <div class="form-group">
+          <label>Extra Comments</label>
+          <textarea rows="2" style="padding:10px 12px;border-radius:9px;border:1.5px solid var(--border);background:var(--surface2);color:var(--text);font-family:'DM Sans',sans-serif;font-size:.92rem;width:100%;resize:vertical;min-height:56px;transition:border-color .15s,background .15s;" placeholder="e.g. access notes, special instructions, contact details..." onchange="updateFarm(13,'comments',this.value)"></textarea>
+        </div>
+      </div>
+      <div class="form-grid full">
+        <div class="form-group">
+          <label>Next Delivery <span class="badge badge-warn" style="font-size:.58rem;">🔮 Predicted</span></label>
+          <input type="date" value="2026-04-29" style="border-color:var(--warn);background:var(--warn-light);" onchange="updateFarm(13,'nextDel',this.value)">
+          <span class="input-hint warn">Auto-calculated: last delivery + 6.0 days. Tap to override.</span>
+        </div>
+      </div>
+      <div class="farm-stats-bar">
+        📦 <strong>5.45</strong> containers/month &nbsp;|&nbsp;
+        <strong>1.26</strong>/week &nbsp;|&nbsp;
+        <strong>120.0 t</strong>/month &nbsp;|&nbsp;
+        Days to empty: <strong>6.0</strong>
+      </div>
+    </div><div class="farm-card">
+      <div class="farm-card-header">
+        <div class="farm-card-name">Farm 15</div>
+        <button class="del-btn" onclick="removeFarm(14)">🗑 Remove</button>
+      </div>
+      <div class="form-grid">
+        <div class="form-group"><label>Farm Name</label><input type="text" value="Farm 15" onchange="updateFarm(14,'name',this.value)"></div>
+        <div class="form-group"><label>Silo (t)</label><input type="number" value="30" min="0" onchange="updateFarm(14,'silo',+this.value)"></div>
+        <div class="form-group"><label>No. of Cows</label><input type="number" value="800" min="0" onchange="updateFarm(14,'cows',+this.value)"></div>
+        <div class="form-group"><label>Feed Rate (kg/day)</label><input type="number" value="5" min="0" step="0.1" onchange="updateFarm(14,'feedRate',+this.value)"></div>
+        <div class="form-group"><label>Tonnes Delivered</label><input type="number" value="24" min="0" onchange="updateFarm(14,'tonnesDel',+this.value)"></div>
+        <div class="form-group"><label>Last Delivery</label><input type="date" value="2026-04-24" onchange="updateFarm(14,'lastDel',this.value)"></div>
+      </div>
+      <div class="form-grid">
+        <div class="form-group">
+          <label>Feed Type <span style="text-transform:none;font-weight:400;color:var(--text2);font-size:.62rem;">(e.g. Dairy Standard, Pasture Optimiser)</span></label>
+          <input type="text" value="" placeholder="e.g. Dairy Standard, Pasture Optimiser, Milko Hi Pro" onchange="updateFarm(14,'feedType',this.value)">
+        </div>
+        <div class="form-group">
+          <label>Extra Additives <span style="text-transform:none;font-weight:400;color:var(--text2);font-size:.62rem;">(optional)</span></label>
+          <input type="text" value="" placeholder="e.g. Availa Zn, DCP, E-mag" onchange="updateFarm(14,'additives',this.value)">
+        </div>
+        <div class="form-group">
+          <label>Phone Number</label>
+          <input type="tel" value="" placeholder="e.g. 0412 345 678" onchange="updateFarm(14,'phone',this.value)">
+        </div>
+      </div>
+      <div class="form-grid full">
+        <div class="form-group">
+          <label>Extra Comments</label>
+          <textarea rows="2" style="padding:10px 12px;border-radius:9px;border:1.5px solid var(--border);background:var(--surface2);color:var(--text);font-family:'DM Sans',sans-serif;font-size:.92rem;width:100%;resize:vertical;min-height:56px;transition:border-color .15s,background .15s;" placeholder="e.g. access notes, special instructions, contact details..." onchange="updateFarm(14,'comments',this.value)"></textarea>
+        </div>
+      </div>
+      <div class="form-grid full">
+        <div class="form-group">
+          <label>Next Delivery <span class="badge badge-warn" style="font-size:.58rem;">🔮 Predicted</span></label>
+          <input type="date" value="2026-04-29" style="border-color:var(--warn);background:var(--warn-light);" onchange="updateFarm(14,'nextDel',this.value)">
+          <span class="input-hint warn">Auto-calculated: last delivery + 6.0 days. Tap to override.</span>
+        </div>
+      </div>
+      <div class="farm-stats-bar">
+        📦 <strong>5.45</strong> containers/month &nbsp;|&nbsp;
+        <strong>1.26</strong>/week &nbsp;|&nbsp;
+        <strong>120.0 t</strong>/month &nbsp;|&nbsp;
+        Days to empty: <strong>6.0</strong>
+      </div>
+    </div><div class="farm-card">
+      <div class="farm-card-header">
+        <div class="farm-card-name">Farm 16</div>
+        <button class="del-btn" onclick="removeFarm(15)">🗑 Remove</button>
+      </div>
+      <div class="form-grid">
+        <div class="form-group"><label>Farm Name</label><input type="text" value="Farm 16" onchange="updateFarm(15,'name',this.value)"></div>
+        <div class="form-group"><label>Silo (t)</label><input type="number" value="30" min="0" onchange="updateFarm(15,'silo',+this.value)"></div>
+        <div class="form-group"><label>No. of Cows</label><input type="number" value="800" min="0" onchange="updateFarm(15,'cows',+this.value)"></div>
+        <div class="form-group"><label>Feed Rate (kg/day)</label><input type="number" value="5" min="0" step="0.1" onchange="updateFarm(15,'feedRate',+this.value)"></div>
+        <div class="form-group"><label>Tonnes Delivered</label><input type="number" value="24" min="0" onchange="updateFarm(15,'tonnesDel',+this.value)"></div>
+        <div class="form-group"><label>Last Delivery</label><input type="date" value="2026-04-24" onchange="updateFarm(15,'lastDel',this.value)"></div>
+      </div>
+      <div class="form-grid">
+        <div class="form-group">
+          <label>Feed Type <span style="text-transform:none;font-weight:400;color:var(--text2);font-size:.62rem;">(e.g. Dairy Standard, Pasture Optimiser)</span></label>
+          <input type="text" value="" placeholder="e.g. Dairy Standard, Pasture Optimiser, Milko Hi Pro" onchange="updateFarm(15,'feedType',this.value)">
+        </div>
+        <div class="form-group">
+          <label>Extra Additives <span style="text-transform:none;font-weight:400;color:var(--text2);font-size:.62rem;">(optional)</span></label>
+          <input type="text" value="" placeholder="e.g. Availa Zn, DCP, E-mag" onchange="updateFarm(15,'additives',this.value)">
+        </div>
+        <div class="form-group">
+          <label>Phone Number</label>
+          <input type="tel" value="" placeholder="e.g. 0412 345 678" onchange="updateFarm(15,'phone',this.value)">
+        </div>
+      </div>
+      <div class="form-grid full">
+        <div class="form-group">
+          <label>Extra Comments</label>
+          <textarea rows="2" style="padding:10px 12px;border-radius:9px;border:1.5px solid var(--border);background:var(--surface2);color:var(--text);font-family:'DM Sans',sans-serif;font-size:.92rem;width:100%;resize:vertical;min-height:56px;transition:border-color .15s,background .15s;" placeholder="e.g. access notes, special instructions, contact details..." onchange="updateFarm(15,'comments',this.value)"></textarea>
+        </div>
+      </div>
+      <div class="form-grid full">
+        <div class="form-group">
+          <label>Next Delivery <span class="badge badge-warn" style="font-size:.58rem;">🔮 Predicted</span></label>
+          <input type="date" value="2026-04-29" style="border-color:var(--warn);background:var(--warn-light);" onchange="updateFarm(15,'nextDel',this.value)">
+          <span class="input-hint warn">Auto-calculated: last delivery + 6.0 days. Tap to override.</span>
+        </div>
+      </div>
+      <div class="farm-stats-bar">
+        📦 <strong>5.45</strong> containers/month &nbsp;|&nbsp;
+        <strong>1.26</strong>/week &nbsp;|&nbsp;
+        <strong>120.0 t</strong>/month &nbsp;|&nbsp;
+        Days to empty: <strong>6.0</strong>
+      </div>
+    </div><div class="farm-card">
+      <div class="farm-card-header">
+        <div class="farm-card-name">Farm 17</div>
+        <button class="del-btn" onclick="removeFarm(16)">🗑 Remove</button>
+      </div>
+      <div class="form-grid">
+        <div class="form-group"><label>Farm Name</label><input type="text" value="Farm 17" onchange="updateFarm(16,'name',this.value)"></div>
+        <div class="form-group"><label>Silo (t)</label><input type="number" value="30" min="0" onchange="updateFarm(16,'silo',+this.value)"></div>
+        <div class="form-group"><label>No. of Cows</label><input type="number" value="800" min="0" onchange="updateFarm(16,'cows',+this.value)"></div>
+        <div class="form-group"><label>Feed Rate (kg/day)</label><input type="number" value="5" min="0" step="0.1" onchange="updateFarm(16,'feedRate',+this.value)"></div>
+        <div class="form-group"><label>Tonnes Delivered</label><input type="number" value="24" min="0" onchange="updateFarm(16,'tonnesDel',+this.value)"></div>
+        <div class="form-group"><label>Last Delivery</label><input type="date" value="2026-04-24" onchange="updateFarm(16,'lastDel',this.value)"></div>
+      </div>
+      <div class="form-grid">
+        <div class="form-group">
+          <label>Feed Type <span style="text-transform:none;font-weight:400;color:var(--text2);font-size:.62rem;">(e.g. Dairy Standard, Pasture Optimiser)</span></label>
+          <input type="text" value="" placeholder="e.g. Dairy Standard, Pasture Optimiser, Milko Hi Pro" onchange="updateFarm(16,'feedType',this.value)">
+        </div>
+        <div class="form-group">
+          <label>Extra Additives <span style="text-transform:none;font-weight:400;color:var(--text2);font-size:.62rem;">(optional)</span></label>
+          <input type="text" value="" placeholder="e.g. Availa Zn, DCP, E-mag" onchange="updateFarm(16,'additives',this.value)">
+        </div>
+        <div class="form-group">
+          <label>Phone Number</label>
+          <input type="tel" value="" placeholder="e.g. 0412 345 678" onchange="updateFarm(16,'phone',this.value)">
+        </div>
+      </div>
+      <div class="form-grid full">
+        <div class="form-group">
+          <label>Extra Comments</label>
+          <textarea rows="2" style="padding:10px 12px;border-radius:9px;border:1.5px solid var(--border);background:var(--surface2);color:var(--text);font-family:'DM Sans',sans-serif;font-size:.92rem;width:100%;resize:vertical;min-height:56px;transition:border-color .15s,background .15s;" placeholder="e.g. access notes, special instructions, contact details..." onchange="updateFarm(16,'comments',this.value)"></textarea>
+        </div>
+      </div>
+      <div class="form-grid full">
+        <div class="form-group">
+          <label>Next Delivery <span class="badge badge-warn" style="font-size:.58rem;">🔮 Predicted</span></label>
+          <input type="date" value="2026-04-29" style="border-color:var(--warn);background:var(--warn-light);" onchange="updateFarm(16,'nextDel',this.value)">
+          <span class="input-hint warn">Auto-calculated: last delivery + 6.0 days. Tap to override.</span>
+        </div>
+      </div>
+      <div class="farm-stats-bar">
+        📦 <strong>5.45</strong> containers/month &nbsp;|&nbsp;
+        <strong>1.26</strong>/week &nbsp;|&nbsp;
+        <strong>120.0 t</strong>/month &nbsp;|&nbsp;
+        Days to empty: <strong>6.0</strong>
+      </div>
+    </div><div class="farm-card">
+      <div class="farm-card-header">
+        <div class="farm-card-name">Farm 18</div>
+        <button class="del-btn" onclick="removeFarm(17)">🗑 Remove</button>
+      </div>
+      <div class="form-grid">
+        <div class="form-group"><label>Farm Name</label><input type="text" value="Farm 18" onchange="updateFarm(17,'name',this.value)"></div>
+        <div class="form-group"><label>Silo (t)</label><input type="number" value="30" min="0" onchange="updateFarm(17,'silo',+this.value)"></div>
+        <div class="form-group"><label>No. of Cows</label><input type="number" value="800" min="0" onchange="updateFarm(17,'cows',+this.value)"></div>
+        <div class="form-group"><label>Feed Rate (kg/day)</label><input type="number" value="5" min="0" step="0.1" onchange="updateFarm(17,'feedRate',+this.value)"></div>
+        <div class="form-group"><label>Tonnes Delivered</label><input type="number" value="24" min="0" onchange="updateFarm(17,'tonnesDel',+this.value)"></div>
+        <div class="form-group"><label>Last Delivery</label><input type="date" value="2026-04-24" onchange="updateFarm(17,'lastDel',this.value)"></div>
+      </div>
+      <div class="form-grid">
+        <div class="form-group">
+          <label>Feed Type <span style="text-transform:none;font-weight:400;color:var(--text2);font-size:.62rem;">(e.g. Dairy Standard, Pasture Optimiser)</span></label>
+          <input type="text" value="" placeholder="e.g. Dairy Standard, Pasture Optimiser, Milko Hi Pro" onchange="updateFarm(17,'feedType',this.value)">
+        </div>
+        <div class="form-group">
+          <label>Extra Additives <span style="text-transform:none;font-weight:400;color:var(--text2);font-size:.62rem;">(optional)</span></label>
+          <input type="text" value="" placeholder="e.g. Availa Zn, DCP, E-mag" onchange="updateFarm(17,'additives',this.value)">
+        </div>
+        <div class="form-group">
+          <label>Phone Number</label>
+          <input type="tel" value="" placeholder="e.g. 0412 345 678" onchange="updateFarm(17,'phone',this.value)">
+        </div>
+      </div>
+      <div class="form-grid full">
+        <div class="form-group">
+          <label>Extra Comments</label>
+          <textarea rows="2" style="padding:10px 12px;border-radius:9px;border:1.5px solid var(--border);background:var(--surface2);color:var(--text);font-family:'DM Sans',sans-serif;font-size:.92rem;width:100%;resize:vertical;min-height:56px;transition:border-color .15s,background .15s;" placeholder="e.g. access notes, special instructions, contact details..." onchange="updateFarm(17,'comments',this.value)"></textarea>
+        </div>
+      </div>
+      <div class="form-grid full">
+        <div class="form-group">
+          <label>Next Delivery <span class="badge badge-warn" style="font-size:.58rem;">🔮 Predicted</span></label>
+          <input type="date" value="2026-04-29" style="border-color:var(--warn);background:var(--warn-light);" onchange="updateFarm(17,'nextDel',this.value)">
+          <span class="input-hint warn">Auto-calculated: last delivery + 6.0 days. Tap to override.</span>
+        </div>
+      </div>
+      <div class="farm-stats-bar">
+        📦 <strong>5.45</strong> containers/month &nbsp;|&nbsp;
+        <strong>1.26</strong>/week &nbsp;|&nbsp;
+        <strong>120.0 t</strong>/month &nbsp;|&nbsp;
+        Days to empty: <strong>6.0</strong>
+      </div>
+    </div><div class="farm-card">
+      <div class="farm-card-header">
+        <div class="farm-card-name">Farm 19</div>
+        <button class="del-btn" onclick="removeFarm(18)">🗑 Remove</button>
+      </div>
+      <div class="form-grid">
+        <div class="form-group"><label>Farm Name</label><input type="text" value="Farm 19" onchange="updateFarm(18,'name',this.value)"></div>
+        <div class="form-group"><label>Silo (t)</label><input type="number" value="30" min="0" onchange="updateFarm(18,'silo',+this.value)"></div>
+        <div class="form-group"><label>No. of Cows</label><input type="number" value="800" min="0" onchange="updateFarm(18,'cows',+this.value)"></div>
+        <div class="form-group"><label>Feed Rate (kg/day)</label><input type="number" value="5" min="0" step="0.1" onchange="updateFarm(18,'feedRate',+this.value)"></div>
+        <div class="form-group"><label>Tonnes Delivered</label><input type="number" value="24" min="0" onchange="updateFarm(18,'tonnesDel',+this.value)"></div>
+        <div class="form-group"><label>Last Delivery</label><input type="date" value="2026-04-24" onchange="updateFarm(18,'lastDel',this.value)"></div>
+      </div>
+      <div class="form-grid">
+        <div class="form-group">
+          <label>Feed Type <span style="text-transform:none;font-weight:400;color:var(--text2);font-size:.62rem;">(e.g. Dairy Standard, Pasture Optimiser)</span></label>
+          <input type="text" value="" placeholder="e.g. Dairy Standard, Pasture Optimiser, Milko Hi Pro" onchange="updateFarm(18,'feedType',this.value)">
+        </div>
+        <div class="form-group">
+          <label>Extra Additives <span style="text-transform:none;font-weight:400;color:var(--text2);font-size:.62rem;">(optional)</span></label>
+          <input type="text" value="" placeholder="e.g. Availa Zn, DCP, E-mag" onchange="updateFarm(18,'additives',this.value)">
+        </div>
+        <div class="form-group">
+          <label>Phone Number</label>
+          <input type="tel" value="" placeholder="e.g. 0412 345 678" onchange="updateFarm(18,'phone',this.value)">
+        </div>
+      </div>
+      <div class="form-grid full">
+        <div class="form-group">
+          <label>Extra Comments</label>
+          <textarea rows="2" style="padding:10px 12px;border-radius:9px;border:1.5px solid var(--border);background:var(--surface2);color:var(--text);font-family:'DM Sans',sans-serif;font-size:.92rem;width:100%;resize:vertical;min-height:56px;transition:border-color .15s,background .15s;" placeholder="e.g. access notes, special instructions, contact details..." onchange="updateFarm(18,'comments',this.value)"></textarea>
+        </div>
+      </div>
+      <div class="form-grid full">
+        <div class="form-group">
+          <label>Next Delivery <span class="badge badge-warn" style="font-size:.58rem;">🔮 Predicted</span></label>
+          <input type="date" value="2026-04-29" style="border-color:var(--warn);background:var(--warn-light);" onchange="updateFarm(18,'nextDel',this.value)">
+          <span class="input-hint warn">Auto-calculated: last delivery + 6.0 days. Tap to override.</span>
+        </div>
+      </div>
+      <div class="farm-stats-bar">
+        📦 <strong>5.45</strong> containers/month &nbsp;|&nbsp;
+        <strong>1.26</strong>/week &nbsp;|&nbsp;
+        <strong>120.0 t</strong>/month &nbsp;|&nbsp;
+        Days to empty: <strong>6.0</strong>
+      </div>
+    </div><div class="farm-card">
+      <div class="farm-card-header">
+        <div class="farm-card-name">Farm 20</div>
+        <button class="del-btn" onclick="removeFarm(19)">🗑 Remove</button>
+      </div>
+      <div class="form-grid">
+        <div class="form-group"><label>Farm Name</label><input type="text" value="Farm 20" onchange="updateFarm(19,'name',this.value)"></div>
+        <div class="form-group"><label>Silo (t)</label><input type="number" value="30" min="0" onchange="updateFarm(19,'silo',+this.value)"></div>
+        <div class="form-group"><label>No. of Cows</label><input type="number" value="800" min="0" onchange="updateFarm(19,'cows',+this.value)"></div>
+        <div class="form-group"><label>Feed Rate (kg/day)</label><input type="number" value="5" min="0" step="0.1" onchange="updateFarm(19,'feedRate',+this.value)"></div>
+        <div class="form-group"><label>Tonnes Delivered</label><input type="number" value="24" min="0" onchange="updateFarm(19,'tonnesDel',+this.value)"></div>
+        <div class="form-group"><label>Last Delivery</label><input type="date" value="2026-04-24" onchange="updateFarm(19,'lastDel',this.value)"></div>
+      </div>
+      <div class="form-grid">
+        <div class="form-group">
+          <label>Feed Type <span style="text-transform:none;font-weight:400;color:var(--text2);font-size:.62rem;">(e.g. Dairy Standard, Pasture Optimiser)</span></label>
+          <input type="text" value="" placeholder="e.g. Dairy Standard, Pasture Optimiser, Milko Hi Pro" onchange="updateFarm(19,'feedType',this.value)">
+        </div>
+        <div class="form-group">
+          <label>Extra Additives <span style="text-transform:none;font-weight:400;color:var(--text2);font-size:.62rem;">(optional)</span></label>
+          <input type="text" value="" placeholder="e.g. Availa Zn, DCP, E-mag" onchange="updateFarm(19,'additives',this.value)">
+        </div>
+        <div class="form-group">
+          <label>Phone Number</label>
+          <input type="tel" value="" placeholder="e.g. 0412 345 678" onchange="updateFarm(19,'phone',this.value)">
+        </div>
+      </div>
+      <div class="form-grid full">
+        <div class="form-group">
+          <label>Extra Comments</label>
+          <textarea rows="2" style="padding:10px 12px;border-radius:9px;border:1.5px solid var(--border);background:var(--surface2);color:var(--text);font-family:'DM Sans',sans-serif;font-size:.92rem;width:100%;resize:vertical;min-height:56px;transition:border-color .15s,background .15s;" placeholder="e.g. access notes, special instructions, contact details..." onchange="updateFarm(19,'comments',this.value)"></textarea>
+        </div>
+      </div>
+      <div class="form-grid full">
+        <div class="form-group">
+          <label>Next Delivery <span class="badge badge-warn" style="font-size:.58rem;">🔮 Predicted</span></label>
+          <input type="date" value="2026-04-29" style="border-color:var(--warn);background:var(--warn-light);" onchange="updateFarm(19,'nextDel',this.value)">
+          <span class="input-hint warn">Auto-calculated: last delivery + 6.0 days. Tap to override.</span>
+        </div>
+      </div>
+      <div class="farm-stats-bar">
+        📦 <strong>5.45</strong> containers/month &nbsp;|&nbsp;
+        <strong>1.26</strong>/week &nbsp;|&nbsp;
+        <strong>120.0 t</strong>/month &nbsp;|&nbsp;
+        Days to empty: <strong>6.0</strong>
+      </div>
+    </div></div>
   </div>
 
   <!-- ORDERS -->
   <div class="panel" id="tab-orders">
     <div class="section-title">⚠️ Urgent Deliveries</div>
-    <div id="orderReminders"></div>
+    <div id="orderReminders"><div class="reminder danger"><div class="reminder-icon">🚨</div><div><strong>Farm 1 — OVERDUE by 2 day(s)</strong><br><span style="font-size:.75rem;">24t • 1.09 containers</span></div></div><div class="reminder danger"><div class="reminder-icon">🚨</div><div><strong>Farm 2 — OVERDUE by 2 day(s)</strong><br><span style="font-size:.75rem;">24t • 1.09 containers</span></div></div><div class="reminder danger"><div class="reminder-icon">🚨</div><div><strong>Farm 3 — OVERDUE by 2 day(s)</strong><br><span style="font-size:.75rem;">24t • 1.09 containers</span></div></div><div class="reminder danger"><div class="reminder-icon">🚨</div><div><strong>Farm 4 — OVERDUE by 2 day(s)</strong><br><span style="font-size:.75rem;">24t • 1.09 containers</span></div></div><div class="reminder danger"><div class="reminder-icon">🚨</div><div><strong>Farm 5 — OVERDUE by 2 day(s)</strong><br><span style="font-size:.75rem;">24t • 1.09 containers</span></div></div><div class="reminder danger"><div class="reminder-icon">🚨</div><div><strong>Farm 6 — OVERDUE by 2 day(s)</strong><br><span style="font-size:.75rem;">24t • 1.09 containers</span></div></div><div class="reminder danger"><div class="reminder-icon">🚨</div><div><strong>Farm 7 — OVERDUE by 2 day(s)</strong><br><span style="font-size:.75rem;">24t • 1.09 containers</span></div></div><div class="reminder danger"><div class="reminder-icon">🚨</div><div><strong>Farm 8 — OVERDUE by 2 day(s)</strong><br><span style="font-size:.75rem;">24t • 1.09 containers</span></div></div><div class="reminder danger"><div class="reminder-icon">🚨</div><div><strong>Farm 9 — OVERDUE by 2 day(s)</strong><br><span style="font-size:.75rem;">24t • 1.09 containers</span></div></div><div class="reminder danger"><div class="reminder-icon">🚨</div><div><strong>Farm 10 — OVERDUE by 2 day(s)</strong><br><span style="font-size:.75rem;">24t • 1.09 containers</span></div></div><div class="reminder danger"><div class="reminder-icon">🚨</div><div><strong>Farm 11 — OVERDUE by 2 day(s)</strong><br><span style="font-size:.75rem;">24t • 1.09 containers</span></div></div><div class="reminder danger"><div class="reminder-icon">🚨</div><div><strong>Farm 12 — OVERDUE by 2 day(s)</strong><br><span style="font-size:.75rem;">24t • 1.09 containers</span></div></div><div class="reminder danger"><div class="reminder-icon">🚨</div><div><strong>Farm 13 — OVERDUE by 2 day(s)</strong><br><span style="font-size:.75rem;">24t • 1.09 containers</span></div></div><div class="reminder danger"><div class="reminder-icon">🚨</div><div><strong>Farm 14 — OVERDUE by 2 day(s)</strong><br><span style="font-size:.75rem;">24t • 1.09 containers</span></div></div><div class="reminder danger"><div class="reminder-icon">🚨</div><div><strong>Farm 15 — OVERDUE by 2 day(s)</strong><br><span style="font-size:.75rem;">24t • 1.09 containers</span></div></div><div class="reminder danger"><div class="reminder-icon">🚨</div><div><strong>Farm 16 — OVERDUE by 2 day(s)</strong><br><span style="font-size:.75rem;">24t • 1.09 containers</span></div></div><div class="reminder danger"><div class="reminder-icon">🚨</div><div><strong>Farm 17 — OVERDUE by 2 day(s)</strong><br><span style="font-size:.75rem;">24t • 1.09 containers</span></div></div><div class="reminder danger"><div class="reminder-icon">🚨</div><div><strong>Farm 18 — OVERDUE by 2 day(s)</strong><br><span style="font-size:.75rem;">24t • 1.09 containers</span></div></div><div class="reminder danger"><div class="reminder-icon">🚨</div><div><strong>Farm 19 — OVERDUE by 2 day(s)</strong><br><span style="font-size:.75rem;">24t • 1.09 containers</span></div></div><div class="reminder danger"><div class="reminder-icon">🚨</div><div><strong>Farm 20 — OVERDUE by 2 day(s)</strong><br><span style="font-size:.75rem;">24t • 1.09 containers</span></div></div></div>
     <div class="divider"></div>
     <div class="section-title">📅 Next 7 Days</div>
-    <div class="timeline-scroll"><div id="timelineWrap"></div></div>
+    <div class="timeline-scroll"><div id="timelineWrap"><div class="timeline-row"><div class="timeline-day is-today"><div class="tl-day-label">Sat</div><div class="tl-day-name">2 May</div><div class="tl-empty">—</div></div><div class="timeline-day"><div class="tl-day-label">Sun</div><div class="tl-day-name">3 May</div><div class="tl-empty">—</div></div><div class="timeline-day"><div class="tl-day-label">Mon</div><div class="tl-day-name">4 May</div><div class="tl-empty">—</div></div><div class="timeline-day"><div class="tl-day-label">Tue</div><div class="tl-day-name">5 May</div><div class="tl-empty">—</div></div><div class="timeline-day"><div class="tl-day-label">Wed</div><div class="tl-day-name">6 May</div><div class="tl-empty">—</div></div><div class="timeline-day"><div class="tl-day-label">Thu</div><div class="tl-day-name">7 May</div><div class="tl-empty">—</div></div><div class="timeline-day"><div class="tl-day-label">Fri</div><div class="tl-day-name">8 May</div><div class="tl-empty">—</div></div></div></div></div>
     <div id="print-btn-wrap" style="margin-bottom:10px;">
       <button class="icon-btn" onclick="printRunSheet()" style="width:100%;justify-content:center;">🖨️ Print Run Sheet</button>
     </div>
     <div class="divider"></div>
     <div class="section-title">All Farms — Order Schedule</div>
-    <div id="orderFilterBar" style="margin-bottom:8px;">
-      <input class="dash-search" id="orderSearch" type="text" placeholder="🔍 Search farm..." oninput="setOrderFilter(this.value)" style="margin-bottom:6px;"/>
-      <div class="sort-pills">
-        <button class="sort-pill active" data-osort="urgency" onclick="setOrderSort('urgency')">⚡ Urgency</button>
-        <button class="sort-pill" data-osort="route" onclick="setOrderSort('route')">🗺️ Route</button>
-        <button class="sort-pill" data-osort="name" onclick="setOrderSort('name')">A→Z Name</button>
+    <div id="orderCards"><div class="order-card urgent">
+      <div class="order-card-top"><div class="order-name">Farm 1</div><span class="badge badge-danger">Overdue</span></div>
+      <div class="order-grid">
+        <div class="order-cell"><div class="order-cell-label">Next Date</div><div class="order-cell-val" style="font-size:.8rem;">30 Apr</div></div>
+        <div class="order-cell"><div class="order-cell-label">Tonnes/Mo</div><div class="order-cell-val">120.0</div></div>
+        <div class="order-cell"><div class="order-cell-label">Cont./Mo</div><div class="order-cell-val">5.5</div></div>
       </div>
-    </div>
-    <div id="orderCards"></div>
-    <div id="orderSummary"></div>
+      <div class="order-feed-row">
+        <span class="order-feed-label">Feed:</span><span style="font-size:.78rem;color:var(--text2);">—</span>
+        <span class="order-feed-label" style="margin-left:6px;">Additives:</span><span style="font-size:.78rem;color:var(--text2);">—</span>
+      </div>
+      
+      <div style="display:flex;gap:8px;margin-top:10px;">
+        <a href="tel:0470490438" class="call-btn" style="flex:1;margin-bottom:0;">📞 0470490438</a>
+        <button class="icon-btn primary" style="flex:2;justify-content:center;" onclick="openDelivery(1)">✅ Record Delivery</button>
+      </div>
+    </div><div class="order-card urgent">
+      <div class="order-card-top"><div class="order-name">Farm 2</div><span class="badge badge-danger">Overdue</span></div>
+      <div class="order-grid">
+        <div class="order-cell"><div class="order-cell-label">Next Date</div><div class="order-cell-val" style="font-size:.8rem;">30 Apr</div></div>
+        <div class="order-cell"><div class="order-cell-label">Tonnes/Mo</div><div class="order-cell-val">120.0</div></div>
+        <div class="order-cell"><div class="order-cell-label">Cont./Mo</div><div class="order-cell-val">5.5</div></div>
+      </div>
+      <div class="order-feed-row">
+        <span class="order-feed-label">Feed:</span><span style="font-size:.78rem;color:var(--text2);">—</span>
+        <span class="order-feed-label" style="margin-left:6px;">Additives:</span><span style="font-size:.78rem;color:var(--text2);">—</span>
+      </div>
+      
+      <div style="display:flex;gap:8px;margin-top:10px;">
+        
+        <button class="icon-btn primary" style="flex:2;justify-content:center;" onclick="openDelivery(2)">✅ Record Delivery</button>
+      </div>
+    </div><div class="order-card urgent">
+      <div class="order-card-top"><div class="order-name">Farm 3</div><span class="badge badge-danger">Overdue</span></div>
+      <div class="order-grid">
+        <div class="order-cell"><div class="order-cell-label">Next Date</div><div class="order-cell-val" style="font-size:.8rem;">30 Apr</div></div>
+        <div class="order-cell"><div class="order-cell-label">Tonnes/Mo</div><div class="order-cell-val">120.0</div></div>
+        <div class="order-cell"><div class="order-cell-label">Cont./Mo</div><div class="order-cell-val">5.5</div></div>
+      </div>
+      <div class="order-feed-row">
+        <span class="order-feed-label">Feed:</span><span style="font-size:.78rem;color:var(--text2);">—</span>
+        <span class="order-feed-label" style="margin-left:6px;">Additives:</span><span style="font-size:.78rem;color:var(--text2);">—</span>
+      </div>
+      
+      <div style="display:flex;gap:8px;margin-top:10px;">
+        
+        <button class="icon-btn primary" style="flex:2;justify-content:center;" onclick="openDelivery(3)">✅ Record Delivery</button>
+      </div>
+    </div><div class="order-card urgent">
+      <div class="order-card-top"><div class="order-name">Farm 4</div><span class="badge badge-danger">Overdue</span></div>
+      <div class="order-grid">
+        <div class="order-cell"><div class="order-cell-label">Next Date</div><div class="order-cell-val" style="font-size:.8rem;">30 Apr</div></div>
+        <div class="order-cell"><div class="order-cell-label">Tonnes/Mo</div><div class="order-cell-val">120.0</div></div>
+        <div class="order-cell"><div class="order-cell-label">Cont./Mo</div><div class="order-cell-val">5.5</div></div>
+      </div>
+      <div class="order-feed-row">
+        <span class="order-feed-label">Feed:</span><span style="font-size:.78rem;color:var(--text2);">—</span>
+        <span class="order-feed-label" style="margin-left:6px;">Additives:</span><span style="font-size:.78rem;color:var(--text2);">—</span>
+      </div>
+      
+      <div style="display:flex;gap:8px;margin-top:10px;">
+        
+        <button class="icon-btn primary" style="flex:2;justify-content:center;" onclick="openDelivery(4)">✅ Record Delivery</button>
+      </div>
+    </div><div class="order-card urgent">
+      <div class="order-card-top"><div class="order-name">Farm 5</div><span class="badge badge-danger">Overdue</span></div>
+      <div class="order-grid">
+        <div class="order-cell"><div class="order-cell-label">Next Date</div><div class="order-cell-val" style="font-size:.8rem;">30 Apr</div></div>
+        <div class="order-cell"><div class="order-cell-label">Tonnes/Mo</div><div class="order-cell-val">120.0</div></div>
+        <div class="order-cell"><div class="order-cell-label">Cont./Mo</div><div class="order-cell-val">5.5</div></div>
+      </div>
+      <div class="order-feed-row">
+        <span class="order-feed-label">Feed:</span><span style="font-size:.78rem;color:var(--text2);">—</span>
+        <span class="order-feed-label" style="margin-left:6px;">Additives:</span><span style="font-size:.78rem;color:var(--text2);">—</span>
+      </div>
+      
+      <div style="display:flex;gap:8px;margin-top:10px;">
+        
+        <button class="icon-btn primary" style="flex:2;justify-content:center;" onclick="openDelivery(5)">✅ Record Delivery</button>
+      </div>
+    </div><div class="order-card urgent">
+      <div class="order-card-top"><div class="order-name">Farm 6</div><span class="badge badge-danger">Overdue</span></div>
+      <div class="order-grid">
+        <div class="order-cell"><div class="order-cell-label">Next Date</div><div class="order-cell-val" style="font-size:.8rem;">30 Apr</div></div>
+        <div class="order-cell"><div class="order-cell-label">Tonnes/Mo</div><div class="order-cell-val">120.0</div></div>
+        <div class="order-cell"><div class="order-cell-label">Cont./Mo</div><div class="order-cell-val">5.5</div></div>
+      </div>
+      <div class="order-feed-row">
+        <span class="order-feed-label">Feed:</span><span style="font-size:.78rem;color:var(--text2);">—</span>
+        <span class="order-feed-label" style="margin-left:6px;">Additives:</span><span style="font-size:.78rem;color:var(--text2);">—</span>
+      </div>
+      
+      <div style="display:flex;gap:8px;margin-top:10px;">
+        
+        <button class="icon-btn primary" style="flex:2;justify-content:center;" onclick="openDelivery(6)">✅ Record Delivery</button>
+      </div>
+    </div><div class="order-card urgent">
+      <div class="order-card-top"><div class="order-name">Farm 7</div><span class="badge badge-danger">Overdue</span></div>
+      <div class="order-grid">
+        <div class="order-cell"><div class="order-cell-label">Next Date</div><div class="order-cell-val" style="font-size:.8rem;">30 Apr</div></div>
+        <div class="order-cell"><div class="order-cell-label">Tonnes/Mo</div><div class="order-cell-val">120.0</div></div>
+        <div class="order-cell"><div class="order-cell-label">Cont./Mo</div><div class="order-cell-val">5.5</div></div>
+      </div>
+      <div class="order-feed-row">
+        <span class="order-feed-label">Feed:</span><span style="font-size:.78rem;color:var(--text2);">—</span>
+        <span class="order-feed-label" style="margin-left:6px;">Additives:</span><span style="font-size:.78rem;color:var(--text2);">—</span>
+      </div>
+      
+      <div style="display:flex;gap:8px;margin-top:10px;">
+        
+        <button class="icon-btn primary" style="flex:2;justify-content:center;" onclick="openDelivery(7)">✅ Record Delivery</button>
+      </div>
+    </div><div class="order-card urgent">
+      <div class="order-card-top"><div class="order-name">Farm 8</div><span class="badge badge-danger">Overdue</span></div>
+      <div class="order-grid">
+        <div class="order-cell"><div class="order-cell-label">Next Date</div><div class="order-cell-val" style="font-size:.8rem;">30 Apr</div></div>
+        <div class="order-cell"><div class="order-cell-label">Tonnes/Mo</div><div class="order-cell-val">120.0</div></div>
+        <div class="order-cell"><div class="order-cell-label">Cont./Mo</div><div class="order-cell-val">5.5</div></div>
+      </div>
+      <div class="order-feed-row">
+        <span class="order-feed-label">Feed:</span><span style="font-size:.78rem;color:var(--text2);">—</span>
+        <span class="order-feed-label" style="margin-left:6px;">Additives:</span><span style="font-size:.78rem;color:var(--text2);">—</span>
+      </div>
+      
+      <div style="display:flex;gap:8px;margin-top:10px;">
+        
+        <button class="icon-btn primary" style="flex:2;justify-content:center;" onclick="openDelivery(8)">✅ Record Delivery</button>
+      </div>
+    </div><div class="order-card urgent">
+      <div class="order-card-top"><div class="order-name">Farm 9</div><span class="badge badge-danger">Overdue</span></div>
+      <div class="order-grid">
+        <div class="order-cell"><div class="order-cell-label">Next Date</div><div class="order-cell-val" style="font-size:.8rem;">30 Apr</div></div>
+        <div class="order-cell"><div class="order-cell-label">Tonnes/Mo</div><div class="order-cell-val">120.0</div></div>
+        <div class="order-cell"><div class="order-cell-label">Cont./Mo</div><div class="order-cell-val">5.5</div></div>
+      </div>
+      <div class="order-feed-row">
+        <span class="order-feed-label">Feed:</span><span style="font-size:.78rem;color:var(--text2);">—</span>
+        <span class="order-feed-label" style="margin-left:6px;">Additives:</span><span style="font-size:.78rem;color:var(--text2);">—</span>
+      </div>
+      
+      <div style="display:flex;gap:8px;margin-top:10px;">
+        
+        <button class="icon-btn primary" style="flex:2;justify-content:center;" onclick="openDelivery(9)">✅ Record Delivery</button>
+      </div>
+    </div><div class="order-card urgent">
+      <div class="order-card-top"><div class="order-name">Farm 10</div><span class="badge badge-danger">Overdue</span></div>
+      <div class="order-grid">
+        <div class="order-cell"><div class="order-cell-label">Next Date</div><div class="order-cell-val" style="font-size:.8rem;">30 Apr</div></div>
+        <div class="order-cell"><div class="order-cell-label">Tonnes/Mo</div><div class="order-cell-val">120.0</div></div>
+        <div class="order-cell"><div class="order-cell-label">Cont./Mo</div><div class="order-cell-val">5.5</div></div>
+      </div>
+      <div class="order-feed-row">
+        <span class="order-feed-label">Feed:</span><span style="font-size:.78rem;color:var(--text2);">—</span>
+        <span class="order-feed-label" style="margin-left:6px;">Additives:</span><span style="font-size:.78rem;color:var(--text2);">—</span>
+      </div>
+      
+      <div style="display:flex;gap:8px;margin-top:10px;">
+        
+        <button class="icon-btn primary" style="flex:2;justify-content:center;" onclick="openDelivery(10)">✅ Record Delivery</button>
+      </div>
+    </div><div class="order-card urgent">
+      <div class="order-card-top"><div class="order-name">Farm 11</div><span class="badge badge-danger">Overdue</span></div>
+      <div class="order-grid">
+        <div class="order-cell"><div class="order-cell-label">Next Date</div><div class="order-cell-val" style="font-size:.8rem;">30 Apr</div></div>
+        <div class="order-cell"><div class="order-cell-label">Tonnes/Mo</div><div class="order-cell-val">120.0</div></div>
+        <div class="order-cell"><div class="order-cell-label">Cont./Mo</div><div class="order-cell-val">5.5</div></div>
+      </div>
+      <div class="order-feed-row">
+        <span class="order-feed-label">Feed:</span><span style="font-size:.78rem;color:var(--text2);">—</span>
+        <span class="order-feed-label" style="margin-left:6px;">Additives:</span><span style="font-size:.78rem;color:var(--text2);">—</span>
+      </div>
+      
+      <div style="display:flex;gap:8px;margin-top:10px;">
+        
+        <button class="icon-btn primary" style="flex:2;justify-content:center;" onclick="openDelivery(11)">✅ Record Delivery</button>
+      </div>
+    </div><div class="order-card urgent">
+      <div class="order-card-top"><div class="order-name">Farm 12</div><span class="badge badge-danger">Overdue</span></div>
+      <div class="order-grid">
+        <div class="order-cell"><div class="order-cell-label">Next Date</div><div class="order-cell-val" style="font-size:.8rem;">30 Apr</div></div>
+        <div class="order-cell"><div class="order-cell-label">Tonnes/Mo</div><div class="order-cell-val">120.0</div></div>
+        <div class="order-cell"><div class="order-cell-label">Cont./Mo</div><div class="order-cell-val">5.5</div></div>
+      </div>
+      <div class="order-feed-row">
+        <span class="order-feed-label">Feed:</span><span style="font-size:.78rem;color:var(--text2);">—</span>
+        <span class="order-feed-label" style="margin-left:6px;">Additives:</span><span style="font-size:.78rem;color:var(--text2);">—</span>
+      </div>
+      
+      <div style="display:flex;gap:8px;margin-top:10px;">
+        
+        <button class="icon-btn primary" style="flex:2;justify-content:center;" onclick="openDelivery(12)">✅ Record Delivery</button>
+      </div>
+    </div><div class="order-card urgent">
+      <div class="order-card-top"><div class="order-name">Farm 13</div><span class="badge badge-danger">Overdue</span></div>
+      <div class="order-grid">
+        <div class="order-cell"><div class="order-cell-label">Next Date</div><div class="order-cell-val" style="font-size:.8rem;">30 Apr</div></div>
+        <div class="order-cell"><div class="order-cell-label">Tonnes/Mo</div><div class="order-cell-val">120.0</div></div>
+        <div class="order-cell"><div class="order-cell-label">Cont./Mo</div><div class="order-cell-val">5.5</div></div>
+      </div>
+      <div class="order-feed-row">
+        <span class="order-feed-label">Feed:</span><span style="font-size:.78rem;color:var(--text2);">—</span>
+        <span class="order-feed-label" style="margin-left:6px;">Additives:</span><span style="font-size:.78rem;color:var(--text2);">—</span>
+      </div>
+      
+      <div style="display:flex;gap:8px;margin-top:10px;">
+        
+        <button class="icon-btn primary" style="flex:2;justify-content:center;" onclick="openDelivery(13)">✅ Record Delivery</button>
+      </div>
+    </div><div class="order-card urgent">
+      <div class="order-card-top"><div class="order-name">Farm 14</div><span class="badge badge-danger">Overdue</span></div>
+      <div class="order-grid">
+        <div class="order-cell"><div class="order-cell-label">Next Date</div><div class="order-cell-val" style="font-size:.8rem;">30 Apr</div></div>
+        <div class="order-cell"><div class="order-cell-label">Tonnes/Mo</div><div class="order-cell-val">120.0</div></div>
+        <div class="order-cell"><div class="order-cell-label">Cont./Mo</div><div class="order-cell-val">5.5</div></div>
+      </div>
+      <div class="order-feed-row">
+        <span class="order-feed-label">Feed:</span><span style="font-size:.78rem;color:var(--text2);">—</span>
+        <span class="order-feed-label" style="margin-left:6px;">Additives:</span><span style="font-size:.78rem;color:var(--text2);">—</span>
+      </div>
+      
+      <div style="display:flex;gap:8px;margin-top:10px;">
+        
+        <button class="icon-btn primary" style="flex:2;justify-content:center;" onclick="openDelivery(14)">✅ Record Delivery</button>
+      </div>
+    </div><div class="order-card urgent">
+      <div class="order-card-top"><div class="order-name">Farm 15</div><span class="badge badge-danger">Overdue</span></div>
+      <div class="order-grid">
+        <div class="order-cell"><div class="order-cell-label">Next Date</div><div class="order-cell-val" style="font-size:.8rem;">30 Apr</div></div>
+        <div class="order-cell"><div class="order-cell-label">Tonnes/Mo</div><div class="order-cell-val">120.0</div></div>
+        <div class="order-cell"><div class="order-cell-label">Cont./Mo</div><div class="order-cell-val">5.5</div></div>
+      </div>
+      <div class="order-feed-row">
+        <span class="order-feed-label">Feed:</span><span style="font-size:.78rem;color:var(--text2);">—</span>
+        <span class="order-feed-label" style="margin-left:6px;">Additives:</span><span style="font-size:.78rem;color:var(--text2);">—</span>
+      </div>
+      
+      <div style="display:flex;gap:8px;margin-top:10px;">
+        
+        <button class="icon-btn primary" style="flex:2;justify-content:center;" onclick="openDelivery(15)">✅ Record Delivery</button>
+      </div>
+    </div><div class="order-card urgent">
+      <div class="order-card-top"><div class="order-name">Farm 16</div><span class="badge badge-danger">Overdue</span></div>
+      <div class="order-grid">
+        <div class="order-cell"><div class="order-cell-label">Next Date</div><div class="order-cell-val" style="font-size:.8rem;">30 Apr</div></div>
+        <div class="order-cell"><div class="order-cell-label">Tonnes/Mo</div><div class="order-cell-val">120.0</div></div>
+        <div class="order-cell"><div class="order-cell-label">Cont./Mo</div><div class="order-cell-val">5.5</div></div>
+      </div>
+      <div class="order-feed-row">
+        <span class="order-feed-label">Feed:</span><span style="font-size:.78rem;color:var(--text2);">—</span>
+        <span class="order-feed-label" style="margin-left:6px;">Additives:</span><span style="font-size:.78rem;color:var(--text2);">—</span>
+      </div>
+      
+      <div style="display:flex;gap:8px;margin-top:10px;">
+        
+        <button class="icon-btn primary" style="flex:2;justify-content:center;" onclick="openDelivery(16)">✅ Record Delivery</button>
+      </div>
+    </div><div class="order-card urgent">
+      <div class="order-card-top"><div class="order-name">Farm 17</div><span class="badge badge-danger">Overdue</span></div>
+      <div class="order-grid">
+        <div class="order-cell"><div class="order-cell-label">Next Date</div><div class="order-cell-val" style="font-size:.8rem;">30 Apr</div></div>
+        <div class="order-cell"><div class="order-cell-label">Tonnes/Mo</div><div class="order-cell-val">120.0</div></div>
+        <div class="order-cell"><div class="order-cell-label">Cont./Mo</div><div class="order-cell-val">5.5</div></div>
+      </div>
+      <div class="order-feed-row">
+        <span class="order-feed-label">Feed:</span><span style="font-size:.78rem;color:var(--text2);">—</span>
+        <span class="order-feed-label" style="margin-left:6px;">Additives:</span><span style="font-size:.78rem;color:var(--text2);">—</span>
+      </div>
+      
+      <div style="display:flex;gap:8px;margin-top:10px;">
+        
+        <button class="icon-btn primary" style="flex:2;justify-content:center;" onclick="openDelivery(17)">✅ Record Delivery</button>
+      </div>
+    </div><div class="order-card urgent">
+      <div class="order-card-top"><div class="order-name">Farm 18</div><span class="badge badge-danger">Overdue</span></div>
+      <div class="order-grid">
+        <div class="order-cell"><div class="order-cell-label">Next Date</div><div class="order-cell-val" style="font-size:.8rem;">30 Apr</div></div>
+        <div class="order-cell"><div class="order-cell-label">Tonnes/Mo</div><div class="order-cell-val">120.0</div></div>
+        <div class="order-cell"><div class="order-cell-label">Cont./Mo</div><div class="order-cell-val">5.5</div></div>
+      </div>
+      <div class="order-feed-row">
+        <span class="order-feed-label">Feed:</span><span style="font-size:.78rem;color:var(--text2);">—</span>
+        <span class="order-feed-label" style="margin-left:6px;">Additives:</span><span style="font-size:.78rem;color:var(--text2);">—</span>
+      </div>
+      
+      <div style="display:flex;gap:8px;margin-top:10px;">
+        
+        <button class="icon-btn primary" style="flex:2;justify-content:center;" onclick="openDelivery(18)">✅ Record Delivery</button>
+      </div>
+    </div><div class="order-card urgent">
+      <div class="order-card-top"><div class="order-name">Farm 19</div><span class="badge badge-danger">Overdue</span></div>
+      <div class="order-grid">
+        <div class="order-cell"><div class="order-cell-label">Next Date</div><div class="order-cell-val" style="font-size:.8rem;">30 Apr</div></div>
+        <div class="order-cell"><div class="order-cell-label">Tonnes/Mo</div><div class="order-cell-val">120.0</div></div>
+        <div class="order-cell"><div class="order-cell-label">Cont./Mo</div><div class="order-cell-val">5.5</div></div>
+      </div>
+      <div class="order-feed-row">
+        <span class="order-feed-label">Feed:</span><span style="font-size:.78rem;color:var(--text2);">—</span>
+        <span class="order-feed-label" style="margin-left:6px;">Additives:</span><span style="font-size:.78rem;color:var(--text2);">—</span>
+      </div>
+      
+      <div style="display:flex;gap:8px;margin-top:10px;">
+        
+        <button class="icon-btn primary" style="flex:2;justify-content:center;" onclick="openDelivery(19)">✅ Record Delivery</button>
+      </div>
+    </div><div class="order-card urgent">
+      <div class="order-card-top"><div class="order-name">Farm 20</div><span class="badge badge-danger">Overdue</span></div>
+      <div class="order-grid">
+        <div class="order-cell"><div class="order-cell-label">Next Date</div><div class="order-cell-val" style="font-size:.8rem;">30 Apr</div></div>
+        <div class="order-cell"><div class="order-cell-label">Tonnes/Mo</div><div class="order-cell-val">120.0</div></div>
+        <div class="order-cell"><div class="order-cell-label">Cont./Mo</div><div class="order-cell-val">5.5</div></div>
+      </div>
+      <div class="order-feed-row">
+        <span class="order-feed-label">Feed:</span><span style="font-size:.78rem;color:var(--text2);">—</span>
+        <span class="order-feed-label" style="margin-left:6px;">Additives:</span><span style="font-size:.78rem;color:var(--text2);">—</span>
+      </div>
+      
+      <div style="display:flex;gap:8px;margin-top:10px;">
+        
+        <button class="icon-btn primary" style="flex:2;justify-content:center;" onclick="openDelivery(20)">✅ Record Delivery</button>
+      </div>
+    </div></div>
+    <div id="orderSummary">
+    <div class="summary-row">
+      <div class="summary-cell"><div class="summary-label">Tonnes/Month</div><div class="summary-val">2400</div></div>
+      <div class="summary-cell"><div class="summary-label">Cont./Month</div><div class="summary-val">109.1</div></div>
+      <div class="summary-cell"><div class="summary-label">Cont./Week</div><div class="summary-val">25.2</div></div>
+    </div></div>
   </div>
 
   <!-- SETTINGS -->
-  <div class="panel" id="tab-settings">
+  <div class="panel active" id="tab-settings" style="">
     <div class="section-title">⚙️ Settings &amp; Tools</div>
     <div class="guide-card">
       <h3>🌙 Night Mode</h3>
       <p style="margin-bottom:12px">Switch between light and dark display for comfortable day or evening use.</p>
-      <button class="icon-btn" id="darkBtn2" onclick="toggleDark()" style="width:100%;justify-content:center;padding:13px;">Toggle Night Mode</button>
+      <button class="icon-btn" id="darkBtn2" onclick="toggleDark()" style="width:100%;justify-content:center;padding:13px;">☀️ Switch to Day Mode</button>
     </div>
     <div class="guide-card">
       <h3>🔔 Delivery Reminders</h3>
       <p style="margin-bottom:12px">Get a browser notification for overdue or upcoming deliveries each time you open the app. No install needed.</p>
-      <button class="icon-btn" id="notifBtn" onclick="toggleNotifications()" style="width:100%;justify-content:center;padding:13px;">🔔 Enable Reminders</button>
+      <button class="icon-btn" id="notifBtn" onclick="toggleNotifications()" style="width:100%;justify-content:center;padding:13px;">🔕 Disable Reminders</button>
     </div>
     <div class="guide-card">
       <h3>🤝 Share App</h3>
@@ -449,43 +2087,25 @@ a.call-btn:active{background:var(--accent);color:#fff;}
     </div>
     <div class="guide-card">
       <h3>💾 Save Data</h3>
-      <p style="margin-bottom:12px">Saves all farm data to this device. Auto-saves every 2 minutes. <span id="lastSaveDisplay" style="color:var(--accent);font-weight:600;"></span></p>
+      <p style="margin-bottom:12px">Saves all farm data to this device. Data auto-saves every 2 minutes.</p>
       <button class="icon-btn primary" onclick="saveAll()" style="width:100%;justify-content:center;padding:13px;">Save Now</button>
-    </div>
-    <div class="guide-card">
-      <h3>📊 Export to CSV</h3>
-      <p style="margin-bottom:12px">Download all farm data as a spreadsheet. Opens in Excel, Google Sheets, or Numbers.</p>
-      <button class="icon-btn" onclick="downloadCSV()" style="width:100%;justify-content:center;padding:13px;">📊 Export CSV</button>
-    </div>
-    <div class="guide-card">
-      <h3>📋 Export Delivery History</h3>
-      <p style="margin-bottom:12px">Download all recorded deliveries as a spreadsheet — one row per delivery. Useful for reconciling with invoices.</p>
-      <button class="icon-btn" onclick="downloadHistoryCSV()" style="width:100%;justify-content:center;padding:13px;">📋 Export History CSV</button>
-    </div>
-    <div class="guide-card">
-      <h3>🗄️ Backup &amp; Restore</h3>
-      <p style="margin-bottom:12px">Save a full backup including all farm data and delivery history as a JSON file. Use Restore to reload it on any device.</p>
-      <div style="display:flex;gap:8px;">
-        <button class="icon-btn" onclick="backupJSON()" style="flex:1;justify-content:center;padding:13px;">🗄️ Backup</button>
-        <button class="icon-btn" onclick="restoreJSON()" style="flex:1;justify-content:center;padding:13px;">↩️ Restore</button>
-      </div>
-    </div>
-    <div class="guide-card">
-      <h3>📥 Import from CSV</h3>
-      <p style="margin-bottom:12px">Load farms from a CSV spreadsheet. Use the exported CSV as a template. <strong>Replaces all current farms.</strong></p>
-      <button class="icon-btn" onclick="importCSV()" style="width:100%;justify-content:center;padding:13px;">📥 Import CSV</button>
     </div>
     <div class="guide-card">
       <h3>🖨️ Print Run Sheet</h3>
       <p style="margin-bottom:12px">Print a clean delivery schedule — hides all buttons and navigation for a driver-friendly page.</p>
       <button class="icon-btn" onclick="printRunSheet()" style="width:100%;justify-content:center;padding:13px;">🖨️ Print Orders</button>
     </div>
+    <div class="guide-card">
+      <h3>📊 Export CSV</h3>
+      <p style="margin-bottom:12px">Download all farm data as a spreadsheet — open in Excel, Google Sheets, or Numbers.</p>
+      <button class="icon-btn" onclick="downloadCSV()" style="width:100%;justify-content:center;padding:13px;">📊 Export to CSV</button>
+    </div>
     <div class="guide-card" id="installCard">
       <h3>📲 Install App</h3>
       <div style="margin-bottom:14px;">
-        <strong style="display:block;margin-bottom:6px;font-size:.88rem;">🍎 iPhone / iPad — use Edge</strong>
+        <strong style="display:block;margin-bottom:6px;font-size:.88rem;">🍎 iPhone / iPad — use Safari</strong>
         <ol style="padding-left:18px;font-size:.82rem;color:var(--text2);line-height:2;">
-          <li>Open this page in <strong>Edge</strong></li>
+          <li>Open this page in <strong>Safari</strong> (not Chrome)</li>
           <li>Tap the <strong>Share</strong> button (box with arrow at bottom of screen)</li>
           <li>Scroll down and tap <strong>"Add to Home Screen"</strong></li>
           <li>Tap <strong>Add</strong> — icon appears on your home screen</li>
@@ -499,12 +2119,9 @@ a.call-btn:active{background:var(--accent);color:#fff;}
           <li>Tap <strong>"Add to Home Screen"</strong> or <strong>"Install app"</strong></li>
           <li>Tap <strong>Install</strong> — icon appears on your home screen</li>
         </ol>
+        <p style="font-size:.75rem;color:var(--text2);margin-top:8px;line-height:1.5;">💡 For the auto-install banner to appear, the file must be hosted on HTTPS. Free options: <strong>GitHub Pages</strong> or drag &amp; drop onto <strong>netlify.com/drop</strong>.</p>
       </div>
       <button class="icon-btn primary" id="installBtn" onclick="installApp()" style="width:100%;justify-content:center;padding:13px;display:none;">📲 Install on this device</button>
-    </div>
-    <div style="text-align:center;padding:18px 0 4px;font-size:.72rem;color:var(--text2);line-height:1.8;">
-      Feed Estimator by M@SE &nbsp;·&nbsp; <strong>v<span id="aboutVersion"></span></strong><br>
-      <span style="font-size:.68rem;">Dairy farm feed order estimator &nbsp;·&nbsp; All data stored on this device</span>
     </div>
   </div>
 
@@ -562,7 +2179,7 @@ a.call-btn:active{background:var(--accent);color:#fff;}
 
 <!-- BOTTOM NAV -->
 <nav class="bnav">
-  <button class="bnav-item active" data-tab="dashboard" onclick="switchTab('dashboard')">
+  <button class="bnav-item" data-tab="dashboard" onclick="switchTab('dashboard')">
     <span class="bnav-icon">📊</span>Dashboard
   </button>
   <button class="bnav-item" data-tab="farms" onclick="switchTab('farms')">
@@ -571,7 +2188,7 @@ a.call-btn:active{background:var(--accent);color:#fff;}
   <button class="bnav-item" data-tab="orders" onclick="switchTab('orders')">
     <span class="bnav-icon">📦</span>Orders
   </button>
-  <button class="bnav-item" data-tab="settings" onclick="switchTab('settings')">
+  <button class="bnav-item active" data-tab="settings" onclick="switchTab('settings')">
     <span class="bnav-icon">⚙️</span>Settings
   </button>
 </nav>
@@ -584,7 +2201,7 @@ a.call-btn:active{background:var(--accent);color:#fff;}
     <p style="font-size:.83rem;color:var(--text2);margin-bottom:14px;">Copy this link and send to any farmer or agronomist. Works on any phone or computer.</p>
     <div class="share-box">
       <div class="share-url">
-        <input type="text" id="shareUrl" readonly/>
+        <input type="text" id="shareUrl" readonly="">
         <button class="icon-btn primary" onclick="copyShare()">Copy</button>
       </div>
     </div>
@@ -600,26 +2217,15 @@ a.call-btn:active{background:var(--accent);color:#fff;}
     <div class="modal-handle"></div>
     <h2>✅ Record Delivery</h2>
     <p id="deliveryFarmName" style="font-size:.88rem;color:var(--text2);margin-bottom:16px;font-weight:600;"></p>
-    <div class="form-grid" style="margin-bottom:8px;">
+    <div class="form-grid" style="margin-bottom:4px;">
       <div class="form-group">
         <label>Tonnes Delivered</label>
-        <input type="number" id="deliveryTonnes" min="0" step="1" placeholder="e.g. 24"/>
+        <input type="number" id="deliveryTonnes" min="0" step="1" placeholder="e.g. 24">
       </div>
       <div class="form-group">
         <label>Delivery Date</label>
-        <input type="date" id="deliveryDate"/>
+        <input type="date" id="deliveryDate">
       </div>
-    </div>
-    <div class="form-group" style="margin-bottom:4px;">
-      <label>Notes <span style="text-transform:none;font-weight:400;font-size:.62rem;">(optional)</span></label>
-      <input type="text" id="deliveryNotes" placeholder="e.g. short delivery, access issues..."/>
-    </div>
-    <div style="margin:10px 0 4px;padding:10px 12px;background:var(--surface2);border-radius:9px;border:1.5px solid var(--border);">
-      <label style="text-transform:none;font-size:.84rem;font-weight:600;color:var(--text);display:flex;align-items:center;gap:8px;cursor:pointer;">
-        <input type="checkbox" id="deliveryCarryOver" style="width:18px;min-height:auto;padding:0;margin:0;cursor:pointer;flex-shrink:0;"/>
-        Add to current silo remaining (<span id="deliveryRemaining">—</span>t in silo)
-      </label>
-      <div style="font-size:.7rem;color:var(--text2);margin-top:4px;">When ticked: total = remaining + delivered. Default: replace with delivered amount.</div>
     </div>
     <div class="modal-actions" style="margin-top:14px;">
       <button class="icon-btn" onclick="closeDelivery()" style="justify-content:center;">Cancel</button>
@@ -628,16 +2234,14 @@ a.call-btn:active{background:var(--accent);color:#fff;}
   </div>
 </div>
 
-<datalist id="feedTypeList"></datalist>
-<datalist id="additivesList"></datalist>
-<div id="toast"></div>
+<div id="toast" class="">✅ Saved!</div>
 
 <script>
 const CONTAINER_SIZE=22;
-const APP_VERSION='2.3';
 
-function fmtDate(d){return d.toISOString().slice(0,10);}
+function fmtDate(d){const dd=String(d.getDate()).padStart(2,'0');const mm=String(d.getMonth()+1).padStart(2,'0');return `${d.getFullYear()}-${mm}-${dd}`;}
 function parseDate(s){if(!s)return null;const d=new Date(s+'T00:00:00');return isNaN(d)?null:d;}
+function fmtDateDisplay(isoStr){if(!isoStr)return '—';const d=parseDate(isoStr);if(!d)return isoStr;const dd=String(d.getDate()).padStart(2,'0');const mm=String(d.getMonth()+1).padStart(2,'0');return `${dd}/${mm}/${d.getFullYear()}`;}
 function daysBetween(a,b){return Math.round((b-a)/86400000);}
 function today(){const d=new Date();d.setHours(0,0,0,0);return d;}
 function fmtDateHuman(d){
@@ -646,34 +2250,27 @@ function fmtDateHuman(d){
   if(diff===0)return 'Today';
   if(diff===1)return 'Tomorrow';
   if(diff===-1)return 'Yesterday';
-  if(diff>1&&diff<=13)return d.toLocaleDateString('en-AU',{weekday:'short',day:'numeric',month:'short'});
-  return d.toLocaleDateString('en-AU',{day:'numeric',month:'short'});
-}
-
-function fmtDateShort(s){
-  const d=parseDate(s);if(!d)return s||'—';
-  const diff=daysBetween(d,today());
-  if(diff===0)return 'Today';if(diff===1)return 'Yesterday';
-  return d.toLocaleDateString('en-AU',{day:'numeric',month:'short'});
+  const dd=String(d.getDate()).padStart(2,'0');const mm=String(d.getMonth()+1).padStart(2,'0');
+  return `${dd}/${mm}/${d.getFullYear()}`;
 }
 
 function defaultFarms(){
   const t=today();
   return Array.from({length:14},(_,i)=>{
     const last=new Date(t);last.setDate(t.getDate()-6);
-    return{id:i+1,name:`Farm ${i+1}`,silo:30+((i%2)*10),cows:800,feedRate:5,tonnesDel:24,lastDel:fmtDate(last),nextDel:'',_manualNextDel:false,feedType:'',additives:'',comments:'',phone:'',phone2:'',deliveryHistory:[],route:0};
+    return{id:i+1,name:`Farm ${i+1}`,silo:30+((i%2)*10),cows:800,feedRate:5,tonnesDel:24,lastDel:fmtDate(last),nextDel:'',_manualNextDel:false,feedType:'',additives:'',comments:'',phone:'',deliveryHistory:[]};
   });
 }
 
 function computeFarm(f){
   const usageDay=(f.cows*f.feedRate)/1000;
-  const daysEmpty=usageDay>0?f.tonnesDel/usageDay:0;
+  const daysEmpty=usageDay>0?((f.tonnesDel||0)/usageDay):0;
   const tonnesMonth=usageDay*30;
   const containersMonth=tonnesMonth/CONTAINER_SIZE;
   const containersWeek=containersMonth/4.33;
   const lastD=parseDate(f.lastDel);
   const manualNextD=parseDate(f.nextDel);
-  const predictedNextD=(lastD&&usageDay>0)?new Date(lastD.getTime()+daysEmpty*86400000):null;
+  const predictedNextD=lastD?new Date(lastD.getTime()+daysEmpty*86400000):null;
   const nextD=manualNextD||predictedNextD;
   const isPredicted=!manualNextD&&!!predictedNextD;
   const t=today();
@@ -686,7 +2283,7 @@ function computeFarm(f){
   return{...f,usageDay,daysEmpty,tonnesMonth,containersMonth,containersWeek,nextD,predictedNextD,isPredicted,daysAway,remainingTonnes,siloPercent,siloBarClass};
 }
 
-let farms=[],darkMode=false,currentTab='dashboard',_lastSaveTime=null;
+let farms=[],darkMode=false,currentTab='dashboard';
 
 function loadData(){
   try{
@@ -694,46 +2291,25 @@ function loadData(){
     if(s){const d=JSON.parse(s);farms=d.farms||defaultFarms();darkMode=d.darkMode||false;notificationsEnabled=d.notificationsEnabled||false;}
     else farms=defaultFarms();
   }catch(e){farms=defaultFarms();}
-  farms.forEach(f=>{if(f.feedType===undefined)f.feedType='';if(f.additives===undefined)f.additives='';if(f.comments===undefined)f.comments='';if(f.phone===undefined)f.phone='';if(f.phone2===undefined)f.phone2='';if(!Array.isArray(f.deliveryHistory))f.deliveryHistory=[];if(f.route===undefined)f.route=0;});
+  farms.forEach(f=>{if(f.feedType===undefined)f.feedType='';if(f.additives===undefined)f.additives='';if(f.comments===undefined)f.comments='';if(f.phone===undefined)f.phone='';if(!Array.isArray(f.deliveryHistory))f.deliveryHistory=[];});
   if(darkMode)document.body.classList.add('dark');
   updateDarkBtn();
 }
 
 function saveAll(silent=false){
   localStorage.setItem('feedEstimator_v2',JSON.stringify({farms,darkMode,notificationsEnabled}));
-  _lastSaveTime=Date.now();updateSaveDisplay();
   if(!silent)showToast('✅ Saved!');
 }
 
-function render(){renderDashboard();renderFarms();renderOrders();updateTodayDisplay();updateDataLists();updateSaveDisplay();}
-
-function updateSaveDisplay(){
-  const el=document.getElementById('lastSaveDisplay');
-  if(!el||!_lastSaveTime)return;
-  const mins=Math.round((Date.now()-_lastSaveTime)/60000);
-  el.textContent=mins===0?'(just saved)':`(saved ${mins} min ago)`;
-}
-
-function updateDataLists(){
-  const feedTypes=[...new Set(farms.map(f=>f.feedType).filter(Boolean))];
-  const additives=[...new Set(farms.map(f=>f.additives).filter(Boolean))];
-  const ftl=document.getElementById('feedTypeList');
-  const al=document.getElementById('additivesList');
-  if(ftl)ftl.innerHTML=feedTypes.map(t=>`<option value="${esc(t)}">`).join('');
-  if(al)al.innerHTML=additives.map(t=>`<option value="${esc(t)}">`).join('');
-}
+function render(){renderDashboard();renderFarms();renderOrders();updateTodayDisplay();}
 
 function updateTodayDisplay(){
-  document.getElementById('todayDisplay').textContent=
-    new Date().toLocaleDateString('en-AU',{day:'numeric',month:'short',year:'numeric'});
-  const vd=document.getElementById('versionDisplay');
-  if(vd)vd.textContent='v'+APP_VERSION;
-  const av=document.getElementById('aboutVersion');
-  if(av)av.textContent=APP_VERSION;
+  const d=new Date();const dd=String(d.getDate()).padStart(2,'0');const mm=String(d.getMonth()+1).padStart(2,'0');
+  document.getElementById('todayDisplay').textContent=`${dd}/${mm}/${d.getFullYear()}`;
 }
 
 function statusInfo(daysAway){
-  if(daysAway===null)return{cls:'badge-ok',badge:'—',cardCls:''};
+  if(daysAway===null)return{cls:'',badge:'—',cardCls:''};
   if(daysAway<=0)return{cls:'badge-danger',badge:'Overdue',cardCls:'urgent'};
   if(daysAway<=3)return{cls:'badge-warn',badge:`${daysAway}d`,cardCls:'soon'};
   return{cls:'badge-ok',badge:`${daysAway}d`,cardCls:''};
@@ -804,7 +2380,6 @@ function renderDashboard(){
       </div>
       ${isExpanded?`<div class="farm-row-detail" onclick="event.stopPropagation()">
         ${f.phone?`<a href="tel:${esc(f.phone)}" class="call-btn" onclick="event.stopPropagation()">📞 ${esc(f.phone)}</a>`:''}
-        ${f.phone2?`<a href="tel:${esc(f.phone2)}" class="call-btn" onclick="event.stopPropagation()">📞 ${esc(f.phone2)}</a>`:''}
         ${f.comments?`<div style="margin-bottom:10px;font-size:.76rem;color:var(--text2);line-height:1.5;">📝 ${esc(f.comments)}</div>`:''}
         <div class="form-grid" style="margin-bottom:8px;">
           <div class="form-group"><label>Tonnes Delivered</label><input type="number" value="${f.tonnesDel}" min="0" onchange="updateFarm(${i},'tonnesDel',+this.value)"/></div>
@@ -814,7 +2389,7 @@ function renderDashboard(){
           <button class="icon-btn primary" onclick="event.stopPropagation();openDelivery(${f.id})">✅ Delivered</button>
           <button class="icon-btn" onclick="event.stopPropagation();expandedFarmId=null;switchTab('farms')">✏️ Edit Details</button>
         </div>
-        ${f.deliveryHistory&&f.deliveryHistory.length?`<div style="margin-top:10px;padding-top:10px;border-top:1px solid var(--border);"><div style="font-size:.62rem;font-weight:700;color:var(--text2);text-transform:uppercase;letter-spacing:.05em;margin-bottom:5px;">📋 Recent Deliveries</div>${f.deliveryHistory.map((h,hi)=>`<div style="padding:4px 0;border-bottom:1px solid var(--border);"><div style="display:flex;justify-content:space-between;align-items:center;font-size:.8rem;"><span style="color:var(--text2);">${esc(fmtDateShort(h.date))}</span><div style="display:flex;align-items:center;gap:8px;"><span style="font-weight:600;">${h.tonnes}t</span><button onclick="event.stopPropagation();removeHistoryEntry(${f.id},${hi})" style="background:none;border:none;color:var(--danger);font-size:.9rem;cursor:pointer;padding:2px 5px;font-weight:700;line-height:1;">×</button></div></div>${h.notes?`<div style="font-size:.72rem;color:var(--text2);margin-top:1px;">${esc(h.notes)}</div>`:''}</div>`).join('')}</div>`:''}
+        ${(f.deliveryHistory&&f.deliveryHistory.length)?`<div style="margin-top:8px;font-size:.72rem;color:var(--text2);">Last delivery: <strong style="color:var(--text);">${fmtDateDisplay(f.deliveryHistory[0].date)}</strong> — <strong style="color:var(--text);">${f.deliveryHistory[0].tonnes}t</strong>${f.deliveryHistory.length>1?` · ${f.deliveryHistory.length} on record`:''}</div>`:''}
       </div>`:f.comments?`<div style="margin-top:8px;padding-top:8px;border-top:1px solid var(--border);font-size:.76rem;color:var(--text2);line-height:1.5;" onclick="event.stopPropagation()">📝 ${esc(f.comments)}</div>`:''}
     </div>`;
   });
@@ -826,13 +2401,11 @@ function renderFarms(){
   farms.forEach((f,i)=>{
     const c=computeFarm(f);
     const predStr=c.predictedNextD?fmtDate(c.predictedNextD):'—';
+    const predStrDisplay=c.predictedNextD?fmtDateDisplay(fmtDate(c.predictedNextD)):'—';
     html+=`<div class="farm-card">
       <div class="farm-card-header">
         <div class="farm-card-name">${esc(f.name)}</div>
-        <div style="display:flex;gap:6px;">
-          <button class="icon-btn" onclick="duplicateFarm(${i})" style="font-size:.75rem;padding:5px 9px;min-height:32px;">📋 Copy</button>
-          <button class="del-btn" onclick="removeFarm(${i})">🗑 Remove</button>
-        </div>
+        <button class="del-btn" onclick="removeFarm(${i})">🗑 Remove</button>
       </div>
       <div class="form-grid">
         <div class="form-group"><label>Farm Name</label><input type="text" value="${esc(f.name)}" onchange="updateFarm(${i},'name',this.value)"/></div>
@@ -845,23 +2418,15 @@ function renderFarms(){
       <div class="form-grid">
         <div class="form-group">
           <label>Feed Type <span style="text-transform:none;font-weight:400;color:var(--text2);font-size:.62rem;">(e.g. Dairy Standard, Pasture Optimiser)</span></label>
-          <input type="text" list="feedTypeList" value="${esc(f.feedType||'')}" placeholder="e.g. Dairy Standard, Pasture Optimiser, Milko Hi Pro" onchange="updateFarm(${i},'feedType',this.value)"/>
+          <input type="text" value="${esc(f.feedType||'')}" placeholder="e.g. Dairy Standard, Pasture Optimiser, Milko Hi Pro" onchange="updateFarm(${i},'feedType',this.value)"/>
         </div>
         <div class="form-group">
           <label>Extra Additives <span style="text-transform:none;font-weight:400;color:var(--text2);font-size:.62rem;">(optional)</span></label>
-          <input type="text" list="additivesList" value="${esc(f.additives||'')}" placeholder="e.g. Availa Zn, DCP, E-mag" onchange="updateFarm(${i},'additives',this.value)"/>
+          <input type="text" value="${esc(f.additives||'')}" placeholder="e.g. Availa Zn, DCP, E-mag" onchange="updateFarm(${i},'additives',this.value)"/>
         </div>
         <div class="form-group">
           <label>Phone Number</label>
           <input type="tel" value="${esc(f.phone||'')}" placeholder="e.g. 0412 345 678" onchange="updateFarm(${i},'phone',this.value)"/>
-        </div>
-        <div class="form-group">
-          <label>Phone 2 <span style="text-transform:none;font-weight:400;font-size:.62rem;">(optional)</span></label>
-          <input type="tel" value="${esc(f.phone2||'')}" placeholder="e.g. 0411 234 567" onchange="updateFarm(${i},'phone2',this.value)"/>
-        </div>
-        <div class="form-group">
-          <label>Route # <span style="text-transform:none;font-weight:400;font-size:.62rem;">(delivery order)</span></label>
-          <input type="number" value="${f.route||0}" min="0" step="1" placeholder="0" onchange="updateFarm(${i},'route',+this.value)"/>
         </div>
       </div>
       <div class="form-grid full">
@@ -873,10 +2438,13 @@ function renderFarms(){
       <div class="form-grid full">
         <div class="form-group">
           <label>Next Delivery ${c.isPredicted?'<span class="badge badge-warn" style="font-size:.58rem;">🔮 Predicted</span>':'<span class="badge badge-ok" style="font-size:.58rem;">📅 Manual</span>'}</label>
-          <input type="date" value="${f.nextDel||predStr}" style="${c.isPredicted?'border-color:var(--warn);background:var(--warn-light);':''}" onchange="updateFarm(${i},'nextDel',this.value)"/>
+          <div style="display:flex;gap:8px;align-items:center;">
+            <input type="date" value="${f.nextDel||predStr}" style="flex:1;${c.isPredicted?'border-color:var(--warn);background:var(--warn-light);':''}" onchange="updateFarm(${i},'nextDel',this.value)"/>
+            <span style="font-size:.9rem;color:var(--text2);min-width:80px;">${fmtDateDisplay(f.nextDel||predStr)}</span>
+          </div>
           ${c.isPredicted
             ?`<span class="input-hint warn">Auto-calculated: last delivery + ${c.daysEmpty.toFixed(1)} days. Tap to override.</span>`
-            :`<span class="input-hint good">Manually set. <button onclick="clearNextDel(${i})" style="background:none;border:none;color:var(--warn);font-size:.7rem;cursor:pointer;text-decoration:underline;padding:0;font-family:'DM Sans',sans-serif;">Reset to predicted (${predStr})</button></span>`
+            :`<span class="input-hint good">Manually set. <button onclick="clearNextDel(${i})" style="background:none;border:none;color:var(--warn);font-size:.7rem;cursor:pointer;text-decoration:underline;padding:0;font-family:'DM Sans',sans-serif;">Reset to predicted</button></span>`
           }
         </div>
       </div>
@@ -886,17 +2454,18 @@ function renderFarms(){
         <strong>${c.tonnesMonth.toFixed(1)} t</strong>/month &nbsp;|&nbsp;
         Days to empty: <strong>${c.daysEmpty.toFixed(1)}</strong>
       </div>
-      ${(f.deliveryHistory&&f.deliveryHistory.length)?`<div style="margin-top:8px;padding:8px 10px;background:var(--surface2);border-radius:8px;"><div style="font-size:.62rem;font-weight:700;color:var(--text2);text-transform:uppercase;letter-spacing:.05em;margin-bottom:5px;">📋 Delivery History</div>${f.deliveryHistory.map((h,hi)=>`<div style="padding:3px 0;border-bottom:1px solid var(--border);"><div style="display:flex;justify-content:space-between;align-items:center;font-size:.8rem;"><span style="color:var(--text2);">${esc(fmtDateShort(h.date))}</span><div style="display:flex;align-items:center;gap:8px;"><span style="font-weight:600;color:var(--text);">${h.tonnes}t</span><button onclick="removeHistoryEntry(${f.id},${hi})" style="background:none;border:none;color:var(--danger);font-size:.9rem;cursor:pointer;padding:2px 5px;font-weight:700;line-height:1;">×</button></div></div>${h.notes?`<div style="font-size:.72rem;color:var(--text2);margin-top:1px;">${esc(h.notes)}</div>`:''}</div>`).join('')}</div>`:''}
+      ${(f.deliveryHistory&&f.deliveryHistory.length)?`
+      <div style="margin-top:10px;border-top:1.5px solid var(--border);padding-top:10px;">
+        <div style="font-size:.62rem;font-weight:700;color:var(--text2);text-transform:uppercase;letter-spacing:.05em;margin-bottom:6px;">📋 Delivery History</div>
+        ${f.deliveryHistory.slice(0,5).map(h=>`<div style="display:flex;justify-content:space-between;align-items:center;font-size:.76rem;padding:5px 0;border-bottom:1px solid var(--border);"><span style="color:var(--text2);">${fmtDateDisplay(h.date)}</span><span style="font-weight:700;color:var(--text);">${h.tonnes}t</span></div>`).join('')}
+      </div>`:''}
     </div>`;
   });
   document.getElementById('farmCards').innerHTML=html;
 }
 
 function renderOrders(){
-  let computed=farms.map(computeFarm);
-  if(orderSort==='route')computed.sort((a,b)=>{const ra=a.route||0,rb=b.route||0;if(ra===0&&rb>0)return 1;if(rb===0&&ra>0)return-1;return ra-rb||(a.daysAway??999)-(b.daysAway??999);});
-  else if(orderSort==='name')computed.sort((a,b)=>a.name.localeCompare(b.name));
-  else computed.sort((a,b)=>(a.daysAway??999)-(b.daysAway??999));
+  const computed=farms.map(computeFarm).sort((a,b)=>(a.daysAway??999)-(b.daysAway??999));
 
   const urgent=computed.filter(f=>f.daysAway!==null&&f.daysAway<=3);
   let remHtml='';
@@ -913,35 +2482,26 @@ function renderOrders(){
   renderTimeline(computed);
 
   let cardsHtml='';
-  const ordersToShow=orderFilter?computed.filter(f=>f.name.toLowerCase().includes(orderFilter.toLowerCase())):computed;
-  if(ordersToShow.length===0&&orderFilter)cardsHtml='<div class="no-results">🔍 No farms match — try a different name</div>';
-  ordersToShow.forEach(f=>{
+  computed.forEach(f=>{
     const{cls,badge,cardCls}=statusInfo(f.daysAway);
     const nextStr=f.nextD?fmtDateHuman(f.nextD):'—';
     const feedTagHtml=f.feedType?`<span class="feed-tag">${esc(f.feedType)}</span>`:'<span style="font-size:.78rem;color:var(--text2);">—</span>';
     const addTagHtml=f.additives?`<span class="additive-tag">${esc(f.additives)}</span>`:'<span style="font-size:.78rem;color:var(--text2);">—</span>';
-    const routeBadge=f.route?`<span style="background:var(--accent);color:#fff;font-size:.65rem;font-weight:700;padding:2px 7px;border-radius:10px;margin-right:6px;vertical-align:middle;">Stop ${f.route}</span>`:'';
     cardsHtml+=`<div class="order-card ${cardCls}">
-      <div class="order-card-top"><div class="order-name">${routeBadge}${esc(f.name)}</div><span class="badge ${cls}">${badge}</span></div>
+      <div class="order-card-top"><div class="order-name">${esc(f.name)}</div><span class="badge ${cls}">${badge}</span></div>
       <div class="order-grid">
         <div class="order-cell"><div class="order-cell-label">Next Date</div><div class="order-cell-val" style="font-size:.8rem;">${nextStr}</div></div>
         <div class="order-cell"><div class="order-cell-label">Tonnes/Mo</div><div class="order-cell-val">${f.tonnesMonth.toFixed(1)}</div></div>
         <div class="order-cell"><div class="order-cell-label">Cont./Mo</div><div class="order-cell-val">${f.containersMonth.toFixed(1)}</div></div>
-      </div>
-      <div class="silo-bar-wrap" style="margin:8px 0 4px;">
-        <div class="silo-bar-bg"><div class="silo-bar-fill ${f.siloBarClass}" style="width:${f.siloPercent}%"></div></div>
-        <div class="silo-bar-label"><span>${f.siloPercent}% silo remaining</span><span>${f.remainingTonnes.toFixed(1)}t left</span></div>
       </div>
       <div class="order-feed-row">
         <span class="order-feed-label">Feed:</span>${feedTagHtml}
         <span class="order-feed-label" style="margin-left:6px;">Additives:</span>${addTagHtml}
       </div>
       ${f.comments?`<div style="margin-top:7px;padding-top:7px;border-top:1px solid var(--border);font-size:.76rem;color:var(--text2);line-height:1.5;">📝 ${esc(f.comments)}</div>`:''}
-      ${f.deliveryHistory&&f.deliveryHistory.length?`<div class="print-history"><strong>Recent deliveries: </strong>${f.deliveryHistory.slice(0,5).map(h=>`${esc(fmtDateShort(h.date))} — ${h.tonnes}t`).join(' · ')}</div>`:''}
-      <div style="display:flex;gap:8px;margin-top:10px;flex-wrap:wrap;">
-        ${f.phone?`<a href="tel:${esc(f.phone)}" class="call-btn" style="flex:1;min-width:120px;margin-bottom:0;">📞 ${esc(f.phone)}</a>`:''}
-        ${f.phone2?`<a href="tel:${esc(f.phone2)}" class="call-btn" style="flex:1;min-width:120px;margin-bottom:0;">📞 ${esc(f.phone2)}</a>`:''}
-        <button class="icon-btn primary" style="flex:2;min-width:140px;justify-content:center;" onclick="openDelivery(${f.id})">✅ Record Delivery</button>
+      <div style="display:flex;gap:8px;margin-top:10px;">
+        ${f.phone?`<a href="tel:${esc(f.phone)}" class="call-btn" style="flex:1;margin-bottom:0;">📞 ${esc(f.phone)}</a>`:''}
+        <button class="icon-btn primary" style="flex:2;justify-content:center;" onclick="openDelivery(${f.id})">✅ Record Delivery</button>
       </div>
     </div>`;
   });
@@ -972,8 +2532,8 @@ function renderTimeline(computed){
     const hasUrgent=farmsOnDay.some(f=>f.daysAway!==null&&f.daysAway<=0);
     const hasSoon=farmsOnDay.some(f=>f.daysAway!==null&&f.daysAway<=3);
     const dayCls=`timeline-day${di===0?' is-today':''}${farmsOnDay.length?hasUrgent?' has-urgent':hasSoon?' has-soon':' has-farms':''}`;
-    const dayLabel=day.toLocaleDateString('en-AU',{weekday:'short'});
-    const dateLabel=day.toLocaleDateString('en-AU',{day:'numeric',month:'short'});
+    const dayLabel=['Sun','Mon','Tue','Wed','Thu','Fri','Sat'][day.getDay()];
+    const dateLabel=`${String(day.getDate()).padStart(2,'0')}/${String(day.getMonth()+1).padStart(2,'0')}`;
     const chips=farmsOnDay.length
       ?farmsOnDay.map(f=>`<div class="tl-chip ${f.daysAway<=0?'urgent':f.daysAway<=3?'soon':'ok'}">${esc(f.name)}</div>`).join('')
       :'<div class="tl-empty">—</div>';
@@ -990,147 +2550,83 @@ function openDelivery(farmId){
   const f=farms.find(fm=>fm.id===farmId);
   if(!f)return;
   document.getElementById('deliveryFarmName').textContent=f.name;
-  const lastTonnes=f.deliveryHistory&&f.deliveryHistory.length?f.deliveryHistory[0].tonnes:(f.silo>0?f.silo:f.tonnesDel||'');
-  document.getElementById('deliveryTonnes').value=lastTonnes;
+  document.getElementById('deliveryTonnes').value=f.silo>0?f.silo:f.tonnesDel||'';
   document.getElementById('deliveryDate').value=fmtDate(today());
-  document.getElementById('deliveryNotes').value='';
-  document.getElementById('deliveryCarryOver').checked=false;
-  document.getElementById('deliveryRemaining').textContent=computeFarm(f).remainingTonnes.toFixed(1);
   document.getElementById('deliveryModal').classList.add('open');
   setTimeout(()=>document.getElementById('deliveryTonnes').select(),150);
 }
 function closeDelivery(){document.getElementById('deliveryModal').classList.remove('open');_deliveryFarmId=null;}
-let _lastDelivery=null,_lastDeliveryTimer=null;
 function confirmDelivery(){
   if(_deliveryFarmId===null)return;
   const tonnes=+document.getElementById('deliveryTonnes').value;
   const date=document.getElementById('deliveryDate').value;
-  const notes=document.getElementById('deliveryNotes').value.trim();
   if(!tonnes||tonnes<=0){showToast('⚠️ Enter tonnes delivered');return;}
+  if(!date||!parseDate(date)){showToast('⚠️ Enter a valid delivery date');return;}
   const idx=farms.findIndex(fm=>fm.id===_deliveryFarmId);
   if(idx===-1)return;
   const name=farms[idx].name;
-  const carryOver=document.getElementById('deliveryCarryOver').checked;
-  const finalTonnes=carryOver?+(computeFarm(farms[idx]).remainingTonnes+tonnes).toFixed(2):tonnes;
-  _lastDelivery={idx,snapshot:JSON.parse(JSON.stringify(farms[idx]))};
-  clearTimeout(_lastDeliveryTimer);
-  _lastDeliveryTimer=setTimeout(()=>{_lastDelivery=null;},7000);
   if(!Array.isArray(farms[idx].deliveryHistory))farms[idx].deliveryHistory=[];
-  farms[idx].deliveryHistory.unshift({date,tonnes,...(notes&&{notes})});
-  farms[idx].deliveryHistory.splice(10);
-  farms[idx].tonnesDel=finalTonnes;farms[idx].lastDel=date;farms[idx].nextDel='';farms[idx]._manualNextDel=false;
+  farms[idx].deliveryHistory.unshift({date,tonnes});
+  if(farms[idx].deliveryHistory.length>10)farms[idx].deliveryHistory.length=10;
+  farms[idx].tonnesDel=tonnes;farms[idx].lastDel=date;farms[idx].nextDel='';farms[idx]._manualNextDel=false;
   closeDelivery();render();saveAll(true);
-  showToast(`✅ ${name} — delivery recorded`,'undoDelivery');
-}
-function undoDelivery(){
-  if(!_lastDelivery)return;
-  clearTimeout(_lastDeliveryTimer);
-  farms[_lastDelivery.idx]=_lastDelivery.snapshot;
-  _lastDelivery=null;
-  render();saveAll(true);showToast('↩️ Delivery undone');
+  showToast(`✅ ${name} — delivery recorded`);
 }
 
 // —— NOTIFICATIONS ——
 let notificationsEnabled=false;
-
-// Returns the Capacitor LocalNotifications plugin when running inside the Android app.
-// Returns null when running in a plain browser.
-function _capLN(){return window.Capacitor&&window.Capacitor.Plugins&&window.Capacitor.Plugins.LocalNotifications||null;}
-
-async function toggleNotifications(){
+function toggleNotifications(){
+  if(!('Notification' in window)){showToast('⚠️ Not supported in this browser');return;}
   if(!notificationsEnabled){
-    const ln=_capLN();
-    if(ln){
-      // ── Capacitor / Android native path ──
-      try{
-        let status=(await ln.checkPermissions()).display;
-        if(status==='prompt'||status==='prompt-with-rationale'){
-          status=(await ln.requestPermissions()).display;
-        }
-        if(status==='granted'){
-          notificationsEnabled=true;saveAll(true);updateNotifBtn();showToast('🔔 Reminders enabled');checkNotifications();
-        }else{
-          showToast('⚠️ Notifications blocked — allow in Android Settings › Apps › Feed Estimator');
-        }
-      }catch(e){showToast('⚠️ Could not enable reminders');}
-    }else if('Notification' in window){
-      // ── Browser Web Notifications path ──
-      if(Notification.permission==='granted'){
-        notificationsEnabled=true;saveAll(true);updateNotifBtn();showToast('🔔 Reminders enabled');checkNotifications();return;
-      }
-      const p=await Notification.requestPermission();
-      if(p==='granted'){
-        notificationsEnabled=true;saveAll(true);updateNotifBtn();showToast('🔔 Reminders enabled');checkNotifications();
-      }else if(p==='denied'){
-        showToast('⚠️ Notifications blocked — allow in browser settings');
-      }else{
-        showToast('⚠️ Permission not granted — please try again');
-      }
-    }else{
-      showToast('⚠️ Notifications not supported in this browser');
-    }
+    Notification.requestPermission().then(p=>{
+      if(p==='granted'){notificationsEnabled=true;saveAll();updateNotifBtn();showToast('🔔 Reminders enabled');checkNotifications();}
+      else showToast('⚠️ Permission denied — check browser settings');
+    });
   }else{
-    notificationsEnabled=false;saveAll(true);updateNotifBtn();showToast('🔕 Reminders off');
+    notificationsEnabled=false;saveAll();updateNotifBtn();showToast('🔕 Reminders off');
   }
 }
 function updateNotifBtn(){
   const b=document.getElementById('notifBtn');
   if(b)b.textContent=notificationsEnabled?'🔕 Disable Reminders':'🔔 Enable Reminders';
 }
-async function checkNotifications(){
-  if(!notificationsEnabled)return;
-  // Fire at most once per calendar day to avoid repeated sounds on every app open
-  const todayStr=fmtDate(today());
-  if(localStorage.getItem('feedEst_notifDate')===todayStr)return;
+function checkNotifications(){
+  if(!notificationsEnabled||Notification.permission!=='granted')return;
   const urgent=farms.map(computeFarm).filter(f=>f.daysAway!==null&&f.daysAway<=3);
-  if(!urgent.length)return;
-  localStorage.setItem('feedEst_notifDate',todayStr);
-  const ln=_capLN();
-  if(ln){
-    // ── Capacitor native notifications ──
-    try{
-      const notifications=urgent.slice(0,5).map((f,i)=>{
-        const msg=f.daysAway<0?`Overdue by ${Math.abs(f.daysAway)} day(s)`:f.daysAway===0?'Due today — order now':`Due in ${f.daysAway} day(s)`;
-        return{id:f.id,title:`🌾 ${f.name}`,body:msg+(f.feedType?` · ${f.feedType}`:''),schedule:{at:new Date(Date.now()+500+i*300)},smallIcon:'ic_launcher',largeIcon:'ic_launcher',iconColor:'#5a8a3c'};
-      });
-      await ln.schedule({notifications});
-    }catch(e){}
-  }else if('Notification' in window&&Notification.permission==='granted'){
-    // ── Browser Web Notifications ──
-    urgent.slice(0,5).forEach(f=>{
-      const msg=f.daysAway<0?`Overdue by ${Math.abs(f.daysAway)}d`:f.daysAway===0?'Due today — order now':`Due in ${f.daysAway} day(s)`;
-      try{new Notification(`🌾 ${f.name}`,{body:msg+(f.feedType?` · ${f.feedType}`:''),tag:`farm-${f.id}`});}catch(e){}
-    });
-  }
+  urgent.slice(0,5).forEach(f=>{
+    const msg=f.daysAway<0?`Overdue by ${Math.abs(f.daysAway)}d`:f.daysAway===0?'Due today — order now':`Due in ${f.daysAway} day(s)`;
+    new Notification(`🌾 ${f.name}`,{body:msg+(f.feedType?` · ${f.feedType}`:''),tag:`farm-${f.id}`});
+  });
 }
 
+let _renderTimer=null;
+function debouncedRender(){clearTimeout(_renderTimer);_renderTimer=setTimeout(render,150);}
+
 function updateFarm(i,key,val){
-  if(key==='cows'&&(isNaN(val)||val<0)){showToast('⚠️ Cows must be 0 or more');return;}
-  if(key==='feedRate'&&(isNaN(val)||val<0)){showToast('⚠️ Feed rate must be 0 or more');return;}
-  if(key==='tonnesDel'&&(isNaN(val)||val<0)){showToast('⚠️ Tonnes must be 0 or more');return;}
-  if(key==='silo'&&(isNaN(val)||val<0)){showToast('⚠️ Silo size must be 0 or more');return;}
-  if(key==='lastDel'&&val&&parseDate(val)>today()){showToast('⚠️ Last delivery cannot be in the future');return;}
+  if(key==='cows'){const n=+val;if(isNaN(n)||n<1){showToast('⚠️ Cows must be at least 1');return;}val=n;}
+  if(key==='feedRate'){const n=+val;if(isNaN(n)||n<=0){showToast('⚠️ Feed rate must be greater than 0');return;}val=n;}
+  if(key==='tonnesDel'){const n=+val;if(isNaN(n)||n<0){showToast('⚠️ Tonnes must be 0 or more');return;}val=n;}
+  if(key==='silo'){const n=+val;if(isNaN(n)||n<0){showToast('⚠️ Silo size must be 0 or more');return;}val=n;}
+  if(key==='lastDel'&&val&&parseDate(val)>today()){showToast('⚠️ Last delivery date cannot be in the future');return;}
   farms[i][key]=val;
   if(['lastDel','cows','feedRate','tonnesDel'].includes(key)){if(!farms[i]._manualNextDel)farms[i].nextDel='';}
   if(key==='nextDel')farms[i]._manualNextDel=!!val;
-  if(key==='tonnesDel'&&farms[i].deliveryHistory&&farms[i].deliveryHistory.length>0)
-    showToast('ℹ️ Tip: use ✅ Delivered to keep history accurate');
-  render();
+  debouncedRender();
 }
 function clearNextDel(i){farms[i].nextDel='';farms[i]._manualNextDel=false;render();showToast('🔮 Reset to predicted date');}
 function addFarm(){
   const t=today();const last=new Date(t);last.setDate(t.getDate()-6);
   const newId=farms.length>0?Math.max(...farms.map(f=>f.id))+1:1;
-  farms.push({id:newId,name:`Farm ${farms.length+1}`,silo:30,cows:800,feedRate:5,tonnesDel:24,lastDel:fmtDate(last),nextDel:'',_manualNextDel:false,feedType:'',additives:'',comments:'',phone:'',phone2:'',deliveryHistory:[],route:0});
-  saveAll(true);switchTab('farms');showToast('✅ New farm added');
+  farms.push({id:newId,name:`Farm ${farms.length+1}`,silo:30,cows:800,feedRate:5,tonnesDel:24,lastDel:fmtDate(last),nextDel:'',_manualNextDel:false,feedType:'',additives:'',comments:'',phone:'',deliveryHistory:[]});
+  switchTab('farms');showToast('✅ New farm added');
 }
 let _deletedFarm=null,_deleteTimer=null;
 function removeFarm(i){
   _deletedFarm={farm:JSON.parse(JSON.stringify(farms[i])),index:i};
   farms.splice(i,1);
-  render();saveAll(true);
+  render();
   clearTimeout(_deleteTimer);
-  showToast(`${_deletedFarm.farm.name} removed`,'undoDelete');
+  showToast(`${_deletedFarm.farm.name} removed`,true);
   _deleteTimer=setTimeout(()=>{_deletedFarm=null;},5000);
 }
 function undoDelete(){
@@ -1138,7 +2634,7 @@ function undoDelete(){
   clearTimeout(_deleteTimer);
   farms.splice(_deletedFarm.index,0,_deletedFarm.farm);
   _deletedFarm=null;
-  render();saveAll(true);
+  render();
   showToast('↩️ Restored!');
 }
 
@@ -1158,7 +2654,7 @@ function switchTab(name){
 }
 
 function toggleDark(){
-  darkMode=!darkMode;document.body.classList.toggle('dark',darkMode);updateDarkBtn();saveAll(true);
+  darkMode=!darkMode;document.body.classList.toggle('dark',darkMode);updateDarkBtn();saveAll();
 }
 function updateDarkBtn(){
   document.getElementById('darkBtn').textContent=darkMode?'☀️':'🌙';
@@ -1167,16 +2663,9 @@ function updateDarkBtn(){
 }
 
 function openShare(){
-  const shareFarms=farms.map(({deliveryHistory,...f})=>f);
-  const data=encodeURIComponent(JSON.stringify({farms:shareFarms}));
-  const url=location.href.split('?')[0]+'?data='+data;
-  if(navigator.share){
-    navigator.share({title:'Feed Estimator by M@SE',url}).catch(()=>{});
-    return;
-  }
-  document.getElementById('shareUrl').value=url;
+  const data=encodeURIComponent(JSON.stringify({farms}));
+  document.getElementById('shareUrl').value=location.href.split('?')[0]+'?data='+data;
   document.getElementById('shareModal').classList.add('open');
-  if(url.length>6000)setTimeout(()=>showToast('⚠️ Link is very long — some browsers may truncate it'),300);
 }
 function closeShare(){document.getElementById('shareModal').classList.remove('open');}
 function copyShare(){
@@ -1186,164 +2675,47 @@ function copyShare(){
 }
 
 function downloadApp(){
-  const payload=JSON.stringify(JSON.stringify({farms,darkMode,notificationsEnabled}));
-  const script=`<script>localStorage.setItem('feedEstimator_v2',${payload});<\/script>`;
-  const html=document.documentElement.outerHTML.replace('</head>',script+'</head>');
-  const blob=new Blob([html],{type:'text/html'});
+  const blob=new Blob([document.documentElement.outerHTML],{type:'text/html'});
   const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='FeedEstimator_by_M@SE.html';a.click();
   showToast('⬇️ Download started');
 }
 
 function downloadCSV(){
-  const BOM='﻿';
-  const headers=['Farm','Route','Cows','Feed Type','Additives','Feed Rate (kg/day)','Silo (t)','Tonnes Delivered','Last Delivery','Next Delivery','Usage/Day (t)','Days to Empty','Tonnes/Month','Containers/Month','Phone','Phone 2','Comments'];
-  const rows=farms.map(f=>{
-    const c=computeFarm(f);
-    return[f.name,f.route||0,f.cows,f.feedType,f.additives,f.feedRate,f.silo,f.tonnesDel,f.lastDel,c.nextD?fmtDate(c.nextD):'',c.usageDay.toFixed(3),c.daysEmpty.toFixed(1),c.tonnesMonth.toFixed(1),c.containersMonth.toFixed(2),f.phone,f.phone2||'',f.comments];
-  });
-  const csv=BOM+[headers,...rows].map(r=>r.map(v=>`"${String(v??'').replace(/"/g,'""')}"`).join(',')).join('\r\n');
-  const blob=new Blob([csv],{type:'text/csv;charset=utf-8'});
-  const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='FeedEstimator_Export.csv';a.click();
-  showToast('📊 CSV downloaded');
+  const computed=farms.map(computeFarm);
+  const cols=['Farm','Phone','Feed Type','Additives','Cows','Feed Rate (kg/d)','Silo (t)','Tonnes Delivered','Last Delivery','Next Delivery','Days Away','Usage/Day (t)','Tonnes/Month','Containers/Month','Containers/Week','Silo %','Comments'];
+  const rows=computed.map(f=>[
+    f.name,f.phone||'',f.feedType||'',f.additives||'',
+    f.cows,f.feedRate,f.silo,f.tonnesDel,f.lastDel,
+    f.nextD?fmtDate(f.nextD):'',
+    f.daysAway!==null?f.daysAway:'',
+    f.usageDay.toFixed(3),f.tonnesMonth.toFixed(1),
+    f.containersMonth.toFixed(2),f.containersWeek.toFixed(2),
+    f.siloPercent,f.comments||''
+  ].map(v=>`"${String(v).replace(/"/g,'""')}"`).join(','));
+  const csv=[cols.map(c=>`"${c}"`).join(','),...rows].join('\r\n');
+  const blob=new Blob(['﻿'+csv],{type:'text/csv;charset=utf-8'});
+  const a=document.createElement('a');
+  const date=fmtDate(new Date());
+  a.href=URL.createObjectURL(blob);a.download=`FeedEstimator_${date}.csv`;a.click();
+  showToast('📊 CSV exported');
 }
 
 let _toastTimer=null;
-function showToast(msg,undoFn=null){
+function showToast(msg,withUndo=false){
   const t=document.getElementById('toast');
-  if(undoFn){
-    t.innerHTML=`${esc(msg)} <button class="toast-undo" onclick="${undoFn}()">Undo</button>`;
+  if(withUndo){
+    t.innerHTML=`${esc(msg)} <button class="toast-undo" onclick="undoDelete()">Undo</button>`;
   }else{
     t.textContent=msg;
   }
   t.classList.add('show');
   clearTimeout(_toastTimer);
-  _toastTimer=setTimeout(()=>t.classList.remove('show'),undoFn?7000:2600);
-}
-
-function removeHistoryEntry(farmId,idx){
-  const farm=farms.find(f=>f.id===farmId);
-  if(!farm)return;
-  farm.deliveryHistory.splice(idx,1);
-  render();saveAll(true);showToast('🗑 Entry removed');
-}
-
-function parseCSVRow(line){
-  const result=[];let cur='';let inQ=false;
-  for(let i=0;i<line.length;i++){
-    const ch=line[i];
-    if(inQ){if(ch==='"'&&line[i+1]==='"'){cur+='"';i++;}else if(ch==='"')inQ=false;else cur+=ch;}
-    else{if(ch==='"')inQ=true;else if(ch===','){result.push(cur);cur='';}else cur+=ch;}
-  }
-  result.push(cur);return result;
-}
-
-function importCSV(){
-  const inp=document.createElement('input');
-  inp.type='file';inp.accept='.csv,text/csv';
-  inp.onchange=e=>{
-    const file=e.target.files[0];if(!file)return;
-    const reader=new FileReader();
-    reader.onload=ev=>{
-      try{
-        const text=ev.target.result.replace(/^﻿/,'');
-        const lines=text.split(/\r?\n/).filter(l=>l.trim());
-        if(lines.length<2){showToast('⚠️ CSV has no data rows');return;}
-        const headers=parseCSVRow(lines[0]).map(h=>h.trim().toLowerCase());
-        const col=h=>headers.indexOf(h);
-        const fc=col('farm');
-        if(fc===-1){showToast('⚠️ No "Farm" column found');return;}
-        const cc=col('cows'),frc=col('feed rate (kg/day)'),ftc=col('feed type'),
-              ac=col('additives'),sc=col('silo (t)'),tc=col('tonnes delivered'),
-              ldc=col('last delivery'),ndc=col('next delivery'),
-              phc=col('phone'),ph2c=col('phone 2'),coc=col('comments'),rtc=col('route');
-        const imported=[];
-        for(let i=1;i<lines.length;i++){
-          const row=parseCSVRow(lines[i]);
-          const name=row[fc]?.trim();if(!name)continue;
-          const maxId=farms.length?Math.max(...farms.map(f=>f.id)):0;
-          imported.push({
-            id:maxId+imported.length+1,name,
-            cows:parseInt(row[cc])||0,feedRate:parseFloat(row[frc])||0,
-            feedType:row[ftc]?.trim()||'',additives:row[ac]?.trim()||'',
-            silo:parseFloat(row[sc])||0,tonnesDel:parseFloat(row[tc])||0,
-            lastDel:row[ldc]?.trim()||'',nextDel:row[ndc]?.trim()||'',
-            _manualNextDel:!!(row[ndc]?.trim()),
-            phone:row[phc]?.trim()||'',phone2:row[ph2c]?.trim()||'',comments:row[coc]?.trim()||'',
-            route:rtc>=0?parseInt(row[rtc])||0:0,deliveryHistory:[]
-          });
-        }
-        if(!imported.length){showToast('⚠️ No valid farms found');return;}
-        if(!confirm(`Replace all ${farms.length} farm(s) with ${imported.length} imported farm(s)?`))return;
-        farms=imported;render();saveAll(true);
-        showToast(`📥 Imported ${imported.length} farm(s)`);
-      }catch(err){showToast('⚠️ Could not read CSV');}
-    };
-    reader.readAsText(file,'utf-8');
-  };
-  inp.click();
-}
-
-function duplicateFarm(i){
-  const orig=farms[i];
-  const newId=Math.max(...farms.map(f=>f.id))+1;
-  const copy={...JSON.parse(JSON.stringify(orig)),id:newId,name:orig.name+' (Copy)',deliveryHistory:[]};
-  farms.splice(i+1,0,copy);
-  render();saveAll(true);showToast(`📋 ${orig.name} duplicated`);
-}
-
-function downloadHistoryCSV(){
-  const BOM='﻿';
-  const headers=['Farm','Date','Tonnes','Notes'];
-  const rows=[];
-  farms.forEach(f=>(f.deliveryHistory||[]).forEach(h=>rows.push([f.name,h.date,h.tonnes,h.notes||''])));
-  if(!rows.length){showToast('⚠️ No delivery history to export');return;}
-  const csv=BOM+[headers,...rows].map(r=>r.map(v=>`"${String(v??'').replace(/"/g,'""')}"`).join(',')).join('\r\n');
-  const blob=new Blob([csv],{type:'text/csv;charset=utf-8'});
-  const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='FeedEstimator_DeliveryHistory.csv';a.click();
-  showToast('📋 History CSV downloaded');
-}
-
-function backupJSON(){
-  const data=JSON.stringify({farms,darkMode,notificationsEnabled},null,2);
-  const blob=new Blob([data],{type:'application/json'});
-  const a=document.createElement('a');a.href=URL.createObjectURL(blob);
-  a.download=`FeedEstimator_Backup_${fmtDate(today())}.json`;a.click();
-  showToast('🗄️ Backup downloaded');
-}
-
-function restoreJSON(){
-  const inp=document.createElement('input');
-  inp.type='file';inp.accept='.json,application/json';
-  inp.onchange=e=>{
-    const file=e.target.files[0];if(!file)return;
-    const reader=new FileReader();
-    reader.onload=ev=>{
-      try{
-        const d=JSON.parse(ev.target.result);
-        if(!d.farms||!Array.isArray(d.farms)){showToast('⚠️ Invalid backup file');return;}
-        if(!confirm(`Restore ${d.farms.length} farm(s) from backup? This replaces all current data.`))return;
-        farms=d.farms;darkMode=d.darkMode||false;notificationsEnabled=d.notificationsEnabled||false;
-        farms.forEach(f=>{if(f.feedType===undefined)f.feedType='';if(f.additives===undefined)f.additives='';if(f.comments===undefined)f.comments='';if(f.phone===undefined)f.phone='';if(f.phone2===undefined)f.phone2='';if(!Array.isArray(f.deliveryHistory))f.deliveryHistory=[];if(f.route===undefined)f.route=0;});
-        document.body.classList.toggle('dark',darkMode);updateDarkBtn();
-        render();saveAll(true);showToast(`✅ Restored ${farms.length} farm(s)`);
-      }catch(err){showToast('⚠️ Could not read backup file');}
-    };
-    reader.readAsText(file,'utf-8');
-  };
-  inp.click();
-}
-
-let orderFilter='',orderSort='urgency';
-function setOrderFilter(v){orderFilter=v;renderOrders();}
-function setOrderSort(v){
-  orderSort=v;
-  document.querySelectorAll('[data-osort]').forEach(p=>p.classList.toggle('active',p.dataset.osort===v));
-  renderOrders();
+  _toastTimer=setTimeout(()=>t.classList.remove('show'),withUndo?5000:2600);
 }
 
 function loadUrlData(){
   const d=new URLSearchParams(location.search).get('data');
-  if(d){try{const p=JSON.parse(d);if(p.farms){farms=p.farms;farms.forEach(f=>{if(!Array.isArray(f.deliveryHistory))f.deliveryHistory=[];if(f.phone2===undefined)f.phone2='';if(f.route===undefined)f.route=0;});showToast('📥 Shared data loaded!');}}catch(e){}}
+  if(d){try{const p=JSON.parse(decodeURIComponent(d));if(p.farms){farms=p.farms;showToast('📥 Shared data loaded!');}}catch(e){}}
 }
 
 let expandedFarmId=null;
@@ -1354,7 +2726,7 @@ let dashFilter='',dashSort='urgency';
 function setDashFilter(v){dashFilter=v;renderDashboard();}
 function setDashSort(v){
   dashSort=v;
-  document.querySelectorAll('[data-sort]').forEach(p=>p.classList.toggle('active',p.dataset.sort===v));
+  document.querySelectorAll('.sort-pill').forEach(p=>p.classList.toggle('active',p.dataset.sort===v));
   renderDashboard();
 }
 
@@ -1417,22 +2789,15 @@ window.addEventListener('appinstalled',()=>{
   // Service worker — required for Android auto-install prompt when hosted on HTTPS
   if('serviceWorker' in navigator){
     const sw=`
-      const CACHE='feed-est-v2';
-      self.addEventListener('install',e=>{
-        e.waitUntil(caches.open(CACHE).then(c=>c.add('./').catch(()=>{})).finally(()=>self.skipWaiting()));
-      });
-      self.addEventListener('activate',e=>{
-        e.waitUntil(caches.keys().then(ks=>Promise.all(ks.filter(k=>k!==CACHE).map(k=>caches.delete(k)))).then(()=>clients.claim()));
-      });
+      const CACHE='feed-est-v1';
+      self.addEventListener('install',e=>{self.skipWaiting();});
+      self.addEventListener('activate',e=>{e.waitUntil(clients.claim());});
       self.addEventListener('fetch',e=>{
         if(e.request.method!=='GET')return;
-        e.respondWith(caches.match(e.request).then(r=>{
-          if(r)return r;
-          return fetch(e.request).then(res=>{
-            if(res.ok&&res.type!=='opaque')caches.open(CACHE).then(c=>c.put(e.request,res.clone()));
-            return res;
-          }).catch(()=>caches.match(e.request)||new Response('Offline — open the app online first to cache it.',{headers:{'Content-Type':'text/plain'}}));
-        }));
+        e.respondWith(caches.match(e.request).then(r=>r||fetch(e.request).then(res=>{
+          caches.open(CACHE).then(c=>c.put(e.request,res.clone()));
+          return res;
+        }).catch(()=>caches.match(e.request))));
       });
     `;
     try{
@@ -1463,7 +2828,7 @@ document.querySelector('.scroll-area').addEventListener('touchend',e=>{
 loadData();loadUrlData();render();
 updateNotifBtn();checkNotifications();
 setInterval(()=>saveAll(true),120000);
-setInterval(checkNotifications,3600000);
 </script>
-</body>
-</html>
+
+
+</body></html>
