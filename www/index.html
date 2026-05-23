@@ -2297,7 +2297,8 @@ function loadData(){
 }
 
 function saveAll(silent=false){
-  localStorage.setItem('feedEstimator_v2',JSON.stringify({farms,darkMode,notificationsEnabled}));
+  try{localStorage.setItem('feedEstimator_v2',JSON.stringify({farms,darkMode,notificationsEnabled}));}
+  catch(e){if(!silent)showToast('⚠️ Could not save — storage full');return;}
   if(!silent)showToast('✅ Saved!');
 }
 
@@ -2715,7 +2716,7 @@ function showToast(msg,withUndo=false){
 
 function loadUrlData(){
   const d=new URLSearchParams(location.search).get('data');
-  if(d){try{const p=JSON.parse(decodeURIComponent(d));if(p.farms){farms=p.farms;showToast('📥 Shared data loaded!');}}catch(e){}}
+  if(d){try{const p=JSON.parse(decodeURIComponent(d));if(p.farms){farms=p.farms;farms.forEach(f=>{if(f.feedType===undefined)f.feedType='';if(f.additives===undefined)f.additives='';if(f.comments===undefined)f.comments='';if(f.phone===undefined)f.phone='';if(!Array.isArray(f.deliveryHistory))f.deliveryHistory=[];if(f._manualNextDel===undefined)f._manualNextDel=false;});showToast('📥 Shared data loaded!');}}catch(e){}}
 }
 
 let expandedFarmId=null;
@@ -2820,6 +2821,7 @@ document.querySelector('.scroll-area').addEventListener('touchend',e=>{
   if(Math.abs(dx)>55&&Math.abs(dx)>Math.abs(dy)*1.5){
     const order=window.innerWidth>=700?_allTabOrder:_mobileTabOrder;
     const idx=order.indexOf(currentTab);
+    if(idx===-1)return;
     if(dx<0&&idx<order.length-1)switchTab(order[idx+1]);
     else if(dx>0&&idx>0)switchTab(order[idx-1]);
   }
