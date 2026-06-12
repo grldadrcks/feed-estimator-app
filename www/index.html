@@ -376,6 +376,7 @@ a.call-btn:active{background:var(--accent);color:#fff;}
 
   <!-- DASHBOARD -->
   <div class="panel" id="tab-dashboard">
+    <div id="seasonBanner"></div>
     <div id="reminderBanner"><div class="reminder danger"><div class="reminder-icon">🚨</div><div><strong>Farm 1 — OVERDUE by 2 day(s)</strong> + 19 more farm(s) — check Orders tab</div></div></div>
     <div class="stats-grid" id="statsGrid">
     <div class="stat-card good"><div class="stat-label">Total Cows</div><div class="stat-val">16,000</div><div class="stat-unit">20 farms</div></div>
@@ -1728,8 +1729,9 @@ a.call-btn:active{background:var(--accent);color:#fff;}
     <div class="divider"></div>
     <div class="section-title">📅 Next 7 Days</div>
     <div class="timeline-scroll"><div id="timelineWrap"><div class="timeline-row"><div class="timeline-day is-today"><div class="tl-day-label">Sat</div><div class="tl-day-name">2 May</div><div class="tl-empty">—</div></div><div class="timeline-day"><div class="tl-day-label">Sun</div><div class="tl-day-name">3 May</div><div class="tl-empty">—</div></div><div class="timeline-day"><div class="tl-day-label">Mon</div><div class="tl-day-name">4 May</div><div class="tl-empty">—</div></div><div class="timeline-day"><div class="tl-day-label">Tue</div><div class="tl-day-name">5 May</div><div class="tl-empty">—</div></div><div class="timeline-day"><div class="tl-day-label">Wed</div><div class="tl-day-name">6 May</div><div class="tl-empty">—</div></div><div class="timeline-day"><div class="tl-day-label">Thu</div><div class="tl-day-name">7 May</div><div class="tl-empty">—</div></div><div class="timeline-day"><div class="tl-day-label">Fri</div><div class="tl-day-name">8 May</div><div class="tl-empty">—</div></div></div></div></div>
-    <div id="print-btn-wrap" style="margin-bottom:10px;">
-      <button class="icon-btn" onclick="printRunSheet()" style="width:100%;justify-content:center;">🖨️ Print Run Sheet</button>
+    <div id="print-btn-wrap" style="margin-bottom:10px;display:flex;gap:8px;">
+      <button class="icon-btn" onclick="generateOrder()" style="flex:1;justify-content:center;">📋 Generate Order</button>
+      <button class="icon-btn" onclick="printRunSheet()" style="flex:1;justify-content:center;">🖨️ Print Run Sheet</button>
     </div>
     <div class="divider"></div>
     <div id="supplierBar"></div>
@@ -2212,9 +2214,28 @@ a.call-btn:active{background:var(--accent);color:#fff;}
         <input type="text" inputmode="numeric" id="deliveryDate" placeholder="DD/MM/YYYY" oninput="onDateInput(this)">
       </div>
     </div>
+    <div class="form-group" style="margin-top:10px;">
+      <label>Schedule Next Delivery <span style="text-transform:none;font-weight:400;color:var(--text2);font-size:.7rem;">(optional)</span></label>
+      <input type="text" inputmode="numeric" id="deliveryNextDate" placeholder="DD/MM/YYYY" oninput="onDateInput(this)">
+    </div>
     <div class="modal-actions" style="margin-top:14px;">
       <button class="icon-btn" onclick="closeDelivery()" style="justify-content:center;">Cancel</button>
       <button class="icon-btn primary" onclick="confirmDelivery()" style="flex:2;justify-content:center;">✅ Confirm Delivery</button>
+    </div>
+  </div>
+</div>
+
+<!-- ORDER MESSAGE MODAL -->
+<div class="modal-overlay" id="orderMsgModal" onclick="if(event.target===this)closeOrderMsg()">
+  <div class="modal">
+    <div class="modal-handle"></div>
+    <h2>📋 Generate Order</h2>
+    <p style="font-size:.83rem;color:var(--text2);margin-bottom:14px;">All farms with a scheduled delivery — copy and send to your supplier.</p>
+    <textarea id="orderMsgText" readonly style="width:100%;min-height:150px;max-height:45vh;padding:10px 12px;border-radius:9px;border:1.5px solid var(--border);background:var(--surface2);color:var(--text);font-family:'DM Sans',sans-serif;font-size:.8rem;line-height:1.55;resize:vertical;overflow-y:auto;"></textarea>
+    <div class="modal-actions" style="margin-top:14px;">
+      <button class="icon-btn" onclick="closeOrderMsg()" style="justify-content:center;">Close</button>
+      <button class="icon-btn" onclick="emailOrder()" style="justify-content:center;">📧 Email</button>
+      <button class="icon-btn primary" onclick="copyOrderMsg()" style="flex:2;justify-content:center;">📋 Copy</button>
     </div>
   </div>
 </div>
@@ -2223,6 +2244,9 @@ a.call-btn:active{background:var(--accent);color:#fff;}
 
 <script>
 const CONTAINER_SIZE=22;
+let lastSeenSeason='';
+let _seasonChangePending=false;
+function currentSeason(){return [9,10,11,0,1,2].includes(new Date().getMonth())?'summer':'winter';}
 
 function fmtDate(d){const dd=String(d.getDate()).padStart(2,'0');const mm=String(d.getMonth()+1).padStart(2,'0');return `${d.getFullYear()}-${mm}-${dd}`;}
 function parseDate(s){if(!s)return null;const d=new Date(s+'T00:00:00');return isNaN(d)?null:d;}
@@ -2304,9 +2328,10 @@ let farms=[],darkMode=false,currentTab='dashboard';
 let supplier={name:'',phone:'',email:''};
 
 function loadData(){
+  let _prevSzn='';
   try{
     const s=localStorage.getItem('feedEstimator_v2');
-    if(s){const d=JSON.parse(s);farms=d.farms||defaultFarms();darkMode=d.darkMode||false;notificationsEnabled=d.notificationsEnabled||false;supplier=d.supplier||{name:'',phone:'',email:''};}
+    if(s){const d=JSON.parse(s);farms=d.farms||defaultFarms();darkMode=d.darkMode||false;notificationsEnabled=d.notificationsEnabled||false;supplier=d.supplier||{name:'',phone:'',email:''};_prevSzn=d.lastSeenSeason||'';}
     else farms=defaultFarms();
   }catch(e){farms=defaultFarms();}
   farms.forEach(f=>{
@@ -2321,15 +2346,18 @@ function loadData(){
     if(f.useSeasonalRates===undefined)f.useSeasonalRates=false;
     if(f._dismissedCalRate===undefined)f._dismissedCalRate=null;
   });
+  lastSeenSeason=currentSeason();
+  if(_prevSzn&&_prevSzn!==lastSeenSeason&&farms.some(f=>f.useSeasonalRates))_seasonChangePending=true;
   document.body.classList.toggle('dark',darkMode);
   updateDarkBtn();
 }
 
 function saveAll(silent=false){
-  try{localStorage.setItem('feedEstimator_v2',JSON.stringify({farms,darkMode,notificationsEnabled,supplier}));}
+  try{localStorage.setItem('feedEstimator_v2',JSON.stringify({farms,darkMode,notificationsEnabled,supplier,lastSeenSeason}));}
   catch(e){if(!silent)showToast('⚠️ Could not save — storage full');return;}
   if(!silent)showToast('✅ Saved!');
 }
+function dismissSeasonBanner(){_seasonChangePending=false;saveAll(true);const sb=document.getElementById('seasonBanner');if(sb)sb.innerHTML='';}
 
 function render(){renderDashboard();renderFarms();renderOrders();renderSupplierFields();updateTodayDisplay();}
 
@@ -2373,6 +2401,8 @@ function renderDashboard(){
     banner=`<div class="reminder ok"><div class="reminder-icon">✅</div><div><strong>All deliveries on track</strong> — nothing due within 3 days</div></div>`;
   }
   document.getElementById('reminderBanner').innerHTML=banner;
+  const _sb=document.getElementById('seasonBanner');
+  if(_sb){if(_seasonChangePending){const _cs=currentSeason();const _ac=farms.filter(f=>f.useSeasonalRates).length;_sb.innerHTML=`<div class="reminder" style="border-color:var(--accent);background:var(--accent-light);margin-bottom:10px;display:flex;align-items:center;gap:10px;"><div class="reminder-icon">🌿</div><div style="flex:1;"><strong>Season changed to ${_cs==='summer'?'Summer ☀️':'Winter 🌨️'}</strong> — ${_ac} farm${_ac===1?'':'s'} use seasonal rates. <span style="font-size:.76rem;color:var(--text2);">Review feed rates in the Farms tab.</span></div><button onclick="dismissSeasonBanner()" style="background:none;border:none;font-size:1.1rem;cursor:pointer;color:var(--text2);padding:0 4px;line-height:1;">✖</button></div>`;}else{_sb.innerHTML='';}}
 
   let display=[...computed];
   if(dashFilter)display=display.filter(f=>f.name.toLowerCase().includes(dashFilter.toLowerCase())||(f.phone&&f.phone.includes(dashFilter)));
@@ -2603,6 +2633,7 @@ function openDelivery(farmId){
   document.getElementById('deliveryFarmName').textContent=f.name;
   document.getElementById('deliveryTonnes').value=f.silo>0?f.silo:f.tonnesDel||'';
   document.getElementById('deliveryDate').value=fmtDateInput(fmtDate(today()));
+  document.getElementById('deliveryNextDate').value='';
   document.getElementById('deliveryModal').classList.add('open');
   setTimeout(()=>document.getElementById('deliveryTonnes').select(),150);
 }
@@ -2619,9 +2650,10 @@ function confirmDelivery(){
   if(!Array.isArray(farms[idx].deliveryHistory))farms[idx].deliveryHistory=[];
   farms[idx].deliveryHistory.unshift({date,tonnes});
   if(farms[idx].deliveryHistory.length>10)farms[idx].deliveryHistory.length=10;
-  farms[idx].tonnesDel=tonnes;farms[idx].lastDel=date;farms[idx].nextDel='';farms[idx]._manualNextDel=false;
+  const _nextDlv=parseDMY(document.getElementById('deliveryNextDate').value);
+  farms[idx].tonnesDel=tonnes;farms[idx].lastDel=date;farms[idx].nextDel=_nextDlv||'';farms[idx]._manualNextDel=!!_nextDlv;
   closeDelivery();render();saveAll(true);
-  showToast(`✅ ${name} — delivery recorded`);
+  showToast(`✅ ${name} — delivery recorded${_nextDlv?' · next: '+fmtDateDisplay(_nextDlv):''}`);
 }
 
 // —— NOTIFICATIONS ——
@@ -2778,6 +2810,35 @@ function copyShare(){
   const el=document.getElementById('shareUrl');el.select();el.setSelectionRange(0,99999);
   try{navigator.clipboard.writeText(el.value);}catch(e){document.execCommand('copy');}
   showToast('🔗 Link copied!');
+}
+
+function generateOrder(){
+  const computed=farms.map(computeFarm).filter(f=>f.nextD!==null).sort((a,b)=>(a.daysAway??999)-(b.daysAway??999));
+  if(!computed.length){showToast('⚠️ No farms have scheduled deliveries');return;}
+  const dateStr=fmtDateDisplay(fmtDate(today()));
+  const lines=computed.map(f=>{
+    const parts=[f.feedType,f.additives].filter(Boolean).join(' + ');
+    const feedStr=parts?` — ${parts}`:'';
+    const dueStr=f.daysAway!==null&&f.daysAway<0?`OVERDUE (${Math.abs(f.daysAway)}d)`:f.daysAway===0?'Due today':f.daysAway===1?`Tomorrow (${fmtDateDisplay(fmtDate(f.nextD))})`:f.nextD?`Due ${fmtDateDisplay(fmtDate(f.nextD))}` :'';
+    return `• ${f.name} — ${f.tonnesDel}t${feedStr} — ${dueStr}`;
+  });
+  const total=computed.reduce((s,f)=>s+f.tonnesDel,0);
+  const supplierLine=supplier.name?`\nSupplier: ${supplier.name}${supplier.phone?' · '+supplier.phone:''}`:''
+  const msg=`Feed Order Request — ${dateStr}${supplierLine}\n\n${lines.join('\n')}\n\nTotal: ${total}t across ${computed.length} farm${computed.length===1?'':'s'}\n\nSent via Feed Estimator by M@SE`;
+  document.getElementById('orderMsgText').value=msg;
+  document.getElementById('orderMsgModal').classList.add('open');
+  setTimeout(()=>{const ta=document.getElementById('orderMsgText');ta.focus();ta.setSelectionRange(0,0);},150);
+}
+function closeOrderMsg(){document.getElementById('orderMsgModal').classList.remove('open');}
+function copyOrderMsg(){
+  const el=document.getElementById('orderMsgText');el.select();el.setSelectionRange(0,99999);
+  try{navigator.clipboard.writeText(el.value);}catch(e){document.execCommand('copy');}
+  showToast('📋 Order message copied!');
+}
+function emailOrder(){
+  if(!supplier.email){showToast('⚠️ Add supplier email in Settings first');return;}
+  const body=encodeURIComponent(document.getElementById('orderMsgText').value);
+  window.location.href=`mailto:${encodeURIComponent(supplier.email)}?subject=${encodeURIComponent('Feed Order Request')}&body=${body}`;
 }
 
 function downloadApp(){
