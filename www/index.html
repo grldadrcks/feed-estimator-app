@@ -2274,6 +2274,32 @@ function computeFarm(f){
   return{...f,effectiveRate,usageDay,daysEmpty,tonnesMonth,containersMonth,containersWeek,monthlyCost,nextD,predictedNextD,isPredicted,daysAway,remainingTonnes,siloPercent,siloAlert,siloBarClass};
 }
 
+function computeCalibration(f){
+  if(!f.cows||f.cows<=0||!f.feedRate)return null;
+  const hist=f.deliveryHistory;
+  if(!hist||hist.length<3)return null;
+  const intervals=[];
+  for(let i=0;i<hist.length-1;i++){
+    const newer=parseDate(hist[i].date);
+    const older=parseDate(hist[i+1].date);
+    if(!newer||!older)continue;
+    const days=daysBetween(older,newer);
+    if(days<3||days>30)continue;
+    const t=Number(hist[i+1].tonnes);
+    if(!t||t<=0)continue;
+    intervals.push((t/days/f.cows)*1000);
+  }
+  if(intervals.length<2)return null;
+  const recent=intervals.slice(0,3);
+  const avg=recent.reduce((s,r)=>s+r,0)/recent.length;
+  const cur=f.feedRate;
+  const pct=Math.abs(avg-cur)/cur*100;
+  if(pct<10)return null;
+  const suggested=Math.round(avg*10)/10;
+  if(f._dismissedCalRate===suggested)return null;
+  return{suggested,current:cur,intervals:recent.length,pct:Math.round(pct),higher:avg>cur};
+}
+
 let farms=[],darkMode=false,currentTab='dashboard';
 let supplier={name:'',phone:'',email:''};
 
@@ -2293,6 +2319,7 @@ function loadData(){
     if(f.alertThreshold===undefined)f.alertThreshold=20;
     if(f.feedRateWinter===undefined)f.feedRateWinter=0;
     if(f.useSeasonalRates===undefined)f.useSeasonalRates=false;
+    if(f._dismissedCalRate===undefined)f._dismissedCalRate=null;
   });
   document.body.classList.toggle('dark',darkMode);
   updateDarkBtn();
@@ -2364,13 +2391,14 @@ function renderDashboard(){
     const feedTagHtml=f.feedType?`<span class="feed-tag">${esc(f.feedType)}</span>`:'';
     const addTagHtml=f.additives?`<span class="additive-tag">+ ${esc(f.additives)}</span>`:'';
     const siloAlertBadge=f.siloAlert?`<span class="badge badge-warn">🪣 Low</span>`:'';
+    const calBadge=computeCalibration(f)?`<span class="badge badge-warn" style="font-size:.65rem;">💡 Rate</span>`:'';
     const isExpanded=expandedFarmId===f.id;
     html+=`<div class="farm-row${isExpanded?' expanded':''}" onclick="toggleFarmExpand(${f.id})">
       <div class="farm-row-top">
         <span class="farm-row-name">${esc(f.name)}</span>
         <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;">
           ${feedTagHtml}${addTagHtml}
-          ${siloAlertBadge}
+          ${siloAlertBadge}${calBadge}
           <span class="badge ${cls}">${badge}</span>
           <span class="expand-chevron">▼</span>
         </div>
@@ -2407,6 +2435,7 @@ function renderFarms(){
   let html='';
   farms.forEach((f,i)=>{
     const c=computeFarm(f);
+    const cal=computeCalibration(f);
     const predStr=c.predictedNextD?fmtDate(c.predictedNextD):'—';
     const predStrDisplay=c.predictedNextD?fmtDateDisplay(fmtDate(c.predictedNextD)):'—';
     html+=`<div class="farm-card">
@@ -2473,6 +2502,7 @@ function renderFarms(){
         ${f.useSeasonalRates?` &nbsp;|&nbsp; Active: <strong>${c.effectiveRate} kg/d</strong>`:''}
       </div>
       ${historyChart(f.deliveryHistory)}
+      ${cal?`<div style="margin-top:10px;padding:11px 13px;border-radius:9px;border:1.5px solid var(--warn);background:var(--warn-light);display:flex;gap:10px;align-items:flex-start;"><span style="font-size:1.05rem;flex-shrink:0;">💡</span><div style="flex:1;min-width:0;"><div style="font-size:.72rem;font-weight:700;color:var(--warn);text-transform:uppercase;letter-spacing:.05em;margin-bottom:3px;">Rate Calibration${cal.intervals===2?' · 2 deliveries':` · ${cal.intervals} deliveries`}</div><div style="font-size:.74rem;color:var(--text2);line-height:1.45;">Actual usage suggests <strong style="color:var(--text);">${cal.suggested} kg/cow/day</strong>${f.useSeasonalRates?' (summer rate)':''} — currently ${cal.current} kg/d (${cal.pct}% ${cal.higher?'under':'over'}estimated).</div><div style="display:flex;gap:7px;margin-top:9px;flex-wrap:wrap;"><button class="icon-btn primary" style="font-size:.73rem;padding:5px 12px;min-height:34px;" onclick="applyCalibratedRate(${i},${cal.suggested})">✅ Update to ${cal.suggested}</button><button class="icon-btn" style="font-size:.73rem;padding:5px 12px;min-height:34px;" onclick="dismissCalibration(${i},${cal.suggested})">✖ Dismiss</button></div></div></div>`:''}
     </div>`;
   });
   document.getElementById('farmCards').innerHTML=html;
@@ -2669,15 +2699,28 @@ function updateFarm(i,key,val){
   if(key==='silo'){const n=+val;if(isNaN(n)||n<0){showToast('⚠️ Silo size must be 0 or more');return;}val=n;}
   if(key==='lastDel'&&val&&parseDate(val)>today()){showToast('⚠️ Last delivery date cannot be in the future');return;}
   farms[i][key]=val;
+  if(key==='feedRate')farms[i]._dismissedCalRate=null;
   if(['lastDel','cows','feedRate','tonnesDel'].includes(key)){if(!farms[i]._manualNextDel)farms[i].nextDel='';}
   if(key==='nextDel')farms[i]._manualNextDel=!!val;
   debouncedRender();
 }
 function clearNextDel(i){farms[i].nextDel='';farms[i]._manualNextDel=false;render();showToast('🔮 Reset to predicted date');}
+function applyCalibratedRate(i,rate){
+  farms[i]._dismissedCalRate=null;
+  updateFarm(i,'feedRate',rate);
+  saveAll(true);
+  showToast(`✅ Feed rate updated to ${rate} kg/cow/day`);
+}
+function dismissCalibration(i,rate){
+  farms[i]._dismissedCalRate=rate;
+  saveAll(true);
+  render();
+  showToast('💡 Suggestion dismissed');
+}
 function addFarm(){
   const t=today();const last=new Date(t);last.setDate(t.getDate()-6);
   const newId=farms.length>0?Math.max(...farms.map(f=>f.id))+1:1;
-  farms.push({id:newId,name:`Farm ${farms.length+1}`,silo:30,cows:800,feedRate:5,feedRateWinter:0,useSeasonalRates:false,tonnesDel:24,lastDel:fmtDate(last),nextDel:'',_manualNextDel:false,feedType:'',additives:'',comments:'',phone:'',pricePerTonne:0,alertThreshold:20,deliveryHistory:[]});
+  farms.push({id:newId,name:`Farm ${farms.length+1}`,silo:30,cows:800,feedRate:5,feedRateWinter:0,useSeasonalRates:false,tonnesDel:24,lastDel:fmtDate(last),nextDel:'',_manualNextDel:false,_dismissedCalRate:null,feedType:'',additives:'',comments:'',phone:'',pricePerTonne:0,alertThreshold:20,deliveryHistory:[]});
   switchTab('farms');showToast('✅ New farm added');
 }
 let _deletedFarm=null,_deleteTimer=null;
@@ -2778,7 +2821,7 @@ function showToast(msg,withUndo=false){
 
 function loadUrlData(){
   const d=new URLSearchParams(location.search).get('data');
-  if(d){try{const p=JSON.parse(d);if(p.farms){farms=p.farms;farms.forEach(f=>{if(f.feedType===undefined)f.feedType='';if(f.additives===undefined)f.additives='';if(f.comments===undefined)f.comments='';if(f.phone===undefined)f.phone='';if(!Array.isArray(f.deliveryHistory))f.deliveryHistory=[];if(f._manualNextDel===undefined)f._manualNextDel=false;if(f.pricePerTonne===undefined)f.pricePerTonne=0;if(f.alertThreshold===undefined)f.alertThreshold=20;if(f.feedRateWinter===undefined)f.feedRateWinter=0;if(f.useSeasonalRates===undefined)f.useSeasonalRates=false;});saveAll(true);showToast('📥 Shared data loaded!');}}catch(e){}}
+  if(d){try{const p=JSON.parse(d);if(p.farms){farms=p.farms;farms.forEach(f=>{if(f.feedType===undefined)f.feedType='';if(f.additives===undefined)f.additives='';if(f.comments===undefined)f.comments='';if(f.phone===undefined)f.phone='';if(!Array.isArray(f.deliveryHistory))f.deliveryHistory=[];if(f._manualNextDel===undefined)f._manualNextDel=false;if(f.pricePerTonne===undefined)f.pricePerTonne=0;if(f.alertThreshold===undefined)f.alertThreshold=20;if(f.feedRateWinter===undefined)f.feedRateWinter=0;if(f.useSeasonalRates===undefined)f.useSeasonalRates=false;if(f._dismissedCalRate===undefined)f._dismissedCalRate=null;});saveAll(true);showToast('📥 Shared data loaded!');}}catch(e){}}
 }
 
 let expandedFarmId=null;
