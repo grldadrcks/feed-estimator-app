@@ -367,7 +367,7 @@ a.call-btn:active{background:var(--accent);color:#fff;}
 <div class="tab-bar">
   <div class="tab" onclick="switchTab('dashboard')">📊 Dashboard</div>
   <div class="tab" onclick="switchTab('farms')">🏡 Farm Data</div>
-  <div class="tab" onclick="switchTab('orders')">📦 Orders</div>
+  <div class="tab" onclick="switchTab('orders')">🚛 Orders</div>
   <div class="tab active" onclick="switchTab('settings')">⚙️ Settings</div>
   <div class="tab" onclick="switchTab('guide')">📖 Guide</div>
 </div>
@@ -1732,6 +1732,7 @@ a.call-btn:active{background:var(--accent);color:#fff;}
       <button class="icon-btn" onclick="printRunSheet()" style="width:100%;justify-content:center;">🖨️ Print Run Sheet</button>
     </div>
     <div class="divider"></div>
+    <div id="supplierBar"></div>
     <div class="section-title">All Farms — Order Schedule</div>
     <div id="orderCards"><div class="order-card urgent">
       <div class="order-card-top"><div class="order-name">Farm 1</div><span class="badge badge-danger">Overdue</span></div>
@@ -2066,13 +2067,20 @@ a.call-btn:active{background:var(--accent);color:#fff;}
   <div class="panel active" id="tab-settings" style="">
     <div class="section-title">⚙️ Settings &amp; Tools</div>
     <div class="guide-card">
+      <h3>🏭 Supplier Contact</h3>
+      <p style="margin-bottom:12px;font-size:.83rem;color:var(--text2);">Save your feed supplier's details. Call or email order buttons appear on the Orders tab.</p>
+      <div class="form-group" style="margin-bottom:8px;"><label>Supplier Name</label><input type="text" id="supplierName" placeholder="e.g. Ridley AgriProducts" oninput="updateSupplier()"/></div>
+      <div class="form-group" style="margin-bottom:8px;"><label>Phone</label><input type="tel" id="supplierPhone" placeholder="e.g. 1800 XXX XXX" oninput="updateSupplier()"/></div>
+      <div class="form-group"><label>Email</label><input type="email" id="supplierEmail" placeholder="e.g. orders@supplier.com.au" oninput="updateSupplier()"/></div>
+    </div>
+    <div class="guide-card">
       <h3>🌙 Night Mode</h3>
       <p style="margin-bottom:12px">Switch between light and dark display for comfortable day or evening use.</p>
       <button class="icon-btn" id="darkBtn2" onclick="toggleDark()" style="width:100%;justify-content:center;padding:13px;">☀️ Switch to Day Mode</button>
     </div>
     <div class="guide-card">
       <h3>🔔 Delivery Reminders</h3>
-      <p style="margin-bottom:12px">Get a browser notification for overdue or upcoming deliveries each time you open the app. No install needed.</p>
+      <p style="margin-bottom:12px">Get a push notification for overdue or low-silo farms each time you open the app. Also alerts on low silo levels.</p>
       <button class="icon-btn" id="notifBtn" onclick="toggleNotifications()" style="width:100%;justify-content:center;padding:13px;">🔕 Disable Reminders</button>
     </div>
     <div class="guide-card">
@@ -2099,29 +2107,6 @@ a.call-btn:active{background:var(--accent);color:#fff;}
       <h3>📊 Export CSV</h3>
       <p style="margin-bottom:12px">Download all farm data as a spreadsheet — open in Excel, Google Sheets, or Numbers.</p>
       <button class="icon-btn" onclick="downloadCSV()" style="width:100%;justify-content:center;padding:13px;">📊 Export to CSV</button>
-    </div>
-    <div class="guide-card" id="installCard">
-      <h3>📲 Install App</h3>
-      <div style="margin-bottom:14px;">
-        <strong style="display:block;margin-bottom:6px;font-size:.88rem;">🍎 iPhone / iPad — use Safari</strong>
-        <ol style="padding-left:18px;font-size:.82rem;color:var(--text2);line-height:2;">
-          <li>Open this page in <strong>Safari</strong> (not Chrome)</li>
-          <li>Tap the <strong>Share</strong> button (box with arrow at bottom of screen)</li>
-          <li>Scroll down and tap <strong>"Add to Home Screen"</strong></li>
-          <li>Tap <strong>Add</strong> — icon appears on your home screen</li>
-        </ol>
-      </div>
-      <div style="margin-bottom:14px;">
-        <strong style="display:block;margin-bottom:6px;font-size:.88rem;">🤖 Android — use Chrome</strong>
-        <ol style="padding-left:18px;font-size:.82rem;color:var(--text2);line-height:2;">
-          <li>Open this page in <strong>Chrome</strong></li>
-          <li>Tap the <strong>⋮ menu</strong> (three dots, top right)</li>
-          <li>Tap <strong>"Add to Home Screen"</strong> or <strong>"Install app"</strong></li>
-          <li>Tap <strong>Install</strong> — icon appears on your home screen</li>
-        </ol>
-        <p style="font-size:.75rem;color:var(--text2);margin-top:8px;line-height:1.5;">💡 For the auto-install banner to appear, the file must be hosted on HTTPS. Free options: <strong>GitHub Pages</strong> or drag &amp; drop onto <strong>netlify.com/drop</strong>.</p>
-      </div>
-      <button class="icon-btn primary" id="installBtn" onclick="installApp()" style="width:100%;justify-content:center;padding:13px;display:none;">📲 Install on this device</button>
     </div>
   </div>
 
@@ -2186,7 +2171,7 @@ a.call-btn:active{background:var(--accent);color:#fff;}
     <span class="bnav-icon">🏡</span>Farms
   </button>
   <button class="bnav-item" data-tab="orders" onclick="switchTab('orders')">
-    <span class="bnav-icon">📦</span>Orders
+    <span class="bnav-icon">🚛</span>Orders
   </button>
   <button class="bnav-item active" data-tab="settings" onclick="switchTab('settings')">
     <span class="bnav-icon">⚙️</span>Settings
@@ -2224,7 +2209,7 @@ a.call-btn:active{background:var(--accent);color:#fff;}
       </div>
       <div class="form-group">
         <label>Delivery Date</label>
-        <input type="date" id="deliveryDate">
+        <input type="text" inputmode="numeric" id="deliveryDate" placeholder="DD/MM/YYYY" oninput="onDateInput(this)">
       </div>
     </div>
     <div class="modal-actions" style="margin-top:14px;">
@@ -2258,16 +2243,20 @@ function defaultFarms(){
   const t=today();
   return Array.from({length:14},(_,i)=>{
     const last=new Date(t);last.setDate(t.getDate()-6);
-    return{id:i+1,name:`Farm ${i+1}`,silo:30+((i%2)*10),cows:800,feedRate:5,tonnesDel:24,lastDel:fmtDate(last),nextDel:'',_manualNextDel:false,feedType:'',additives:'',comments:'',phone:'',deliveryHistory:[]};
+    return{id:i+1,name:`Farm ${i+1}`,silo:30+((i%2)*10),cows:800,feedRate:5,feedRateWinter:0,useSeasonalRates:false,tonnesDel:24,lastDel:fmtDate(last),nextDel:'',_manualNextDel:false,feedType:'',additives:'',comments:'',phone:'',pricePerTonne:0,alertThreshold:20,deliveryHistory:[]};
   });
 }
 
 function computeFarm(f){
-  const usageDay=(f.cows*f.feedRate)/1000;
+  const month=new Date().getMonth();
+  const isSummer=[9,10,11,0,1,2].includes(month);
+  const effectiveRate=(f.useSeasonalRates&&(f.feedRateWinter||0)>0)?(isSummer?f.feedRate:f.feedRateWinter):f.feedRate;
+  const usageDay=(f.cows*effectiveRate)/1000;
   const daysEmpty=usageDay>0?((f.tonnesDel||0)/usageDay):0;
   const tonnesMonth=usageDay*30;
   const containersMonth=tonnesMonth/CONTAINER_SIZE;
   const containersWeek=containersMonth/4.33;
+  const monthlyCost=(f.pricePerTonne||0)*tonnesMonth;
   const lastD=parseDate(f.lastDel);
   const manualNextD=parseDate(f.nextDel);
   const predictedNextD=lastD?new Date(lastD.getTime()+daysEmpty*86400000):null;
@@ -2279,30 +2268,43 @@ function computeFarm(f){
   const remainingTonnes=Math.max(0,f.tonnesDel-usageDay*daysSinceLastDel);
   const siloBase=f.silo>0?f.silo:(f.tonnesDel||1);
   const siloPercent=Math.min(100,Math.round(remainingTonnes/siloBase*100));
+  const alertThreshold=f.alertThreshold??20;
+  const siloAlert=siloPercent<=alertThreshold&&remainingTonnes>0&&(daysAway===null||daysAway>3);
   const siloBarClass=siloPercent>40?'good':siloPercent>15?'warn':'danger';
-  return{...f,usageDay,daysEmpty,tonnesMonth,containersMonth,containersWeek,nextD,predictedNextD,isPredicted,daysAway,remainingTonnes,siloPercent,siloBarClass};
+  return{...f,effectiveRate,usageDay,daysEmpty,tonnesMonth,containersMonth,containersWeek,monthlyCost,nextD,predictedNextD,isPredicted,daysAway,remainingTonnes,siloPercent,siloAlert,siloBarClass};
 }
 
 let farms=[],darkMode=false,currentTab='dashboard';
+let supplier={name:'',phone:'',email:''};
 
 function loadData(){
   try{
     const s=localStorage.getItem('feedEstimator_v2');
-    if(s){const d=JSON.parse(s);farms=d.farms||defaultFarms();darkMode=d.darkMode||false;notificationsEnabled=d.notificationsEnabled||false;}
+    if(s){const d=JSON.parse(s);farms=d.farms||defaultFarms();darkMode=d.darkMode||false;notificationsEnabled=d.notificationsEnabled||false;supplier=d.supplier||{name:'',phone:'',email:''};}
     else farms=defaultFarms();
   }catch(e){farms=defaultFarms();}
-  farms.forEach(f=>{if(f.feedType===undefined)f.feedType='';if(f.additives===undefined)f.additives='';if(f.comments===undefined)f.comments='';if(f.phone===undefined)f.phone='';if(!Array.isArray(f.deliveryHistory))f.deliveryHistory=[];});
-  if(darkMode)document.body.classList.add('dark');
+  farms.forEach(f=>{
+    if(f.feedType===undefined)f.feedType='';
+    if(f.additives===undefined)f.additives='';
+    if(f.comments===undefined)f.comments='';
+    if(f.phone===undefined)f.phone='';
+    if(!Array.isArray(f.deliveryHistory))f.deliveryHistory=[];
+    if(f.pricePerTonne===undefined)f.pricePerTonne=0;
+    if(f.alertThreshold===undefined)f.alertThreshold=20;
+    if(f.feedRateWinter===undefined)f.feedRateWinter=0;
+    if(f.useSeasonalRates===undefined)f.useSeasonalRates=false;
+  });
+  document.body.classList.toggle('dark',darkMode);
   updateDarkBtn();
 }
 
 function saveAll(silent=false){
-  try{localStorage.setItem('feedEstimator_v2',JSON.stringify({farms,darkMode,notificationsEnabled}));}
+  try{localStorage.setItem('feedEstimator_v2',JSON.stringify({farms,darkMode,notificationsEnabled,supplier}));}
   catch(e){if(!silent)showToast('⚠️ Could not save — storage full');return;}
   if(!silent)showToast('✅ Saved!');
 }
 
-function render(){renderDashboard();renderFarms();renderOrders();updateTodayDisplay();}
+function render(){renderDashboard();renderFarms();renderOrders();renderSupplierFields();updateTodayDisplay();}
 
 function updateTodayDisplay(){
   const d=new Date();const dd=String(d.getDate()).padStart(2,'0');const mm=String(d.getMonth()+1).padStart(2,'0');
@@ -2320,13 +2322,15 @@ function renderDashboard(){
   const computed=farms.map(computeFarm);
   const totalCows=farms.reduce((s,f)=>s+f.cows,0);
   const totalTonnes=computed.reduce((s,f)=>s+f.tonnesMonth,0);
-  const totalContW=computed.reduce((s,f)=>s+f.containersWeek,0);
+  const totalCost=computed.reduce((s,f)=>s+(f.monthlyCost||0),0);
+  const hasCost=farms.some(f=>(f.pricePerTonne||0)>0);
   const urgent=computed.filter(f=>f.daysAway!==null&&f.daysAway<=3).length;
+  const costDisplay=hasCost?(totalCost>=10000?'$'+Math.round(totalCost/1000).toFixed(1)+'k':'$'+Math.round(totalCost).toLocaleString()):'—';
 
   document.getElementById('statsGrid').innerHTML=`
     <div class="stat-card good"><div class="stat-label">Total Cows</div><div class="stat-val">${totalCows.toLocaleString()}</div><div class="stat-unit">${farms.length} farms</div></div>
     <div class="stat-card"><div class="stat-label">Tonnes/Month</div><div class="stat-val">${totalTonnes.toFixed(0)}</div><div class="stat-unit">group total</div></div>
-    <div class="stat-card"><div class="stat-label">Cont./Week</div><div class="stat-val">${totalContW.toFixed(1)}</div><div class="stat-unit">@ 22t each</div></div>
+    <div class="stat-card ${hasCost?'good':''}"><div class="stat-label">Est. Cost/Mo</div><div class="stat-val">${costDisplay}</div><div class="stat-unit">${hasCost?'group estimate':'add $/tonne'}</div></div>
     <div class="stat-card ${urgent>0?'danger':'good'}"><div class="stat-label">Attention</div><div class="stat-val">${urgent}</div><div class="stat-unit">farms due soon</div></div>
   `;
   document.getElementById('farmCount').textContent=`${farms.length} Farms`;
@@ -2359,12 +2363,14 @@ function renderDashboard(){
     const nextStr=f.nextD?fmtDateHuman(f.nextD):'—';
     const feedTagHtml=f.feedType?`<span class="feed-tag">${esc(f.feedType)}</span>`:'';
     const addTagHtml=f.additives?`<span class="additive-tag">+ ${esc(f.additives)}</span>`:'';
+    const siloAlertBadge=f.siloAlert?`<span class="badge badge-warn">🪣 Low</span>`:'';
     const isExpanded=expandedFarmId===f.id;
     html+=`<div class="farm-row${isExpanded?' expanded':''}" onclick="toggleFarmExpand(${f.id})">
       <div class="farm-row-top">
         <span class="farm-row-name">${esc(f.name)}</span>
         <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;">
           ${feedTagHtml}${addTagHtml}
+          ${siloAlertBadge}
           <span class="badge ${cls}">${badge}</span>
           <span class="expand-chevron">▼</span>
         </div>
@@ -2384,7 +2390,7 @@ function renderDashboard(){
         ${f.comments?`<div style="margin-bottom:10px;font-size:.76rem;color:var(--text2);line-height:1.5;">📝 ${esc(f.comments)}</div>`:''}
         <div class="form-grid" style="margin-bottom:8px;">
           <div class="form-group"><label>Tonnes Delivered</label><input type="number" value="${f.tonnesDel}" min="0" onchange="updateFarm(${i},'tonnesDel',+this.value)"/></div>
-          <div class="form-group"><label>Last Delivery</label><input type="date" value="${f.lastDel}" onchange="updateFarm(${i},'lastDel',this.value)"/></div>
+          <div class="form-group"><label>Last Delivery</label><input type="text" inputmode="numeric" placeholder="DD/MM/YYYY" value="${fmtDateInput(f.lastDel)}" oninput="onDateInput(this)" onchange="const iso=parseDMY(this.value);if(iso||!this.value)updateFarm(${i},'lastDel',iso)"/></div>
         </div>
         <div class="deliver-row">
           <button class="icon-btn primary" onclick="event.stopPropagation();openDelivery(${f.id})">✅ Delivered</button>
@@ -2414,8 +2420,20 @@ function renderFarms(){
         <div class="form-group"><label>No. of Cows</label><input type="number" value="${f.cows}" min="0" onchange="updateFarm(${i},'cows',+this.value)"/></div>
         <div class="form-group"><label>Feed Rate (kg/day)</label><input type="number" value="${f.feedRate}" min="0" step="0.1" onchange="updateFarm(${i},'feedRate',+this.value)"/></div>
         <div class="form-group"><label>Tonnes Delivered</label><input type="number" value="${f.tonnesDel}" min="0" onchange="updateFarm(${i},'tonnesDel',+this.value)"/></div>
-        <div class="form-group"><label>Last Delivery</label><input type="date" value="${f.lastDel}" onchange="updateFarm(${i},'lastDel',this.value)"/></div>
+        <div class="form-group"><label>Last Delivery</label><input type="text" inputmode="numeric" placeholder="DD/MM/YYYY" value="${fmtDateInput(f.lastDel)}" oninput="onDateInput(this)" onchange="const iso=parseDMY(this.value);if(iso||!this.value)updateFarm(${i},'lastDel',iso)"/></div>
+        <div class="form-group"><label>Price ($/tonne)</label><input type="number" value="${f.pricePerTonne||0}" min="0" step="0.01" onchange="updateFarm(${i},'pricePerTonne',+this.value)"/></div>
+        <div class="form-group"><label>Low Silo Alert (%)</label><input type="number" value="${f.alertThreshold??20}" min="0" max="100" onchange="updateFarm(${i},'alertThreshold',+this.value)"/></div>
       </div>
+      <div class="form-group" style="margin-bottom:10px;padding:10px 12px;background:var(--surface2);border-radius:9px;border:1.5px solid var(--border);">
+        <label style="flex-direction:row;gap:10px;font-size:.78rem;text-transform:none;letter-spacing:0;font-weight:600;cursor:pointer;">
+          <input type="checkbox" ${f.useSeasonalRates?'checked':''} onchange="updateFarm(${i},'useSeasonalRates',this.checked)" style="width:18px;height:18px;accent-color:var(--accent);cursor:pointer;flex-shrink:0;"/>
+          Use seasonal feed rates (Summer / Winter)
+        </label>
+      </div>
+      ${f.useSeasonalRates?`<div class="form-grid" style="margin-bottom:10px;">
+        <div class="form-group"><label>Summer Rate (kg/d) <span style="font-size:.6rem;color:var(--text2);">Oct–Mar</span></label><input type="number" value="${f.feedRate}" min="0" step="0.1" onchange="updateFarm(${i},'feedRate',+this.value)"/></div>
+        <div class="form-group"><label>Winter Rate (kg/d) <span style="font-size:.6rem;color:var(--text2);">Apr–Sep</span></label><input type="number" value="${f.feedRateWinter||f.feedRate}" min="0" step="0.1" onchange="updateFarm(${i},'feedRateWinter',+this.value)"/></div>
+      </div>`:''}
       <div class="form-grid">
         <div class="form-group">
           <label>Feed Type <span style="text-transform:none;font-weight:400;color:var(--text2);font-size:.62rem;">(e.g. Dairy Standard, Pasture Optimiser)</span></label>
@@ -2439,10 +2457,7 @@ function renderFarms(){
       <div class="form-grid full">
         <div class="form-group">
           <label>Next Delivery ${c.isPredicted?'<span class="badge badge-warn" style="font-size:.58rem;">🔮 Predicted</span>':'<span class="badge badge-ok" style="font-size:.58rem;">📅 Manual</span>'}</label>
-          <div style="display:flex;gap:8px;align-items:center;">
-            <input type="date" value="${f.nextDel||predStr}" style="flex:1;${c.isPredicted?'border-color:var(--warn);background:var(--warn-light);':''}" onchange="updateFarm(${i},'nextDel',this.value)"/>
-            <span style="font-size:.9rem;color:var(--text2);min-width:80px;">${fmtDateDisplay(f.nextDel||predStr)}</span>
-          </div>
+          <input type="text" inputmode="numeric" placeholder="DD/MM/YYYY" value="${fmtDateInput(f.nextDel||predStr)}" style="${c.isPredicted?'border-color:var(--warn);background:var(--warn-light);':''}" oninput="onDateInput(this)" onchange="const iso=parseDMY(this.value);if(iso||!this.value)updateFarm(${i},'nextDel',iso)"/>
           ${c.isPredicted
             ?`<span class="input-hint warn">Auto-calculated: last delivery + ${c.daysEmpty.toFixed(1)} days. Tap to override.</span>`
             :`<span class="input-hint good">Manually set. <button onclick="clearNextDel(${i})" style="background:none;border:none;color:var(--warn);font-size:.7rem;cursor:pointer;text-decoration:underline;padding:0;font-family:'DM Sans',sans-serif;">Reset to predicted</button></span>`
@@ -2454,12 +2469,10 @@ function renderFarms(){
         <strong>${c.containersWeek.toFixed(2)}</strong>/week &nbsp;|&nbsp;
         <strong>${c.tonnesMonth.toFixed(1)} t</strong>/month &nbsp;|&nbsp;
         Days to empty: <strong>${c.daysEmpty.toFixed(1)}</strong>
+        ${f.pricePerTonne>0?` &nbsp;|&nbsp; Est. <strong>$${Math.round(c.monthlyCost).toLocaleString()}</strong>/mo`:''}
+        ${f.useSeasonalRates?` &nbsp;|&nbsp; Active: <strong>${c.effectiveRate} kg/d</strong>`:''}
       </div>
-      ${(f.deliveryHistory&&f.deliveryHistory.length)?`
-      <div style="margin-top:10px;border-top:1.5px solid var(--border);padding-top:10px;">
-        <div style="font-size:.62rem;font-weight:700;color:var(--text2);text-transform:uppercase;letter-spacing:.05em;margin-bottom:6px;">📋 Delivery History</div>
-        ${f.deliveryHistory.slice(0,5).map(h=>`<div style="display:flex;justify-content:space-between;align-items:center;font-size:.76rem;padding:5px 0;border-bottom:1px solid var(--border);"><span style="color:var(--text2);">${fmtDateDisplay(h.date)}</span><span style="font-weight:700;color:var(--text);">${h.tonnes}t</span></div>`).join('')}
-      </div>`:''}
+      ${historyChart(f.deliveryHistory)}
     </div>`;
   });
   document.getElementById('farmCards').innerHTML=html;
@@ -2511,6 +2524,13 @@ function renderOrders(){
   const totalT=computed.reduce((s,f)=>s+f.tonnesMonth,0);
   const totalC=computed.reduce((s,f)=>s+f.containersMonth,0);
   const totalCW=computed.reduce((s,f)=>s+f.containersWeek,0);
+  const sb=document.getElementById('supplierBar');
+  if(sb){
+    sb.innerHTML=(supplier.phone||supplier.email)?`<div style="display:flex;gap:8px;margin-bottom:14px;flex-wrap:wrap;">
+      ${supplier.phone?`<a href="tel:${esc(supplier.phone)}" class="icon-btn primary" style="flex:1;justify-content:center;min-width:140px;">📞 Call ${esc(supplier.name||'Supplier')}</a>`:''}
+      ${supplier.email?`<a href="mailto:${esc(supplier.email)}?subject=Feed+Order+Request&body=Hi%2C%20please%20arrange%20a%20delivery%20for%20the%20following%20farms." class="icon-btn" style="flex:1;justify-content:center;min-width:140px;">📧 Email Order</a>`:''}
+    </div>`:'';
+  }
   document.getElementById('orderSummary').innerHTML=`
     <div class="summary-row">
       <div class="summary-cell"><div class="summary-label">Tonnes/Month</div><div class="summary-val">${totalT.toFixed(0)}</div></div>
@@ -2552,7 +2572,7 @@ function openDelivery(farmId){
   if(!f)return;
   document.getElementById('deliveryFarmName').textContent=f.name;
   document.getElementById('deliveryTonnes').value=f.silo>0?f.silo:f.tonnesDel||'';
-  document.getElementById('deliveryDate').value=fmtDate(today());
+  document.getElementById('deliveryDate').value=fmtDateInput(fmtDate(today()));
   document.getElementById('deliveryModal').classList.add('open');
   setTimeout(()=>document.getElementById('deliveryTonnes').select(),150);
 }
@@ -2560,9 +2580,9 @@ function closeDelivery(){document.getElementById('deliveryModal').classList.remo
 function confirmDelivery(){
   if(_deliveryFarmId===null)return;
   const tonnes=+document.getElementById('deliveryTonnes').value;
-  const date=document.getElementById('deliveryDate').value;
+  const date=parseDMY(document.getElementById('deliveryDate').value);
   if(!tonnes||tonnes<=0){showToast('⚠️ Enter tonnes delivered');return;}
-  if(!date||!parseDate(date)){showToast('⚠️ Enter a valid delivery date');return;}
+  if(!date){showToast('⚠️ Enter a valid date (DD/MM/YYYY)');return;}
   const idx=farms.findIndex(fm=>fm.id===_deliveryFarmId);
   if(idx===-1)return;
   const name=farms[idx].name;
@@ -2576,27 +2596,65 @@ function confirmDelivery(){
 
 // —— NOTIFICATIONS ——
 let notificationsEnabled=false;
-function toggleNotifications(){
-  if(!('Notification' in window)){showToast('⚠️ Not supported in this browser');return;}
-  if(!notificationsEnabled){
-    Notification.requestPermission().then(p=>{
-      if(p==='granted'){notificationsEnabled=true;saveAll();updateNotifBtn();showToast('🔔 Reminders enabled');checkNotifications();}
-      else showToast('⚠️ Permission denied — check browser settings');
-    });
+const _LN=()=>window.Capacitor?.Plugins?.LocalNotifications;
+
+async function toggleNotifications(){
+  const LN=_LN();
+  if(LN){
+    if(!notificationsEnabled){
+      try{
+        const perm=await LN.requestPermissions();
+        if(perm.display==='granted'){notificationsEnabled=true;saveAll(true);updateNotifBtn();showToast('🔔 Reminders enabled');await scheduleLocalNotifications();}
+        else showToast('⚠️ Permission denied — enable in phone Settings');
+      }catch(e){showToast('⚠️ Could not enable reminders');}
+    }else{
+      try{const p=await LN.getPending();if(p.notifications.length)await LN.cancel({notifications:p.notifications});}catch(_){}
+      notificationsEnabled=false;saveAll(true);updateNotifBtn();showToast('🔕 Reminders off');
+    }
   }else{
-    notificationsEnabled=false;saveAll();updateNotifBtn();showToast('🔕 Reminders off');
+    if(!('Notification' in window)){showToast('⚠️ Not supported');return;}
+    if(!notificationsEnabled){
+      Notification.requestPermission().then(p=>{
+        if(p==='granted'){notificationsEnabled=true;saveAll(true);updateNotifBtn();showToast('🔔 Reminders enabled');checkNotifications();}
+        else showToast('⚠️ Permission denied — check browser settings');
+      });
+    }else{notificationsEnabled=false;saveAll(true);updateNotifBtn();showToast('🔕 Reminders off');}
   }
 }
+
+async function scheduleLocalNotifications(){
+  const LN=_LN();
+  if(!LN||!notificationsEnabled)return;
+  try{
+    const p=await LN.getPending();if(p.notifications.length)await LN.cancel({notifications:p.notifications});
+    const urgent=farms.map(computeFarm).filter(f=>f.daysAway!==null&&f.daysAway<=3);
+    const lowSilo=farms.map(computeFarm).filter(f=>f.siloAlert);
+    const all=[...urgent,...lowSilo.filter(f=>!urgent.find(u=>u.id===f.id))].slice(0,10);
+    if(!all.length)return;
+    await LN.schedule({notifications:all.map(f=>({
+      id:f.id,
+      title:`🌾 ${f.name}`,
+      body:f.daysAway!==null&&f.daysAway<=3?(f.daysAway<0?`Overdue by ${Math.abs(f.daysAway)} day(s)`:f.daysAway===0?'Due TODAY — order now':`Due in ${f.daysAway} day(s)`):`Low silo — ${f.siloPercent}% remaining`,
+      schedule:{at:new Date(Date.now()+800)},
+      sound:'default',
+      extra:{farmId:f.id}
+    }))});
+  }catch(e){}
+}
+
 function updateNotifBtn(){
   const b=document.getElementById('notifBtn');
   if(b)b.textContent=notificationsEnabled?'🔕 Disable Reminders':'🔔 Enable Reminders';
 }
+
 function checkNotifications(){
-  if(!notificationsEnabled||Notification.permission!=='granted')return;
-  const urgent=farms.map(computeFarm).filter(f=>f.daysAway!==null&&f.daysAway<=3);
-  urgent.slice(0,5).forEach(f=>{
-    const msg=f.daysAway<0?`Overdue by ${Math.abs(f.daysAway)}d`:f.daysAway===0?'Due today — order now':`Due in ${f.daysAway} day(s)`;
-    new Notification(`🌾 ${f.name}`,{body:msg+(f.feedType?` · ${f.feedType}`:''),tag:`farm-${f.id}`});
+  scheduleLocalNotifications().catch(()=>{
+    if(!notificationsEnabled||!('Notification' in window)||Notification.permission!=='granted')return;
+    const urgent=farms.map(computeFarm).filter(f=>f.daysAway!==null&&f.daysAway<=3);
+    urgent.slice(0,5).forEach(f=>{
+      const msg=f.daysAway<0?`Overdue by ${Math.abs(f.daysAway)}d`:f.daysAway===0?'Due today — order now':`Due in ${f.daysAway} day(s)`;
+      new Notification(`🌾 ${f.name}`,{body:msg+(f.feedType?` · ${f.feedType}`:''),tag:`farm-${f.id}`});
+    });
   });
 }
 
@@ -2606,6 +2664,7 @@ function debouncedRender(){clearTimeout(_renderTimer);_renderTimer=setTimeout(re
 function updateFarm(i,key,val){
   if(key==='cows'){const n=+val;if(isNaN(n)||n<1){showToast('⚠️ Cows must be at least 1');return;}val=n;}
   if(key==='feedRate'){const n=+val;if(isNaN(n)||n<=0){showToast('⚠️ Feed rate must be greater than 0');return;}val=n;}
+  if(key==='feedRateWinter'){const n=+val;if(isNaN(n)||n<0){showToast('⚠️ Winter feed rate must be 0 or more');return;}val=n;}
   if(key==='tonnesDel'){const n=+val;if(isNaN(n)||n<0){showToast('⚠️ Tonnes must be 0 or more');return;}val=n;}
   if(key==='silo'){const n=+val;if(isNaN(n)||n<0){showToast('⚠️ Silo size must be 0 or more');return;}val=n;}
   if(key==='lastDel'&&val&&parseDate(val)>today()){showToast('⚠️ Last delivery date cannot be in the future');return;}
@@ -2618,7 +2677,7 @@ function clearNextDel(i){farms[i].nextDel='';farms[i]._manualNextDel=false;rende
 function addFarm(){
   const t=today();const last=new Date(t);last.setDate(t.getDate()-6);
   const newId=farms.length>0?Math.max(...farms.map(f=>f.id))+1:1;
-  farms.push({id:newId,name:`Farm ${farms.length+1}`,silo:30,cows:800,feedRate:5,tonnesDel:24,lastDel:fmtDate(last),nextDel:'',_manualNextDel:false,feedType:'',additives:'',comments:'',phone:'',deliveryHistory:[]});
+  farms.push({id:newId,name:`Farm ${farms.length+1}`,silo:30,cows:800,feedRate:5,feedRateWinter:0,useSeasonalRates:false,tonnesDel:24,lastDel:fmtDate(last),nextDel:'',_manualNextDel:false,feedType:'',additives:'',comments:'',phone:'',pricePerTonne:0,alertThreshold:20,deliveryHistory:[]});
   switchTab('farms');showToast('✅ New farm added');
 }
 let _deletedFarm=null,_deleteTimer=null;
@@ -2633,7 +2692,8 @@ function removeFarm(i){
 function undoDelete(){
   if(!_deletedFarm)return;
   clearTimeout(_deleteTimer);
-  farms.splice(_deletedFarm.index,0,_deletedFarm.farm);
+  const idx=Math.min(_deletedFarm.index,farms.length);
+  farms.splice(idx,0,_deletedFarm.farm);
   _deletedFarm=null;
   render();
   showToast('↩️ Restored!');
@@ -2665,7 +2725,9 @@ function updateDarkBtn(){
 
 function openShare(){
   const data=encodeURIComponent(JSON.stringify({farms}));
-  document.getElementById('shareUrl').value=location.href.split('?')[0]+'?data='+data;
+  const url=location.href.split('?')[0]+'?data='+data;
+  document.getElementById('shareUrl').value=url;
+  if(url.length>2000)showToast('⚠️ Share URL is very long and may not work in all browsers');
   document.getElementById('shareModal').classList.add('open');
 }
 function closeShare(){document.getElementById('shareModal').classList.remove('open');}
@@ -2716,7 +2778,7 @@ function showToast(msg,withUndo=false){
 
 function loadUrlData(){
   const d=new URLSearchParams(location.search).get('data');
-  if(d){try{const p=JSON.parse(decodeURIComponent(d));if(p.farms){farms=p.farms;farms.forEach(f=>{if(f.feedType===undefined)f.feedType='';if(f.additives===undefined)f.additives='';if(f.comments===undefined)f.comments='';if(f.phone===undefined)f.phone='';if(!Array.isArray(f.deliveryHistory))f.deliveryHistory=[];if(f._manualNextDel===undefined)f._manualNextDel=false;});showToast('📥 Shared data loaded!');}}catch(e){}}
+  if(d){try{const p=JSON.parse(d);if(p.farms){farms=p.farms;farms.forEach(f=>{if(f.feedType===undefined)f.feedType='';if(f.additives===undefined)f.additives='';if(f.comments===undefined)f.comments='';if(f.phone===undefined)f.phone='';if(!Array.isArray(f.deliveryHistory))f.deliveryHistory=[];if(f._manualNextDel===undefined)f._manualNextDel=false;if(f.pricePerTonne===undefined)f.pricePerTonne=0;if(f.alertThreshold===undefined)f.alertThreshold=20;if(f.feedRateWinter===undefined)f.feedRateWinter=0;if(f.useSeasonalRates===undefined)f.useSeasonalRates=false;});saveAll(true);showToast('📥 Shared data loaded!');}}catch(e){}}
 }
 
 let expandedFarmId=null;
@@ -2789,22 +2851,7 @@ window.addEventListener('appinstalled',()=>{
 
   // Service worker — required for Android auto-install prompt when hosted on HTTPS
   if('serviceWorker' in navigator){
-    const sw=`
-      const CACHE='feed-est-v1';
-      self.addEventListener('install',e=>{self.skipWaiting();});
-      self.addEventListener('activate',e=>{e.waitUntil(clients.claim());});
-      self.addEventListener('fetch',e=>{
-        if(e.request.method!=='GET')return;
-        e.respondWith(caches.match(e.request).then(r=>r||fetch(e.request).then(res=>{
-          caches.open(CACHE).then(c=>c.put(e.request,res.clone()));
-          return res;
-        }).catch(()=>caches.match(e.request))));
-      });
-    `;
-    try{
-      const swBlob=new Blob([sw],{type:'text/javascript'});
-      navigator.serviceWorker.register(URL.createObjectURL(swBlob));
-    }catch(e){}
+    navigator.serviceWorker.register('./sw.js').catch(()=>{});
   }
 })();
 
@@ -2826,6 +2873,30 @@ document.querySelector('.scroll-area').addEventListener('touchend',e=>{
     else if(dx>0&&idx>0)switchTab(order[idx-1]);
   }
 },{passive:true});
+
+function historyChart(history){
+  if(!history||!history.length)return '';
+  const hist=history.slice(0,5);
+  const maxT=Math.max(...hist.map(h=>h.tonnes),1);
+  const rows=hist.map(h=>`<div style="margin-bottom:6px;"><div style="display:flex;justify-content:space-between;font-size:.7rem;margin-bottom:2px;"><span style="color:var(--text2);">${fmtDateDisplay(h.date)}</span><span style="font-weight:700;color:var(--text);">${h.tonnes}t</span></div><div style="height:5px;background:var(--border);border-radius:3px;overflow:hidden;"><div style="height:100%;width:${Math.round(h.tonnes/maxT*100)}%;background:var(--accent);border-radius:3px;"></div></div></div>`).join('');
+  return `<div style="margin-top:10px;border-top:1.5px solid var(--border);padding-top:10px;"><div style="font-size:.62rem;font-weight:700;color:var(--text2);text-transform:uppercase;letter-spacing:.05em;margin-bottom:7px;">📋 Delivery History</div>${rows}</div>`;
+}
+
+function updateSupplier(){
+  supplier.name=document.getElementById('supplierName')?.value||'';
+  supplier.phone=document.getElementById('supplierPhone')?.value||'';
+  supplier.email=document.getElementById('supplierEmail')?.value||'';
+  saveAll(true);
+}
+
+function renderSupplierFields(){
+  const n=document.getElementById('supplierName');const p=document.getElementById('supplierPhone');const e=document.getElementById('supplierEmail');
+  if(n)n.value=supplier.name||'';if(p)p.value=supplier.phone||'';if(e)e.value=supplier.email||'';
+}
+
+function fmtDateInput(isoStr){if(!isoStr)return '';const d=parseDate(isoStr);if(!d)return '';const dd=String(d.getDate()).padStart(2,'0');const mm=String(d.getMonth()+1).padStart(2,'0');return `${dd}/${mm}/${d.getFullYear()}`;}
+function parseDMY(v){if(!v)return '';const m=v.match(/^(\d{2})\/(\d{2})\/(\d{4})$/);if(!m)return '';const iso=`${m[3]}-${m[2]}-${m[1]}`;return parseDate(iso)?iso:'';}
+function onDateInput(el){let digits=el.value.replace(/\D/g,'').substring(0,8);let out='';if(digits.length>0)out=digits.substring(0,2);if(digits.length>2)out+='/'+digits.substring(2,4);if(digits.length>4)out+='/'+digits.substring(4,8);el.value=out;}
 
 loadData();loadUrlData();render();
 updateNotifBtn();checkNotifications();
