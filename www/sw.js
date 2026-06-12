@@ -1,5 +1,5 @@
-const CACHE='feed-est-v2';
-const PRECACHE=['./', './sw.js'];
+const CACHE='feed-est-v3';
+const PRECACHE=['./', './sw.js', './icon.png'];
 self.addEventListener('install', e=>{
   e.waitUntil(caches.open(CACHE).then(c=>c.addAll(PRECACHE)).then(()=>self.skipWaiting()));
 });

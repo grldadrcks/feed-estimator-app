@@ -11,6 +11,7 @@
 <meta name="apple-mobile-web-app-title" content="Feed Estimator">
 <meta name="description" content="Feed Estimator by M@SE — predict dairy farm feed orders with ease.">
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&amp;family=DM+Sans:wght@300;400;500;600&amp;display=swap" rel="stylesheet">
+<link rel="apple-touch-icon" href="icon.png">
 <link id="pwa-manifest" rel="manifest" href="">
 <style>
 /* —— TOKENS —— */
@@ -2943,36 +2944,15 @@ function dismissIOSBanner(){
   const el=document.getElementById('iosBanner');if(el)el.style.display='none';
 }
 
-// —— PWA: canvas icons, manifest, service worker ——
+// —— PWA: manifest, service worker ——
 (function(){
-  function makeIcon(size){
-    const c=document.createElement('canvas');c.width=c.height=size;
-    const x=c.getContext('2d');
-    x.fillStyle='#5a8a3c';
-    if(x.roundRect)x.roundRect(0,0,size,size,size*.15);
-    else{x.beginPath();x.rect(0,0,size,size);}
-    x.fill();
-    x.font=`${Math.round(size*.58)}px serif`;
-    x.textAlign='center';x.textBaseline='middle';
-    x.fillText('🌾',size/2,size*.54);
-    return c.toDataURL('image/png');
-  }
-  const i192=makeIcon(192),i512=makeIcon(512);
-
-  // Apple touch icon (iOS home screen)
-  const atl=document.createElement('link');
-  atl.rel='apple-touch-icon';atl.href=i192;
-  document.head.appendChild(atl);
-
-  // Manifest with PNG icons — Chrome requires PNG (not SVG) for installability
   const m={
     name:'Feed Estimator by M@SE',short_name:'FeedEst',
     description:'Dairy farm feed order estimator',
     start_url:'./',scope:'./',display:'standalone',orientation:'portrait',
     background_color:'#f5f0e8',theme_color:'#5a8a3c',
     icons:[
-      {src:i192,sizes:'192x192',type:'image/png'},
-      {src:i512,sizes:'512x512',type:'image/png',purpose:'any maskable'}
+      {src:'icon.png',sizes:'512x512',type:'image/png',purpose:'any maskable'}
     ]
   };
   const blob=new Blob([JSON.stringify(m)],{type:'application/manifest+json'});
