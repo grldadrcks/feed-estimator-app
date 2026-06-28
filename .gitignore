@@ -9,3 +9,5 @@ android/app/.cxx/
 *.jks
 .DS_Store
 Thumbs.db
+*.apk
+*.aab

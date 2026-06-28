@@ -2280,11 +2280,7 @@ function fmtDateHuman(d){
 }
 
 function defaultFarms(){
-  const t=today();
-  return Array.from({length:14},(_,i)=>{
-    const last=new Date(t);last.setDate(t.getDate()-6);
-    return{id:i+1,name:`Farm ${i+1}`,silo:30+((i%2)*10),cows:800,feedRate:5,feedRateWinter:0,useSeasonalRates:false,tonnesDel:24,lastDel:fmtDate(last),nextDel:'',_manualNextDel:false,feedType:'',additives:'',comments:'',phone:'',pricePerTonne:0,alertThreshold:20,deliveryHistory:[]};
-  });
+  return [];
 }
 
 function computeFarm(f){
