@@ -3178,12 +3178,12 @@ function buildOrderEmail(){
     const feedParts=[f.feedType,f.additives].filter(Boolean);
     const feedStr=feedParts.length?`\n   Product: ${feedParts.join(' + ')}`:'';
     const notesStr=item.notes?`\n   Notes: ${item.notes}`:'';
-    return`• ${f.name} — ${item.tonnes}t (${(item.tonnes/CONTAINER_SIZE).toFixed(2)} ctrs) — ${dueStr}${feedStr}${notesStr}`;
+    return`• ${f.name} — ${item.tonnes}t — ${dueStr}${feedStr}${notesStr}`;
   }).filter(Boolean);
   const totalT=included.reduce((s,o)=>s+(+o.tonnes||0),0);
   const totalC=(totalT/CONTAINER_SIZE).toFixed(1);
   const greeting=supplier.name?`Hi ${supplier.name},`:'Hi,';
-  const body=`${greeting}\n\nPlease arrange the following feed deliveries:\n\n${lines.join('\n\n')}\n\n---\nTotal: ${totalT}t across ${included.length} farm${included.length!==1?'s':''} (${totalC} containers)${extraNotes?'\n\nAdditional Notes:\n'+extraNotes:''}\n\nKind regards,\n\nSent via Feed Estimator by M@SE`;
+  const body=`${greeting}\n\nPlease arrange the following feed deliveries:\n\n${lines.join('\n\n')}\n\n---\nTotal: ${totalT}t across ${included.length} farm${included.length!==1?'s':''}${extraNotes?'\n\nAdditional Notes:\n'+extraNotes:''}\n\nKind regards,\n\nSent via Feed Estimator by M@SE`;
   return{subject,body};
 }
 
